@@ -330,24 +330,12 @@ graph LR
 
 This is version v0.1.0 of Multi-Project Memory Bank. It introduces **Multi-Project Support** and comprehensive project isolation capabilities while maintaining all token optimization improvements from the original project.
 
-### Ongoing Development
-
-The Memory Bank system is actively being developed and improved. Key points to understand:
-
-- **Work in Progress**: This is a beta version with ongoing development. Expect regular updates, optimizations, and new features.
-- **Feature Optimization**: The modular architecture enables continuous refinement without breaking existing functionality.
-- **Previous Version Available**: If you prefer the stability of the previous version (v0.1-legacy), you can continue using it while this version matures.
-- **Architectural Benefits**: Before deciding which version to use, please read the [Memory Bank Upgrade Guide](memory_bank_upgrade_guide.md) to understand the significant benefits of the new architecture.
-
 ## Resources
 
-- [Memory Bank Optimizations](MEMORY_BANK_OPTIMIZATIONS.md) - Detailed overview of token efficiency improvements
-- [Release Notes](RELEASE_NOTES.md) - Information about the latest changes
 - [Cursor Custom Modes Documentation](https://docs.cursor.com/chat/custom-modes)
-- [Memory Bank Upgrade Guide](memory_bank_upgrade_guide.md)
 - [CREATIVE Mode and Claude's "Think" Tool](creative_mode_think_tool.md)
 - Mode-specific instruction files in the `custom_modes/` directory
-- Original Memory Bank project (upstream inspiration): https://github.com/vanzan01/cursor-memory-bank
+- [Original Memory Bank project (upstream inspiration)](https://github.com/vanzan01/cursor-memory-bank)
 
 ---
 
