@@ -6,9 +6,90 @@ alwaysApply: false
 
 # MODE TRANSITION OPTIMIZATION
 
-> **TL;DR:** This file implements optimized mode transitions to preserve context efficiently between different phases of the Memory Bank system.
+> **TL;DR:** This file implements optimized mode transitions to preserve context efficiently between different phases of the Memory Bank system. **NEW: Multi-project support with automatic folder rename on stage transitions.**
 
-## 🔄 UNIFIED CONTEXT TRANSFER PROTOCOL
+## 🎯 MULTI-PROJECT TRANSITION PROTOCOL
+
+### Project Folder Stage Transitions
+
+When transitioning between modes, the project folder is automatically renamed to reflect the new stage:
+
+```mermaid
+graph TD
+    CurrentProject["Current Project<br><project-name> -- <old-timestamp> -- <old-stage>"] --> DetectTransition["Detect Mode<br>Transition"]
+    DetectTransition --> GenerateTimestamp["Generate Fresh<br>ISO Timestamp"]
+    GenerateTimestamp --> CreateNewName["Create New Folder Name<br><project-name> -- <new-timestamp> -- <new-stage>"]
+    CreateNewName --> RenameFolder["Rename Project Folder<br>Before File Operations"]
+    RenameFolder --> UpdateMacro["Update <MB_ROOT><br>Macro Resolution"]
+    UpdateMacro --> ContinueMode["Continue with<br>New Mode Operations"]
+    
+    style CurrentProject fill:#e6ccff,stroke:#d9b3ff,color:black
+    style DetectTransition fill:#ffa64d,stroke:#cc7a30,color:white
+    style GenerateTimestamp fill:#4dbb5f,stroke:#36873f,color:white
+    style CreateNewName fill:#4dbbbb,stroke:#368787,color:white
+    style RenameFolder fill:#d971ff,stroke:#a33bc2,color:white
+    style UpdateMacro fill:#ff71c2,stroke:#c23b8a,color:white
+    style ContinueMode fill:#5fd94d,stroke:#3da336,color:white
+```
+
+### Stage Transition Mapping
+
+```javascript
+// Pseudocode for stage transition logic
+const stageTransitions = {
+  'van': 'plan',        // VAN → PLAN
+  'plan': 'creative',   // PLAN → CREATIVE  
+  'creative': 'implement', // CREATIVE → IMPLEMENT
+  'implement': 'reflect',  // IMPLEMENT → REFLECT
+  'reflect': 'van'      // REFLECT → VAN (new task)
+};
+
+function transitionProjectStage(currentStage, targetStage) {
+  const currentProject = resolveMBRoot();
+  const projectInfo = parseProjectFolder(currentProject);
+  
+  // Generate new timestamp
+  const now = new Date();
+  const newTimestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  
+  // Create new folder name
+  const newFolderName = `${projectInfo.projectName} -- ${newTimestamp} -- ${targetStage}`;
+  const newProjectPath = path.join('memory-bank', newFolderName);
+  
+  // Perform atomic rename
+  fs.renameSync(currentProject, newProjectPath);
+  
+  // Update macro resolution
+  updateMBRootCache(newProjectPath);
+  
+  return newProjectPath;
+}
+```
+
+### Atomic Rename Safety
+
+```mermaid
+graph TD
+    StartRename["Start Folder<br>Rename Operation"] --> CheckLocks["Check for Open<br>File Handles"]
+    CheckLocks --> HasLocks{"Open Files<br>Detected?"}
+    HasLocks -->|"Yes"| WaitRelease["Wait for File<br>Handle Release"]
+    HasLocks -->|"No"| AtomicRename["Perform Atomic<br>Folder Rename"]
+    WaitRelease --> CheckLocks
+    AtomicRename --> VerifySuccess["Verify Rename<br>Success"]
+    VerifySuccess --> UpdateCache["Update <MB_ROOT><br>Cache"]
+    UpdateCache --> Complete["Transition<br>Complete"]
+    
+    style StartRename fill:#4da6ff,stroke:#0066cc,color:white
+    style CheckLocks fill:#ffa64d,stroke:#cc7a30,color:white
+    style HasLocks fill:#d94dbb,stroke:#a3378a,color:white
+    style WaitRelease fill:#ff5555,stroke:#cc0000,color:white
+    style AtomicRename fill:#4dbb5f,stroke:#36873f,color:white
+    style VerifySuccess fill:#4dbbbb,stroke:#368787,color:white
+    style UpdateCache fill:#d971ff,stroke:#a33bc2,color:white
+    style Complete fill:#5fd94d,stroke:#3da336,color:white
+```
+
+## 🔄 ENHANCED CONTEXT TRANSFER PROTOCOL
 
 ```mermaid
 graph TD
@@ -354,6 +435,11 @@ When transitioning from CREATIVE to IMPLEMENT mode:
 This optimization provides:
 
 1. Reduced token usage during mode transitions (~40% reduction)
+2. Better context preservation between modes
+3. Improved efficiency through rule caching
+4. Targeted loading of only necessary rules
+5. Optimized memory bank updates
+6. Clear transition documents that preserve critical context
 2. Better context preservation between modes
 3. Improved efficiency through rule caching
 4. Targeted loading of only necessary rules

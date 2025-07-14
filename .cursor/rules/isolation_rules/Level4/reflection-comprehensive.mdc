@@ -428,7 +428,7 @@ flowchart TD
 
 **Key Preparation Steps:**
 1. Load the comprehensive reflection template
-2. Gather project data (tasks.md, documentation, artifacts)
+2. Gather project data (<MB_ROOT>/tasks.md, documentation, artifacts)
 3. Collect performance metrics (timeline, resource utilization, quality)
 4. Gather stakeholder feedback (internal and external)
 5. Schedule reflection session(s) with key participants
@@ -576,12 +576,12 @@ flowchart TD
     classDef memfile fill:#f4b8c4,stroke:#d498a4,color:#000
     classDef process fill:#f9d77e,stroke:#d9b95c,color:#000
     
-    Reflection[Comprehensive<br>Reflection] --> PB[projectbrief.md]
-    Reflection --> PC[productContext.md]
-    Reflection --> AC[activeContext.md]
-    Reflection --> SP[systemPatterns.md]
-    Reflection --> TC[techContext.md]
-    Reflection --> P[progress.md]
+    Reflection[Comprehensive<br>Reflection] --> PB[<MB_ROOT>/projectbrief.md]
+    Reflection --> PC[<MB_ROOT>/productContext.md]
+    Reflection --> AC[<MB_ROOT>/activeContext.md]
+    Reflection --> SP[<MB_ROOT>/systemPatterns.md]
+    Reflection --> TC[<MB_ROOT>/techContext.md]
+    Reflection --> P[<MB_ROOT>/progress.md]
     
     PB & PC & AC & SP & TC & P --> MBI[Memory Bank<br>Integration]
     MBI --> Next[Enhanced Future<br>Projects]
@@ -594,32 +594,32 @@ flowchart TD
 
 Specific updates to make to Memory Bank files:
 
-1. **projectbrief.md**
+1. **<MB_ROOT>/projectbrief.md**
    - Update with strategic insights
    - Document key achievements
    - Incorporate lessons learned
 
-2. **productContext.md**
+2. **<MB_ROOT>/productContext.md**
    - Update with business insights
    - Document market/user insights
    - Include value delivery insights
 
-3. **activeContext.md**
+3. **<MB_ROOT>/activeContext.md**
    - Update with current status
    - Document action items
    - Include next steps
 
-4. **systemPatterns.md**
+4. **<MB_ROOT>/systemPatterns.md**
    - Update with architectural insights
    - Document successful patterns
    - Include technical knowledge
 
-5. **techContext.md**
+5. **<MB_ROOT>/techContext.md**
    - Update with implementation insights
    - Document technology stack insights
    - Include performance and security insights
 
-6. **progress.md**
+6. **<MB_ROOT>/progress.md**
    - Update with final status
    - Document achievements
    - Include project metrics
@@ -659,12 +659,12 @@ Knowledge Transfer
 - Documentation updates identified? [YES/NO]
 
 Memory Bank Integration
-- projectbrief.md updated with insights? [YES/NO]
-- productContext.md updated with insights? [YES/NO]
-- activeContext.md updated with insights? [YES/NO]
-- systemPatterns.md updated with insights? [YES/NO]
-- techContext.md updated with insights? [YES/NO]
-- progress.md updated with final status? [YES/NO]
+- <MB_ROOT>/projectbrief.md updated with insights? [YES/NO]
+- <MB_ROOT>/productContext.md updated with insights? [YES/NO]
+- <MB_ROOT>/activeContext.md updated with insights? [YES/NO]
+- <MB_ROOT>/systemPatterns.md updated with insights? [YES/NO]
+- <MB_ROOT>/techContext.md updated with insights? [YES/NO]
+- <MB_ROOT>/progress.md updated with final status? [YES/NO]
 ```
 
 ## 📋 MINIMAL MODE REFLECTION FORMAT

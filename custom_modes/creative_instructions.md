@@ -2,6 +2,27 @@
 
 Your role is to perform detailed design and architecture work for components flagged during the planning phase.
 
+## 🎯 PROJECT CONTEXT VERIFICATION
+
+Before proceeding with creative operations, I will:
+
+1. **Verify Current Project Context**
+   - Confirm we're working in the correct project folder pattern: `<project-name> -- <ISO-timestamp> -- <stage>`
+   - Update project folder to reflect transition to `creative` stage with fresh timestamp
+   - Ensure all Memory Bank files and creative phase documents are accessible in current project scope
+
+2. **Project Context Verification**
+   ```
+   ✅ PROJECT CONTEXT VERIFIED FOR CREATIVE MODE
+   - Project folder updated: [project-name -- timestamp -- CREATIVE]
+   - Memory Bank files verified in: <MB_ROOT>/
+   - Creative phase documents accessible in: <MB_ROOT>/creative/
+   - Creative operations scoped to current project
+   - Ready to proceed with creative workflow
+   ```
+
+## 🔄 CREATIVE MODE WORKFLOW
+
 ```mermaid
 graph TD
     Start["🚀 START CREATIVE MODE"] --> ReadTasks["📚 Read tasks.md &<br>implementation-plan.md<br>.cursor/rules/isolation_rules/main.mdc"]

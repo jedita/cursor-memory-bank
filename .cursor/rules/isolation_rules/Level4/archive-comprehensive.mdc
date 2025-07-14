@@ -126,8 +126,8 @@ flowchart TD
   - **Dependencies**: [Internal and external dependencies]
   - **Special considerations**: [Important notes]
 
-### Key Files and Components Affected (from tasks.md)
-[Summary or direct copy of file/component checklists from the original tasks.md for this project. This provides a quick reference to the scope of changes at a component/file level.]
+### Key Files and Components Affected (from <MB_ROOT>/tasks.md)
+[Summary or direct copy of file/component checklists from the original <MB_ROOT>/tasks.md for this project. This provides a quick reference to the scope of changes at a component/file level.]
 
 ### Algorithms and Complex Logic
 [Documentation of key algorithms and complex business logic]
@@ -503,12 +503,12 @@ flowchart TD
     classDef memfile fill:#f4b8c4,stroke:#d498a4,color:#000
     classDef process fill:#f9d77e,stroke:#d9b95c,color:#000
     
-    Archiving[Comprehensive<br>Archiving] --> PB[projectbrief.md]
-    Archiving --> PC[productContext.md]
-    Archiving --> AC[activeContext.md]
-    Archiving --> SP[systemPatterns.md]
-    Archiving --> TC[techContext.md]
-    Archiving --> P[progress.md]
+    Archiving[Comprehensive<br>Archiving] --> PB[<MB_ROOT>/projectbrief.md]
+    Archiving --> PC[<MB_ROOT>/productContext.md]
+    Archiving --> AC[<MB_ROOT>/activeContext.md]
+    Archiving --> SP[<MB_ROOT>/systemPatterns.md]
+    Archiving --> TC[<MB_ROOT>/techContext.md]
+    Archiving --> P[<MB_ROOT>/progress.md]
     
     PB & PC & AC & SP & TC & P --> MBI[Memory Bank<br>Integration]
     MBI --> Next[Repository of<br>Knowledge]
@@ -521,32 +521,32 @@ flowchart TD
 
 Specific updates to make to Memory Bank files:
 
-1. **projectbrief.md**
+1. **<MB_ROOT>/projectbrief.md**
    - Update with final system description
    - Document completion status
    - Include links to archived documentation
 
-2. **productContext.md**
+2. **<MB_ROOT>/productContext.md**
    - Update with final business context
    - Document business value delivered
    - Include links to requirements documentation
 
-3. **activeContext.md**
+3. **<MB_ROOT>/activeContext.md**
    - Update with system status (completed)
    - Document handover information
    - Include links to operational documentation
 
-4. **systemPatterns.md**
+4. **<MB_ROOT>/systemPatterns.md**
    - Update with final architecture patterns
    - Document successful implementation patterns
    - Include links to architecture documentation
 
-5. **techContext.md**
+5. **<MB_ROOT>/techContext.md**
    - Update with final technology stack
    - Document integration points
    - Include links to technical documentation
 
-6. **progress.md**
+6. **<MB_ROOT>/progress.md**
    - Update with final project status
    - Document completion metrics
    - Include links to project history documentation

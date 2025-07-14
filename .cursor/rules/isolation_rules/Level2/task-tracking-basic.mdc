@@ -50,9 +50,9 @@ Level 2 tasks require a more structured tracking approach than Level 1, but don'
 [Any additional information or context]
 ```
 
-## 📋 TASKS.MD ORGANIZATION
+## 📋 <MB_ROOT>/TASKS.MD ORGANIZATION
 
-Organize tasks.md with these sections for Level 2 tasks:
+Organize <MB_ROOT>/tasks.md with these sections for Level 2 tasks:
 
 ```markdown
 # Tasks
@@ -166,22 +166,22 @@ Task tracking integrates with Memory Bank:
 
 ```mermaid
 graph TD
-    TasksFile["tasks.md"] --> Active["activeContext.md"]
-    TasksFile --> Progress["progress.md"]
+    TasksFile["<MB_ROOT>/tasks.md"] --> Active["<MB_ROOT>/activeContext.md"]
+    TasksFile --> Progress["<MB_ROOT>/progress.md"]
     
     Active -->|"Current focus"| TasksFile
     Progress -->|"Completion status"| TasksFile
 ```
 
-## 🚨 TASKS.MD PRIMACY PRINCIPLE
+## 🚨 <MB_ROOT>/TASKS.MD PRIMACY PRINCIPLE
 
 Remember:
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│ tasks.md is the SINGLE SOURCE OF TRUTH for ALL      │
-│ task tracking. ALL task updates MUST be reflected   │
-│ in tasks.md IMMEDIATELY.                            │
+│ <MB_ROOT>/tasks.md is the SINGLE SOURCE OF TRUTH    │
+│ for ALL task tracking. ALL task updates MUST be     │
+│ reflected in <MB_ROOT>/tasks.md IMMEDIATELY.        │
 └─────────────────────────────────────────────────────┘
 ```
 

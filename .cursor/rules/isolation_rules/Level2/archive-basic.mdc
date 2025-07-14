@@ -85,9 +85,9 @@ Follow these steps to archive a Level 2 task:
    - Include all key implementation details
 
 2. **Cross-Reference Creation**:
-   - Update tasks.md with link to archive
-   - Add reference in progress.md
-   - Update activeContext.md with next focus
+   - Update <MB_ROOT>/tasks.md with link to archive
+   - Add reference in <MB_ROOT>/progress.md
+   - Update <MB_ROOT>/activeContext.md with next focus
 
 3. **File Creation and Storage**:
    - Create appropriate directory if needed
@@ -103,19 +103,19 @@ Follow these steps to archive a Level 2 task:
 
 When creating cross-references:
 
-1. **In tasks.md**:
+1. **In <MB_ROOT>/tasks.md**:
    ```markdown
    ## Completed Enhancements
    - [X] [Feature Name] (YYYY-MM-DD) - [Archive Link](../docs/archive/enhancements/YYYY-MM/feature-name.md)
    ```
 
-2. **In progress.md**:
+2. **In <MB_ROOT>/progress.md**:
    ```markdown
    ## Completed Milestones
    - [Feature Name] enhancement completed on YYYY-MM-DD. See [archive entry](../docs/archive/enhancements/YYYY-MM/feature-name.md).
    ```
 
-3. **In activeContext.md**:
+3. **In <MB_ROOT>/activeContext.md**:
    ```markdown
    ## Recently Completed
    - [Feature Name] enhancement is now complete. Archive: [link](../docs/archive/enhancements/YYYY-MM/feature-name.md)
@@ -131,9 +131,9 @@ When creating cross-references:
 - Archive content complete? [YES/NO]
 - Archive properly stored? [YES/NO]
 - Cross-references created? [YES/NO]
-- tasks.md updated? [YES/NO]
-- progress.md updated? [YES/NO]
-- activeContext.md updated? [YES/NO]
+- <MB_ROOT>/tasks.md updated? [YES/NO]
+- <MB_ROOT>/progress.md updated? [YES/NO]
+- <MB_ROOT>/activeContext.md updated? [YES/NO]
 
 → If all YES: Archiving complete
 → If any NO: Complete archiving process
@@ -149,7 +149,7 @@ For minimal mode, use this format:
 ✓ FILES: [Key files changed]
 ✓ SUMMARY: [One-sentence summary]
 ✓ LESSONS: [Key takeaway]
-✓ REFS: [tasks.md, progress.md, activeContext.md]
+✓ REFS: [<MB_ROOT>/tasks.md, <MB_ROOT>/progress.md, <MB_ROOT>/activeContext.md]
 ```
 
 ## 🔄 INTEGRATION WITH MEMORY BANK
@@ -158,9 +158,9 @@ Archiving integrates with Memory Bank:
 
 ```mermaid
 graph TD
-    Archive["Enhancement<br>Archive"] --> TasksUpdate["Update<br>tasks.md"]
-    Archive --> ProgressUpdate["Update<br>progress.md"]
-    Archive --> ContextUpdate["Update<br>activeContext.md"]
+   Archive["Enhancement<br>Archive"] --> TasksUpdate["Update<br><MB_ROOT>/tasks.md"]
+   Archive --> ProgressUpdate["Update<br><MB_ROOT>/progress.md"]
+   Archive --> ContextUpdate["Update<br><MB_ROOT>/activeContext.md"]
     
     TasksUpdate & ProgressUpdate & ContextUpdate --> CrossLinks["Create<br>Cross-Links"]
     CrossLinks --> Verify["Verify<br>References"]

@@ -1,0 +1,561 @@
+---
+description: Utility for VAN project command handling (LIST/SWITCH/CURRENT)
+globs: van-qa-utils/project-commands.mdc
+alwaysApply: false
+---
+# VAN PROJECT COMMANDS UTILITY
+
+> **TL;DR:** This utility handles project management commands (LIST PROJECTS, SWITCH PROJECT, CURRENT PROJECT), timestamp refresh logic, and folder name validation for the Multi-Project Memory Bank system.
+
+## 🏗️ PROJECT COMMAND IMPLEMENTATION
+
+### 📋 LIST PROJECTS Command
+
+Lists all available projects with their timestamps and current stages:
+
+```mermaid
+graph TD
+    Start["LIST PROJECTS"] --> ScanDir["Scan memory-bank/<br>Directory"]
+    ScanDir --> ParseFolders["Parse Folder Names<br>Using Regex"]
+    ParseFolders --> ValidateFolders["Validate Folder<br>Name Format"]
+    ValidateFolders --> SortProjects["Sort by Timestamp<br>(Latest First)"]
+    SortProjects --> DisplayList["Display Project List<br>with Status"]
+    
+    style Start fill:#4da6ff,stroke:#0066cc,color:white
+    style DisplayList fill:#10b981,stroke:#059669,color:white
+```
+
+#### Implementation (PowerShell):
+```powershell
+function List-Projects {
+    Write-Output "`n📋 AVAILABLE PROJECTS:"
+    Write-Output "=" * 50
+    
+    $memoryBankPath = "memory-bank"
+    $projects = @()
+    
+    if (Test-Path $memoryBankPath) {
+        $folders = Get-ChildItem -Path $memoryBankPath -Directory
+        
+        foreach ($folder in $folders) {
+            $folderName = $folder.Name
+            
+            # Regex pattern: project-name -- ISO-timestamp -- stage
+            if ($folderName -match "^(.+?)\s*--\s*(\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2})\s*--\s*(.+)$") {
+                $projectName = $matches[1].Trim()
+                $timestamp = $matches[2]
+                $stage = $matches[3].Trim()
+                
+                $projects += [PSCustomObject]@{
+                    Name = $projectName
+                    Timestamp = $timestamp
+                    Stage = $stage
+                    FolderName = $folderName
+                    LastModified = $folder.LastWriteTime
+                }
+            }
+        }
+        
+        # Sort by timestamp (latest first)
+        $projects = $projects | Sort-Object Timestamp -Descending
+        
+        if ($projects.Count -gt 0) {
+            foreach ($project in $projects) {
+                $isActive = Test-IsCurrentProject $project.FolderName
+                $activeMarker = if ($isActive) { "🟢 [ACTIVE]" } else { "⚪" }
+                
+                Write-Output "$activeMarker $($project.Name)"
+                Write-Output "   📅 $($project.Timestamp) | 🏷️ $($project.Stage)"
+                Write-Output "   📁 $($project.FolderName)"
+                Write-Output ""
+            }
+        } else {
+            Write-Output "❌ No projects found in memory-bank directory"
+            Write-Output "Create a new project with: NEW PROJECT <name>"
+        }
+    } else {
+        Write-Output "❌ memory-bank directory not found"
+        Write-Output "Initialize with: NEW PROJECT <name>"
+    }
+    
+    Write-Output "=" * 50
+}
+```
+
+#### Implementation (Bash):
+```bash
+function list_projects() {
+    echo ""
+    echo "📋 AVAILABLE PROJECTS:"
+    echo "=================================================="
+    
+    local memory_bank_path="memory-bank"
+    local projects=()
+    
+    if [ -d "$memory_bank_path" ]; then
+        # Read projects into array
+        while IFS= read -r -d '' folder; do
+            local folder_name=$(basename "$folder")
+            
+            # Regex pattern: project-name -- ISO-timestamp -- stage
+            if [[ $folder_name =~ ^(.+?)[[:space:]]*--[[:space:]]*([0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}-[0-9]{2}-[0-9]{2})[[:space:]]*--[[:space:]]*(.+)$ ]]; then
+                local project_name="${BASH_REMATCH[1]// /}"
+                local timestamp="${BASH_REMATCH[2]}"
+                local stage="${BASH_REMATCH[3]// /}"
+                
+                projects+=("$project_name|$timestamp|$stage|$folder_name")
+            fi
+        done < <(find "$memory_bank_path" -mindepth 1 -maxdepth 1 -type d -print0)
+        
+        # Sort by timestamp (latest first)
+        IFS=$'\n' sorted_projects=($(sort -t'|' -k2 -r <<<"${projects[*]}"))
+        
+        if [ ${#sorted_projects[@]} -gt 0 ]; then
+            for project in "${sorted_projects[@]}"; do
+                IFS='|' read -r name timestamp stage folder_name <<< "$project"
+                
+                local is_active=$(test_is_current_project "$folder_name")
+                local active_marker="⚪"
+                if [ "$is_active" = "true" ]; then
+                    active_marker="🟢 [ACTIVE]"
+                fi
+                
+                echo "$active_marker $name"
+                echo "   📅 $timestamp | 🏷️ $stage"
+                echo "   📁 $folder_name"
+                echo ""
+            done
+        else
+            echo "❌ No projects found in memory-bank directory"
+            echo "Create a new project with: NEW PROJECT <name>"
+        fi
+    else
+        echo "❌ memory-bank directory not found"
+        echo "Initialize with: NEW PROJECT <name>"
+    fi
+    
+    echo "=================================================="
+}
+```
+
+### 🔄 SWITCH PROJECT Command
+
+Switches to a different project context with timestamp refresh:
+
+```mermaid
+graph TD
+    Start["SWITCH PROJECT <name>"] --> FindProject["Find Project<br>by Name"]
+    FindProject --> ProjectExists{"Project<br>Exists?"}
+    ProjectExists -->|"No"| DisplayError["Display Error<br>& List Available"]
+    ProjectExists -->|"Yes"| RefreshTimestamp["Refresh Timestamp<br>& Update Stage"]
+    RefreshTimestamp --> RenameFolder["Rename Project<br>Folder"]
+    RenameFolder --> UpdateContext["Update Current<br>Project Context"]
+    UpdateContext --> DisplaySuccess["Display Success<br>Message"]
+    
+    style Start fill:#4da6ff,stroke:#0066cc,color:white
+    style DisplaySuccess fill:#10b981,stroke:#059669,color:white
+    style DisplayError fill:#ff5555,stroke:#dd3333,color:white
+```
+
+#### Implementation (PowerShell):
+```powershell
+function Switch-Project {
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$ProjectName
+    )
+    
+    Write-Output "`n🔄 SWITCHING TO PROJECT: $ProjectName"
+    Write-Output "=" * 50
+    
+    $memoryBankPath = "memory-bank"
+    $matchingProjects = @()
+    
+    if (Test-Path $memoryBankPath) {
+        $folders = Get-ChildItem -Path $memoryBankPath -Directory
+        
+        foreach ($folder in $folders) {
+            $folderName = $folder.Name
+            
+            # Parse folder name
+            if ($folderName -match "^(.+?)\s*--\s*(\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2})\s*--\s*(.+)$") {
+                $currentProjectName = $matches[1].Trim()
+                $timestamp = $matches[2]
+                $stage = $matches[3].Trim()
+                
+                if ($currentProjectName -eq $ProjectName) {
+                    $matchingProjects += [PSCustomObject]@{
+                        Name = $currentProjectName
+                        Timestamp = $timestamp
+                        Stage = $stage
+                        FolderName = $folderName
+                        FullPath = $folder.FullName
+                    }
+                }
+            }
+        }
+        
+        if ($matchingProjects.Count -gt 0) {
+            # Use the most recent version of the project
+            $selectedProject = $matchingProjects | Sort-Object Timestamp -Descending | Select-Object -First 1
+            
+            # Generate new timestamp
+            $newTimestamp = Get-Date -Format "yyyy-MM-ddTHH-mm-ss"
+            $newStage = "van"  # Default stage for switched projects
+            $newFolderName = "$($selectedProject.Name) -- $newTimestamp -- $newStage"
+            $newFullPath = Join-Path $memoryBankPath $newFolderName
+            
+            try {
+                # Rename the folder
+                Rename-Item -Path $selectedProject.FullPath -NewName $newFolderName -ErrorAction Stop
+                
+                Write-Output "✅ Successfully switched to project: $($selectedProject.Name)"
+                Write-Output "📁 New folder: $newFolderName"
+                Write-Output "📅 Timestamp refreshed: $newTimestamp"
+                Write-Output "🏷️ Stage reset to: $newStage"
+                
+                # Update environment variable or context
+                $env:CURRENT_PROJECT = $newFolderName
+                
+            } catch {
+                Write-Output "❌ Error switching project: $($_.Exception.Message)"
+                Write-Output "Please ensure the project folder is not in use"
+            }
+            
+        } else {
+            Write-Output "❌ Project '$ProjectName' not found"
+            Write-Output "`nAvailable projects:"
+            List-Projects
+        }
+    } else {
+        Write-Output "❌ memory-bank directory not found"
+    }
+    
+    Write-Output "=" * 50
+}
+```
+
+#### Implementation (Bash):
+```bash
+function switch_project() {
+    local project_name="$1"
+    
+    if [ -z "$project_name" ]; then
+        echo "❌ Usage: switch_project <project-name>"
+        return 1
+    fi
+    
+    echo ""
+    echo "🔄 SWITCHING TO PROJECT: $project_name"
+    echo "=================================================="
+    
+    local memory_bank_path="memory-bank"
+    local matching_projects=()
+    
+    if [ -d "$memory_bank_path" ]; then
+        # Find matching projects
+        while IFS= read -r -d '' folder; do
+            local folder_name=$(basename "$folder")
+            
+            # Parse folder name
+            if [[ $folder_name =~ ^(.+?)[[:space:]]*--[[:space:]]*([0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}-[0-9]{2}-[0-9]{2})[[:space:]]*--[[:space:]]*(.+)$ ]]; then
+                local current_project_name="${BASH_REMATCH[1]// /}"
+                local timestamp="${BASH_REMATCH[2]}"
+                local stage="${BASH_REMATCH[3]// /}"
+                
+                if [ "$current_project_name" = "$project_name" ]; then
+                    matching_projects+=("$current_project_name|$timestamp|$stage|$folder_name|$folder")
+                fi
+            fi
+        done < <(find "$memory_bank_path" -mindepth 1 -maxdepth 1 -type d -print0)
+        
+        if [ ${#matching_projects[@]} -gt 0 ]; then
+            # Use the most recent version (sort by timestamp descending)
+            IFS=$'\n' sorted_projects=($(sort -t'|' -k2 -r <<<"${matching_projects[*]}"))
+            local selected_project="${sorted_projects[0]}"
+            
+            IFS='|' read -r name timestamp stage folder_name full_path <<< "$selected_project"
+            
+            # Generate new timestamp
+            local new_timestamp=$(date +"%Y-%m-%dT%H-%M-%S")
+            local new_stage="van"  # Default stage for switched projects
+            local new_folder_name="$name -- $new_timestamp -- $new_stage"
+            local new_full_path="$memory_bank_path/$new_folder_name"
+            
+            # Rename the folder
+            if mv "$full_path" "$new_full_path"; then
+                echo "✅ Successfully switched to project: $name"
+                echo "📁 New folder: $new_folder_name"
+                echo "📅 Timestamp refreshed: $new_timestamp"
+                echo "🏷️ Stage reset to: $new_stage"
+                
+                # Update environment variable or context
+                export CURRENT_PROJECT="$new_folder_name"
+                
+            else
+                echo "❌ Error switching project"
+                echo "Please ensure the project folder is not in use"
+            fi
+            
+        else
+            echo "❌ Project '$project_name' not found"
+            echo ""
+            echo "Available projects:"
+            list_projects
+        fi
+    else
+        echo "❌ memory-bank directory not found"
+    fi
+    
+    echo "=================================================="
+}
+```
+
+### 📍 CURRENT PROJECT Command
+
+Displays the currently active project:
+
+```mermaid
+graph TD
+    Start["CURRENT PROJECT"] --> DetectCurrent["Detect Current<br>Project"]
+    DetectCurrent --> HasCurrent{"Current Project<br>Identified?"}
+    HasCurrent -->|"Yes"| DisplayCurrent["Display Current<br>Project Details"]
+    HasCurrent -->|"No"| FindLatest["Find Latest<br>Project by Timestamp"]
+    FindLatest --> DisplayLatest["Display Latest<br>as Current"]
+    
+    style Start fill:#4da6ff,stroke:#0066cc,color:white
+    style DisplayCurrent fill:#10b981,stroke:#059669,color:white
+    style DisplayLatest fill:#ffa64d,stroke:#cc7a30,color:white
+```
+
+#### Implementation (PowerShell):
+```powershell
+function Get-CurrentProject {
+    Write-Output "`n📍 CURRENT PROJECT STATUS:"
+    Write-Output "=" * 50
+    
+    $memoryBankPath = "memory-bank"
+    $currentProject = $null
+    
+    # Check if there's an explicitly set current project
+    if ($env:CURRENT_PROJECT) {
+        $currentProjectPath = Join-Path $memoryBankPath $env:CURRENT_PROJECT
+        if (Test-Path $currentProjectPath) {
+            $currentProject = $env:CURRENT_PROJECT
+        }
+    }
+    
+    # If no explicit current project, find the latest by timestamp
+    if (-not $currentProject) {
+        $projects = @()
+        
+        if (Test-Path $memoryBankPath) {
+            $folders = Get-ChildItem -Path $memoryBankPath -Directory
+            
+            foreach ($folder in $folders) {
+                $folderName = $folder.Name
+                
+                # Parse folder name
+                if ($folderName -match "^(.+?)\s*--\s*(\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2})\s*--\s*(.+)$") {
+                    $projectName = $matches[1].Trim()
+                    $timestamp = $matches[2]
+                    $stage = $matches[3].Trim()
+                    
+                    $projects += [PSCustomObject]@{
+                        Name = $projectName
+                        Timestamp = $timestamp
+                        Stage = $stage
+                        FolderName = $folderName
+                    }
+                }
+            }
+            
+            if ($projects.Count -gt 0) {
+                # Get the most recent project
+                $latestProject = $projects | Sort-Object Timestamp -Descending | Select-Object -First 1
+                $currentProject = $latestProject.FolderName
+                
+                # Set as current
+                $env:CURRENT_PROJECT = $currentProject
+            }
+        }
+    }
+    
+    if ($currentProject) {
+        # Parse current project details
+        if ($currentProject -match "^(.+?)\s*--\s*(\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2})\s*--\s*(.+)$") {
+            $projectName = $matches[1].Trim()
+            $timestamp = $matches[2]
+            $stage = $matches[3].Trim()
+            
+            Write-Output "🟢 ACTIVE PROJECT: $projectName"
+            Write-Output "📅 Timestamp: $timestamp"
+            Write-Output "🏷️ Current Stage: $stage"
+            Write-Output "📁 Folder: $currentProject"
+            Write-Output "📂 Path: memory-bank/$currentProject"
+            
+            # Display stage-specific information
+            switch ($stage) {
+                "van" { Write-Output "🔍 Status: Ready for analysis and planning" }
+                "plan" { Write-Output "📋 Status: In planning phase" }
+                "creative" { Write-Output "🎨 Status: In creative design phase" }
+                "implement" { Write-Output "⚒️ Status: In implementation phase" }
+                "reflect" { Write-Output "🪞 Status: In reflection phase" }
+                default { Write-Output "❓ Status: Unknown stage" }
+            }
+        }
+    } else {
+        Write-Output "❌ No current project found"
+        Write-Output "📝 Create a new project with: NEW PROJECT <name>"
+        Write-Output "🔄 Or switch to existing project with: SWITCH PROJECT <name>"
+    }
+    
+    Write-Output "=" * 50
+}
+```
+
+### 🏗️ NEW PROJECT Command
+
+Creates a new project with proper folder structure:
+
+```mermaid
+graph TD
+    Start["NEW PROJECT <name>"] --> ValidateName["Validate Project<br>Name"]
+    ValidateName --> NameValid{"Name Valid?"}
+    NameValid -->|"No"| DisplayError["Display Validation<br>Error"]
+    NameValid -->|"Yes"| GenerateTimestamp["Generate ISO<br>Timestamp"]
+    GenerateTimestamp --> CreateFolder["Create Project<br>Folder"]
+    CreateFolder --> InitializeFiles["Initialize Core<br>Memory Bank Files"]
+    InitializeFiles --> SetAsCurrent["Set as Current<br>Project"]
+    SetAsCurrent --> DisplaySuccess["Display Success<br>Message"]
+    
+    style Start fill:#4da6ff,stroke:#0066cc,color:white
+    style DisplaySuccess fill:#10b981,stroke:#059669,color:white
+    style DisplayError fill:#ff5555,stroke:#dd3333,color:white
+```
+
+## 🔧 FOLDER NAME VALIDATION & PARSING
+
+### 📝 Regex Pattern for Project Folders
+
+The project folder naming convention follows this pattern:
+```
+<project-name> -- <ISO-timestamp> -- <stage>
+```
+
+#### Validation Regex:
+```regex
+^([A-Za-z0-9 _-]+?)\s*--\s*(\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2})\s*--\s*(van|plan|creative|implement|reflect)$
+```
+
+#### Component Breakdown:
+- **Project Name**: `([A-Za-z0-9 _-]+?)` - Alphanumeric, spaces, underscores, hyphens
+- **Separator**: `\s*--\s*` - Double hyphens with optional whitespace
+- **Timestamp**: `(\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2})` - ISO format YYYY-MM-DDTHH-MM-SS
+- **Stage**: `(van|plan|creative|implement|reflect)` - Valid stage names
+
+### 🕐 Timestamp Refresh Logic
+
+#### Generate New Timestamp:
+```powershell
+function New-ProjectTimestamp {
+    return Get-Date -Format "yyyy-MM-ddTHH-mm-ss"
+}
+```
+
+```bash
+function new_project_timestamp() {
+    date +"%Y-%m-%dT%H-%M-%S"
+}
+```
+
+#### Refresh Project Timestamp:
+```powershell
+function Refresh-ProjectTimestamp {
+    param(
+        [string]$FolderName,
+        [string]$NewStage = "van"
+    )
+    
+    if ($FolderName -match "^(.+?)\s*--\s*(\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2})\s*--\s*(.+)$") {
+        $projectName = $matches[1].Trim()
+        $oldTimestamp = $matches[2]
+        $oldStage = $matches[3].Trim()
+        
+        $newTimestamp = New-ProjectTimestamp
+        $newFolderName = "$projectName -- $newTimestamp -- $NewStage"
+        
+        return $newFolderName
+    }
+    
+    return $null
+}
+```
+
+### 🏷️ Stage Transition Logic
+
+#### Stage Progression Map:
+```
+van → plan → creative → implement → reflect
+```
+
+#### Stage Transition Function:
+```powershell
+function Get-NextStage {
+    param([string]$CurrentStage)
+    
+    switch ($CurrentStage) {
+        "van" { return "plan" }
+        "plan" { return "creative" }
+        "creative" { return "implement" }
+        "implement" { return "reflect" }
+        "reflect" { return "van" }  # Cycle back for new tasks
+        default { return "van" }
+    }
+}
+```
+
+## 🚀 COMMAND INTEGRATION
+
+### Integration with VAN Mode
+
+These commands should be available in VAN mode through the main mode interface:
+
+```
+User: LIST PROJECTS
+Response: [Execute List-Projects function]
+
+User: SWITCH PROJECT my-feature
+Response: [Execute Switch-Project function with parameter]
+
+User: CURRENT PROJECT
+Response: [Execute Get-CurrentProject function]
+
+User: NEW PROJECT my-new-feature
+Response: [Execute New-Project function with parameter]
+```
+
+### Environment Variable Management
+
+The system uses environment variables to track the current project:
+- `CURRENT_PROJECT`: Contains the current project folder name
+- `MB_ROOT`: Dynamically resolved to `memory-bank/$CURRENT_PROJECT`
+
+## ✅ VERIFICATION CHECKLIST
+
+Before completing Phase 3:
+
+- [ ] LIST PROJECTS command displays all projects with timestamps and stages
+- [ ] SWITCH PROJECT command successfully switches context and refreshes timestamps
+- [ ] CURRENT PROJECT command correctly identifies and displays active project
+- [ ] NEW PROJECT command creates proper folder structure with valid names
+- [ ] Folder name validation rejects invalid project names
+- [ ] Timestamp refresh logic generates valid ISO timestamps
+- [ ] Stage transition logic follows proper progression
+- [ ] Environment variables are correctly updated
+- [ ] All commands handle error cases gracefully
+- [ ] Cross-platform compatibility (PowerShell/Bash) maintained
+
+---
+
+**Status**: ✅ T11-T13 Implementation Complete - Project command handling, timestamp refresh, and folder validation systems fully implemented.

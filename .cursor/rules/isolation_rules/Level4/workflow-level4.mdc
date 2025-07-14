@@ -66,7 +66,7 @@ graph TD
 1. Platform detection with comprehensive environment configuration
 2. Critical file verification with in-depth integrity checks
 3. Comprehensive Memory Bank structure loading with full reference mapping
-4. Create detailed task framework in tasks.md with full structure
+4. Create detailed task framework in <MB_ROOT>/tasks.md with full structure
 5. Establish complete enterprise context and stakeholder requirements
 6. Identify and allocate all necessary resources (technical, human, time)
 7. Perform system readiness assessment
@@ -93,10 +93,10 @@ graph TD
 graph TD
     Start["Begin Documentation<br>Setup"] --> LoadTemplate["Load Comprehensive<br>Documentation Templates"]
     LoadTemplate --> Framework["Establish Documentation<br>Framework"]
-    Framework --> UpdateProject["Update<br>projectbrief.md"]
-    UpdateProject --> UpdateContext["Update<br>activeContext.md"]
-    UpdateContext --> SystemPatterns["Update<br>systemPatterns.md"]
-    SystemPatterns --> TechContext["Update<br>techContext.md"]
+    Framework --> UpdateProject["Update<br><MB_ROOT>/projectbrief.md"]
+    UpdateProject --> UpdateContext["Update<br><MB_ROOT>/activeContext.md"]
+    UpdateContext --> SystemPatterns["Update<br><MB_ROOT>/systemPatterns.md"]
+    SystemPatterns --> TechContext["Update<br><MB_ROOT>/techContext.md"]
     TechContext --> Standards["Document System<br>Standards"]
     Standards --> Architecture["Document Existing<br>Architecture"]
     Architecture --> SetupComplete["Documentation<br>Setup Complete"]
@@ -105,10 +105,10 @@ graph TD
 **Steps:**
 1. Load comprehensive documentation templates for all aspects
 2. Establish complete documentation framework with structure
-3. Update projectbrief.md with detailed system description and requirements
-4. Update activeContext.md with current focus, dependencies, and stakeholders
-5. Update systemPatterns.md with comprehensive patterns and principles
-6. Update techContext.md with complete technical landscape
+3. Update <MB_ROOT>/projectbrief.md with detailed system description and requirements
+4. Update <MB_ROOT>/activeContext.md with current focus, dependencies, and stakeholders
+5. Update <MB_ROOT>/systemPatterns.md with comprehensive patterns and principles
+6. Update <MB_ROOT>/techContext.md with complete technical landscape
 7. Document system standards, constraints, and conventions
 8. Document existing architecture and integration points
 
@@ -117,10 +117,10 @@ graph TD
 ✓ DOCUMENTATION CHECKPOINT
 - Documentation templates loaded? [YES/NO]
 - Documentation framework established? [YES/NO]
-- projectbrief.md comprehensively updated? [YES/NO]
-- activeContext.md fully updated? [YES/NO]
-- systemPatterns.md comprehensively updated? [YES/NO]
-- techContext.md fully updated? [YES/NO]
+- <MB_ROOT>/projectbrief.md comprehensively updated? [YES/NO]
+- <MB_ROOT>/activeContext.md fully updated? [YES/NO]
+- <MB_ROOT>/systemPatterns.md comprehensively updated? [YES/NO]
+- <MB_ROOT>/techContext.md fully updated? [YES/NO]
 - System standards documented? [YES/NO]
 - Existing architecture documented? [YES/NO]
 
@@ -396,12 +396,12 @@ This workflow integrates comprehensively with Memory Bank:
 
 ```mermaid
 graph TD
-    Workflow["Level 4<br>Workflow"] --> PB["Comprehensive Update<br>projectbrief.md"]
-    Workflow --> AC["Detailed Update<br>activeContext.md"]
-    Workflow --> SP["Strategic Update<br>systemPatterns.md"]
-    Workflow --> TC["Complete Update<br>techContext.md"]
-    Workflow --> TM["Structured Maintenance<br>tasks.md"]
-    Workflow --> PM["Enterprise Update<br>progress.md"]
+    Workflow["Level 4<br>Workflow"] --> PB["Comprehensive Update<br><MB_ROOT>/projectbrief.md"]
+    Workflow --> AC["Detailed Update<br><MB_ROOT>/activeContext.md"]
+    Workflow --> SP["Strategic Update<br><MB_ROOT>/systemPatterns.md"]
+    Workflow --> TC["Complete Update<br><MB_ROOT>/techContext.md"]
+    Workflow --> TM["Structured Maintenance<br><MB_ROOT>/tasks.md"]
+    Workflow --> PM["Enterprise Update<br><MB_ROOT>/progress.md"]
     
     PB & AC & SP & TC & TM & PM --> MB["Memory Bank<br>Integration"]
     MB --> KT["Knowledge<br>Transfer"]

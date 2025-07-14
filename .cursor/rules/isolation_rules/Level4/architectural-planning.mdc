@@ -665,10 +665,10 @@ flowchart TD
     classDef memfile fill:#f4b8c4,stroke:#d498a4,color:#000
     classDef process fill:#f9d77e,stroke:#d9b95c,color:#000
     
-    Architecture[Architectural<br>Planning] --> PB[projectbrief.md]
-    Architecture --> PC[productContext.md]
-    Architecture --> SP[systemPatterns.md]
-    Architecture --> TC[techContext.md]
+    Architecture[Architectural<br>Planning] --> PB[<MB_ROOT>/projectbrief.md]
+    Architecture --> PC[<MB_ROOT>/productContext.md]
+    Architecture --> SP[<MB_ROOT>/systemPatterns.md]
+    Architecture --> TC[<MB_ROOT>/techContext.md]
     
     PB & PC & SP & TC --> MBI[Memory Bank<br>Integration]
     MBI --> Next[Implementation<br>Phase]
@@ -681,22 +681,22 @@ flowchart TD
 
 Update the following Memory Bank files during architectural planning:
 
-1. **projectbrief.md**
+1. **<MB_ROOT>/projectbrief.md**
    - Update with architectural vision
    - Document high-level architecture approach
    - Link to architecture documentation
 
-2. **productContext.md**
+2. **<MB_ROOT>/productContext.md**
    - Update with business context documentation
    - Document key stakeholder requirements
    - Capture business drivers for architectural decisions
 
-3. **systemPatterns.md**
+3. **<MB_ROOT>/systemPatterns.md**
    - Document architectural patterns and styles chosen
    - Capture key architecture decisions with rationales
    - Document technical patterns to be used
 
-4. **techContext.md**
+4. **<MB_ROOT>/techContext.md**
    - Update with technology stack decisions
    - Document technical constraints and considerations
    - Capture integration approaches
@@ -757,10 +757,10 @@ Architecture Validation
 - Architecture review conducted? [YES/NO]
 
 Memory Bank Integration
-- projectbrief.md updated? [YES/NO]
-- productContext.md updated? [YES/NO]
-- systemPatterns.md updated? [YES/NO]
-- techContext.md updated? [YES/NO]
+- <MB_ROOT>/projectbrief.md updated? [YES/NO]
+- <MB_ROOT>/productContext.md updated? [YES/NO]
+- <MB_ROOT>/systemPatterns.md updated? [YES/NO]
+- <MB_ROOT>/techContext.md updated? [YES/NO]
 ```
 
 ## 📋 MINIMAL MODE ARCHITECTURE PLANNING FORMAT

@@ -7,7 +7,7 @@ alwaysApply: false
 
 # PLATFORM AWARENESS SYSTEM
 
-> **TL;DR:** This system detects the operating system, path format, and shell environment, then adapts commands accordingly to ensure cross-platform compatibility.
+> **TL;DR:** This system detects the operating system, path format, and shell environment, then adapts commands accordingly to ensure cross-platform compatibility. It also provides the `<MB_ROOT>` macro resolver for multi-project Memory Bank support.
 
 ## 🔍 PLATFORM DETECTION PROCESS
 
@@ -21,7 +21,8 @@ graph TD
     Windows & Mac & Linux --> PathCheck["Path Separator<br>Detection"]
     PathCheck --> CmdAdapt["Command<br>Adaptation"]
     CmdAdapt --> ShellCheck["Shell Type<br>Detection"]
-    ShellCheck --> Complete["Platform Detection<br>Complete"]
+    ShellCheck --> MBRoot["MB_ROOT Macro<br>Resolution"]
+    MBRoot --> Complete["Platform Detection<br>Complete"]
 ```
 
 ## 📋 PLATFORM DETECTION IMPLEMENTATION
@@ -36,6 +37,143 @@ Shell Environment: [PowerShell/Bash/Zsh/Cmd]
 Command Adaptation: [Required/Not Required]
 
 Adapting commands for [detected platform]...
+```
+
+## 🎯 MB_ROOT MACRO RESOLVER
+
+The `<MB_ROOT>` macro provides dynamic resolution of the current Memory Bank project directory.
+
+### Macro Resolution Process
+
+```mermaid
+graph TD
+    Start["<MB_ROOT> Requested"] --> RepoRoot["Identify Repo Root<br>(existing logic)"]
+    RepoRoot --> EnsureMB["Ensure memory-bank/<br>Directory Exists"]
+    EnsureMB --> ScanDirs["Scan Sub-folders<br>for Project Pattern"]
+    ScanDirs --> ParseNames["Parse Folder Names<br>Extract: name, timestamp, stage"]
+    ParseNames --> SelectCurrent["Select Latest Timestamp<br>as CURRENT_PROJECT"]
+    SelectCurrent --> ValidateExists["Validate Current<br>Project Exists"]
+    ValidateExists --> ReturnPath["Return Absolute Path<br>to Current Project"]
+    
+    ScanDirs --> NoProjects{"No Project<br>Folders Found?"}
+    NoProjects -->|"Yes"| CheckLegacy["Check for Legacy<br>memory-bank Files"]
+    CheckLegacy --> LegacyExists{"Legacy Files<br>Exist?"}
+    LegacyExists -->|"Yes"| MigrateLegacy["Auto-migrate to<br>legacy -- timestamp -- VAN"]
+    LegacyExists -->|"No"| PromptNew["Prompt VAN Mode<br>to Create New Project"]
+    MigrateLegacy --> ReturnPath
+    PromptNew --> ReturnPath
+```
+
+### Project Folder Naming Convention
+
+**Pattern**: `<project-name> -- <timestamp> -- <stage>`
+
+**Regex**: `^(.+) -- (\d{4}-\d{2}-\d{2} \d{2}:\d{2}) -- (VAN|PLAN|CREATIVE|IMPLEMENT|REFLECT|ARCHIVE)$`
+
+**Examples**:
+- `my-feature -- 2024-06-10 12:30 -- VAN`
+- `user-auth -- 2024-06-09 15:45 -- IMPLEMENT`
+- `legacy -- 2024-06-08 10:00 -- VAN`
+
+### Resolver Implementation
+
+```javascript
+// Pseudocode for MB_ROOT resolution
+function resolveMBRoot() {
+  const repoRoot = identifyRepoRoot();
+  const memoryBankDir = path.join(repoRoot, 'memory-bank');
+  
+  // Ensure memory-bank directory exists
+  if (!fs.existsSync(memoryBankDir)) {
+    fs.mkdirSync(memoryBankDir, { recursive: true });
+  }
+  
+  // Scan for project folders
+  const projectFolders = scanProjectFolders(memoryBankDir);
+  
+  if (projectFolders.length === 0) {
+    // Check for legacy files
+    const legacyFiles = ['tasks.md', 'projectbrief.md', 'activeContext.md'];
+    const hasLegacy = legacyFiles.some(file => 
+      fs.existsSync(path.join(memoryBankDir, file))
+    );
+    
+    if (hasLegacy) {
+      // Auto-migrate legacy files
+      const now = new Date();
+      const timestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      const legacyFolder = `legacy -- ${timestamp} -- VAN`;
+      return migrateLegacyFiles(memoryBankDir, legacyFolder);
+    } else {
+      // No projects found - will prompt in VAN mode
+      return null; // Signals need for new project creation
+    }
+  }
+  
+  // Select project with latest timestamp
+  const currentProject = selectLatestProject(projectFolders);
+  return path.join(memoryBankDir, currentProject.folderName);
+}
+
+function scanProjectFolders(memoryBankDir) {
+  const regex = /^(.+) -- (\d{4}-\d{2}-\d{2} \d{2}:\d{2}) -- (VAN|PLAN|CREATIVE|IMPLEMENT|REFLECT|ARCHIVE)$/;
+  const folders = fs.readdirSync(memoryBankDir, { withFileTypes: true })
+    .filter(dirent => dirent.isDirectory())
+    .map(dirent => dirent.name)
+    .filter(name => regex.test(name))
+    .map(name => {
+      const match = name.match(regex);
+      return {
+        folderName: name,
+        projectName: match[1],
+        timestamp: match[2],
+        stage: match[3]
+      };
+    });
+  
+  return folders.sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+}
+
+function selectLatestProject(projectFolders) {
+  return projectFolders[0]; // Already sorted by timestamp desc
+}
+```
+
+### Security Validation
+
+```javascript
+function validateProjectName(name) {
+  // Prevent path traversal and ensure safe characters
+  const safeNameRegex = /^[A-Za-z0-9\s_-]+$/;
+  
+  if (!safeNameRegex.test(name)) {
+    throw new Error(`Invalid project name: ${name}. Only alphanumeric, spaces, underscores, and hyphens allowed.`);
+  }
+  
+  if (name.includes('..')) {
+    throw new Error(`Invalid project name: ${name}. Path traversal sequences not allowed.`);
+  }
+  
+  return true;
+}
+```
+
+### Usage in Rules
+
+Replace hard-coded paths with the macro:
+
+```markdown
+// Before:
+read_file({
+  target_file: "memory-bank/tasks.md",
+  should_read_entire_file: true
+})
+
+// After:
+read_file({
+  target_file: "<MB_ROOT>/tasks.md",
+  should_read_entire_file: true
+})
 ```
 
 ## 🔍 PATH FORMAT CONVERSION
@@ -64,6 +202,14 @@ sequenceDiagram
 - Path separator format detected? [YES/NO]
 - Shell environment identified? [YES/NO]
 - Command set adapted appropriately? [YES/NO]
+- Path format handling configured? [YES/NO]
+- MB_ROOT macro resolver functional? [YES/NO]
+- Project discovery working correctly? [YES/NO]
+- Legacy migration operational? [YES/NO]
+
+→ If all YES: Platform adaptation complete
+→ If any NO: Run additional detection steps
+``` 
 - Path format handling configured? [YES/NO]
 
 → If all YES: Platform adaptation complete

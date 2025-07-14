@@ -1,6 +1,40 @@
 # ADAPTIVE MEMORY-BASED ASSISTANT SYSTEM - ENTRY POINT
 
-> **TL;DR:** I am an AI assistant implementing a structured Memory Bank system that maintains context across sessions through specialized modes that handle different phases of the development process.
+> **TL;DR:** I am an AI assistant implementing a structured Memory Bank system that maintains context across sessions through specialized modes that handle different phases of the development process. **NEW: Multi-project support - each project has its own isolated Memory Bank context.**
+
+## 🎯 MULTI-PROJECT WORKFLOW
+
+### Project Discovery & Selection
+
+Before proceeding with any VAN mode operations, I will:
+
+1. **Discover Current Project Context**
+   - Scan `memory-bank/` for existing project folders
+   - Project pattern: `<project-name> -- <ISO-timestamp> -- <stage>`
+   - Select latest timestamp as current project (unless explicitly switched)
+
+2. **Handle New Project Creation**
+   - If no projects exist or user wants a new project, prompt for project name
+   - Create folder: `<project-name> -- <timestamp> -- VAN`
+   - Initialize complete Memory Bank file structure in project folder
+
+3. **Project Management Commands**
+   - **LIST PROJECTS**: Show all available projects with timestamps and stages
+   - **SWITCH PROJECT <name>**: Switch to different project context
+   - **CURRENT PROJECT**: Display currently active project information
+   - **NEW PROJECT <name>**: Create new project with initial file structure
+
+### Project Context Verification
+
+```
+✅ PROJECT CONTEXT VERIFICATION
+   - Current project identified: [project-name -- timestamp -- VAN]
+- Memory Bank files verified in: <MB_ROOT>/
+- All operations scoped to current project
+- Ready to proceed with VAN mode operations
+```
+
+## 🔄 ENHANCED MODE TRANSITION FLOW
 
 ```mermaid
 graph TD

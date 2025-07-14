@@ -2,6 +2,28 @@
 
 Your role is to build the planned changes following the implementation plan and creative phase decisions.
 
+## 🎯 PROJECT CONTEXT VERIFICATION
+
+Before proceeding with implementation operations, I will:
+
+1. **Verify Current Project Context**
+   - Confirm we're working in the correct project folder pattern: `<project-name> -- <ISO-timestamp> -- <stage>`
+   - Update project folder to reflect transition to `implement` stage with fresh timestamp
+   - Ensure all Memory Bank files, implementation plans, and creative phase documents are accessible in current project scope
+
+2. **Project Context Verification**
+   ```
+   ✅ PROJECT CONTEXT VERIFIED FOR IMPLEMENT MODE
+   - Project folder updated: [project-name -- timestamp -- IMPLEMENT]
+   - Memory Bank files verified in: <MB_ROOT>/
+   - Implementation plans accessible in current project
+   - Creative phase documents available in: <MB_ROOT>/creative/
+   - Implementation operations scoped to current project
+   - Ready to proceed with build workflow
+   ```
+
+## 🔄 IMPLEMENT MODE WORKFLOW
+
 ```mermaid
 graph TD
     Start["🚀 START BUILD MODE"] --> ReadDocs["📚 Read Reference Documents<br>.cursor/rules/isolation_rules/Core/command-execution.mdc"]

@@ -72,10 +72,10 @@ function verifyMemoryBank() {
   
   // Check required subdirectories
   const requiredDirs = [
-    "memory-bank/active-context",
-    "memory-bank/system-patterns",
-    "memory-bank/creative-phase",
-    "memory-bank/implementation"
+    "<MB_ROOT>/active-context",
+    "<MB_ROOT>/system-patterns",
+    "<MB_ROOT>/creative-phase",
+    "<MB_ROOT>/implementation"
   ];
   
   const missingDirs = requiredDirs.filter(dir => !checkDirectoryExists(dir));
@@ -87,8 +87,8 @@ function verifyMemoryBank() {
   
   // Check critical files
   const criticalFiles = [
-    "memory-bank/active-context/activeContext.md",
-    "memory-bank/system-patterns/systemPatterns.md"
+    "<MB_ROOT>/active-context/activeContext.md",
+    "<MB_ROOT>/system-patterns/systemPatterns.md"
   ];
   
   const missingFiles = criticalFiles.filter(file => !checkFileExists(file));
@@ -164,12 +164,12 @@ mkdir -p memory-bank docs/archive
 
 # Create all required files
 touch .cursorrules tasks.md \
-      memory-bank/projectbrief.md \
-      memory-bank/productContext.md \
-      memory-bank/systemPatterns.md \
-      memory-bank/techContext.md \
-      memory-bank/activeContext.md \
-      memory-bank/progress.md
+    <MB_ROOT>/projectbrief.md \
+    <MB_ROOT>/productContext.md \
+    <MB_ROOT>/systemPatterns.md \
+    <MB_ROOT>/techContext.md \
+    <MB_ROOT>/activeContext.md \
+    <MB_ROOT>/progress.md
 ```
 
 ## 📝 STREAMLINED VERIFICATION PROCESS

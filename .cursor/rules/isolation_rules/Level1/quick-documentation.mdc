@@ -13,7 +13,7 @@ alwaysApply: false
 ```mermaid
 graph TD
     FixComplete["Bug Fix<br>Complete"] --> Document["Document<br>Solution"]
-    Document --> UpdateTasks["Update<br>tasks.md"]
+    Document --> UpdateTasks["Update<br><MB_ROOT>/tasks.md"]
     UpdateTasks --> MinimalUpdates["Make Minimal<br>Memory Bank Updates"]
     MinimalUpdates --> CrossReference["Create Simple<br>Cross-References"]
     CrossReference --> Complete["Documentation<br>Complete"]
@@ -54,9 +54,9 @@ Level 1 tasks require efficient documentation that captures essential informatio
 [Any additional information that might be helpful - optional]
 ```
 
-## 📋 TASKS.MD UPDATES
+## 📋 <MB_ROOT>/TASKS.MD UPDATES
 
-For Level 1 tasks, update tasks.md with this format:
+For Level 1 tasks, update <MB_ROOT>/tasks.md with this format:
 
 ```markdown
 ## Completed Bug Fixes
@@ -127,7 +127,7 @@ Follow these steps for efficient documentation:
    - Be specific about changes made
 
 2. **Update Task Tracking**:
-   - Update tasks.md with fix details
+   - Update <MB_ROOT>/tasks.md with fix details
    - Use consistent format for easy reference
 
 3. **Minimal Cross-References**:
@@ -176,7 +176,7 @@ Tested login with various special characters in email addresses (test+user@examp
 - Solution explained? [YES/NO]
 - Files changed listed? [YES/NO]
 - Verification method described? [YES/NO]
-- tasks.md updated? [YES/NO]
+- <MB_ROOT>/tasks.md updated? [YES/NO]
 - Memory Bank minimally updated? [YES/NO]
 
 → If all YES: Documentation complete
@@ -201,7 +201,7 @@ Quick documentation integrates with other systems:
 
 ```mermaid
 graph TD
-    QuickDoc["Quick Fix<br>Documentation"] --> TasksMD["tasks.md<br>Update"]
+    QuickDoc["Quick Fix<br>Documentation"] --> TasksMD["<MB_ROOT>/tasks.md<br>Update"]
     QuickDoc --> FixDetails["Fix Details<br>Documentation"]
     
     TasksMD --> Tracking["Task<br>Tracking"]

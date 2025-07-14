@@ -108,7 +108,7 @@ flowchart TD
 
 ## 📋 COMPREHENSIVE TASK STRUCTURE
 
-Each Level 4 task in `tasks.md` follows this comprehensive structure:
+Each Level 4 task in `<MB_ROOT>/tasks.md` follows this comprehensive structure:
 
 ```markdown
 ## [SYSTEM-ID]: System Name
@@ -173,9 +173,9 @@ Each Level 4 task in `tasks.md` follows this comprehensive structure:
 - [Date]: [Update description]
 ```
 
-## 📋 TASK TRACKING ORGANIZATION IN TASKS.MD
+## 📋 TASK TRACKING ORGANIZATION IN <MB_ROOT>/TASKS.MD
 
-For Level 4 Complex System tasks, organize `tasks.md` as follows:
+For Level 4 Complex System tasks, organize `<MB_ROOT>/tasks.md` as follows:
 
 ```markdown
 # TASK TRACKING
@@ -276,7 +276,7 @@ For Level 4 tasks, track milestones explicitly:
 
 ## 📋 PROGRESS VISUALIZATION
 
-Include visual representations of progress in `tasks.md`:
+Include visual representations of progress in `<MB_ROOT>/tasks.md`:
 
 ```markdown
 ## Progress Visualization
@@ -400,24 +400,24 @@ Architectural Alignment
 
 Level 4 task tracking is tightly integrated with the Memory Bank:
 
-1. **projectbrief.md**: System-level tasks are derived from and linked to the project brief
-2. **productContext.md**: Tasks are aligned with business context and objectives
-3. **systemPatterns.md**: Tasks respect and implement defined architectural patterns
-4. **techContext.md**: Tasks are aligned with the technology stack and constraints
-5. **activeContext.md**: Current focus and status from `tasks.md` informs the active context
-6. **progress.md**: System progress from `tasks.md` is reflected in overall progress
+1. **<MB_ROOT>/projectbrief.md**: System-level tasks are derived from and linked to the project brief
+2. **<MB_ROOT>/productContext.md**: Tasks are aligned with business context and objectives
+3. **<MB_ROOT>/systemPatterns.md**: Tasks respect and implement defined architectural patterns
+4. **<MB_ROOT>/techContext.md**: Tasks are aligned with the technology stack and constraints
+5. **<MB_ROOT>/activeContext.md**: Current focus and status from `<MB_ROOT>/tasks.md` informs the active context
+6. **<MB_ROOT>/progress.md**: System progress from `<MB_ROOT>/tasks.md` is reflected in overall progress
 
 ```mermaid
 flowchart TD
     classDef memfile fill:#f4b8c4,stroke:#d498a4,color:#000
     classDef process fill:#f9d77e,stroke:#d9b95c,color:#000
     
-    TaskTracking[Advanced Task<br>Tracking] --> PB[projectbrief.md]
-    TaskTracking --> PC[productContext.md]
-    TaskTracking --> AC[activeContext.md]
-    TaskTracking --> SP[systemPatterns.md]
-    TaskTracking --> TC[techContext.md]
-    TaskTracking --> P[progress.md]
+    TaskTracking[Advanced Task<br>Tracking] --> PB[<MB_ROOT>/projectbrief.md]
+    TaskTracking --> PC[<MB_ROOT>/productContext.md]
+    TaskTracking --> AC[<MB_ROOT>/activeContext.md]
+    TaskTracking --> SP[<MB_ROOT>/systemPatterns.md]
+    TaskTracking --> TC[<MB_ROOT>/techContext.md]
+    TaskTracking --> P[<MB_ROOT>/progress.md]
     
     P --> TU[Task<br>Updates]
     TU --> TaskTracking
@@ -459,8 +459,9 @@ For situations requiring a more compact tracking approach:
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│ tasks.md is the SINGLE SOURCE OF TRUTH for all task  │
-│ tracking. All task-related decisions and status      │
-│ updates MUST be reflected in tasks.md.               │
+│ <MB_ROOT>/tasks.md is the SINGLE SOURCE OF TRUTH    │
+│ for all task tracking. All task-related decisions    │
+│ and status updates MUST be reflected in              │
+│ <MB_ROOT>/tasks.md.                                  │
 └─────────────────────────────────────────────────────┘
 ``` 

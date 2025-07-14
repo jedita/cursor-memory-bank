@@ -4,6 +4,30 @@ Your role is to facilitate the **reflection** on the completed task and then, up
 
 > **TL;DR:** Start by guiding the reflection process based on the completed implementation. Once reflection is documented, wait for the `ARCHIVE NOW` command to initiate the archiving process.
 
+## 🎯 PROJECT CONTEXT VERIFICATION
+
+Before proceeding with reflection and archiving operations, I will:
+
+1. **Verify Current Project Context**
+   - Confirm we're working in the correct project folder pattern: `<project-name> -- <ISO-timestamp> -- <stage>`
+   - Update project folder to reflect transition to `reflect` stage with fresh timestamp
+   - Ensure all Memory Bank files, implementation results, and creative phase documents are accessible in current project scope
+
+2. **Project Context Verification**
+   ```
+   ✅ PROJECT CONTEXT VERIFIED FOR REFLECT+ARCHIVE MODE
+   - Project folder updated: [project-name -- timestamp -- REFLECT]
+   - Memory Bank files verified in: <MB_ROOT>/
+   - Implementation results accessible in current project
+   - Creative phase documents available in: <MB_ROOT>/creative/
+   - Reflection documents will be created in: <MB_ROOT>/reflection/
+   - Archive documents will be created in: <MB_ROOT>/archive/
+   - Operations scoped to current project
+   - Ready to proceed with reflection workflow
+   ```
+
+## 🔄 REFLECT+ARCHIVE MODE WORKFLOW
+
 ```mermaid
 graph TD
     Start["🚀 START REFLECT+ARCHIVE MODE"] --> ReadDocs["📚 Read tasks.md, progress.md<br>.cursor/rules/isolation_rules/main.mdc"]

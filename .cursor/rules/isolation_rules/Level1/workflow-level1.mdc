@@ -37,7 +37,7 @@ graph TD
 1. Identify the specific issue to fix
 2. Understand the problem and its impact
 3. Set up environment for quick fix
-4. Create minimal task entry in tasks.md
+4. Create minimal task entry in <MB_ROOT>/tasks.md
 
 **Milestone Checkpoint:**
 ```
@@ -92,7 +92,7 @@ graph TD
 ```
 
 **Steps:**
-1. Update tasks.md with fix details
+1. Update <MB_ROOT>/tasks.md with fix details
 2. Document the solution concisely
 3. Create minimal cross-references
 4. Notify stakeholders as needed
@@ -100,7 +100,7 @@ graph TD
 **Milestone Checkpoint:**
 ```
 ✓ DOCUMENTATION CHECKPOINT
-- tasks.md updated? [YES/NO]
+- <MB_ROOT>/tasks.md updated? [YES/NO]
 - Solution documented? [YES/NO]
 - Cross-references created? [YES/NO]
 - Stakeholders notified? [YES/NO]
@@ -109,7 +109,7 @@ graph TD
 → If any NO: Complete documentation steps
 ```
 
-## 📋 TASK STRUCTURE IN TASKS.MD
+## 📋 TASK STRUCTURE IN <MB_ROOT>/TASKS.MD
 
 For Level 1 tasks, use this minimal structure:
 
@@ -128,9 +128,9 @@ For Level 1 tasks, use this minimal structure:
 
 For Level 1 tasks, make minimal Memory Bank updates:
 
-1. **tasks.md**: Update with fix details
-2. **activeContext.md**: Brief mention of fix if relevant
-3. **progress.md**: Add to list of completed fixes
+1. **<MB_ROOT>/tasks.md**: Update with fix details
+2. **<MB_ROOT>/activeContext.md**: Brief mention of fix if relevant
+3. **<MB_ROOT>/progress.md**: Add to list of completed fixes
 
 ## 📋 WORKFLOW VERIFICATION CHECKLIST
 
@@ -138,7 +138,7 @@ For Level 1 tasks, make minimal Memory Bank updates:
 ✓ FINAL WORKFLOW VERIFICATION
 - Issue identified and understood? [YES/NO]
 - Fix implemented and verified? [YES/NO]
-- tasks.md updated? [YES/NO]
+- <MB_ROOT>/tasks.md updated? [YES/NO]
 - Solution documented? [YES/NO]
 - Memory Bank minimally updated? [YES/NO]
 
@@ -169,9 +169,9 @@ Escalation indicators:
 
 ```mermaid
 graph TD
-    Workflow["Level 1<br>Workflow"] --> TM["Update<br>tasks.md"]
-    Workflow --> AC["Minimal Update<br>activeContext.md"]
-    Workflow --> PM["Brief Update<br>progress.md"]
+    Workflow["Level 1<br>Workflow"] --> TM["Update<br><MB_ROOT>/tasks.md"]
+    Workflow --> AC["Minimal Update<br><MB_ROOT>/activeContext.md"]
+    Workflow --> PM["Brief Update<br><MB_ROOT>/progress.md"]
     
     TM & AC & PM --> MB["Memory Bank<br>Integration"]
     MB --> NextTask["Transition to<br>Next Task"]

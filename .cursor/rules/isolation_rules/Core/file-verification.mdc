@@ -5,18 +5,195 @@ alwaysApply: false
 ---
 # OPTIMIZED FILE VERIFICATION SYSTEM
 
-> **TL;DR:** This system efficiently verifies and creates required Memory Bank file structures using batch operations and platform-optimized commands.
+> **TL;DR:** This system efficiently verifies and creates required Memory Bank file structures using batch operations and platform-optimized commands. Now includes multi-project discovery and creation capabilities.
 
-## 🔍 OPTIMIZED FILE VERIFICATION WORKFLOW
+## 🔍 MULTI-PROJECT FILE VERIFICATION WORKFLOW
 
 ```mermaid
 graph TD
-    Start["Start File<br>Verification"] --> VerifyAll["Verify All<br>Required Components"]
-    VerifyAll --> MissingCheck{"Missing<br>Components?"}
+    Start["Start File<br>Verification"] --> ProjectDiscovery["Project Discovery<br>& Selection"]
+    ProjectDiscovery --> CurrentProject{"Current Project<br>Resolved?"}
+    CurrentProject -->|"Yes"| VerifyProject["Verify Project<br>File Structure"]
+    CurrentProject -->|"No"| CreateProject["Create New<br>Project"]
+    CreateProject --> VerifyProject
+    VerifyProject --> MissingCheck{"Missing<br>Components?"}
     MissingCheck -->|"Yes"| BatchCreate["Batch Create<br>All Missing Items"]
     MissingCheck -->|"No"| Complete["Verification<br>Complete"]
     BatchCreate --> Report["Generate<br>Verification Report"]
     Report --> Complete
+```
+
+## 🎯 PROJECT DISCOVERY & MANAGEMENT
+
+### Project Discovery Process
+
+```mermaid
+graph TD
+    Start["Start Discovery"] --> ScanMB["Scan memory-bank/<br>Directory"]
+    ScanMB --> ParseFolders["Parse Project Folders<br>Extract: name, timestamp, stage"]
+    ParseFolders --> HasProjects{"Projects<br>Found?"}
+    HasProjects -->|"Yes"| SelectLatest["Select Latest<br>Timestamp"]
+    HasProjects -->|"No"| CheckLegacy["Check for<br>Legacy Files"]
+    CheckLegacy --> LegacyExists{"Legacy Files<br>Exist?"}
+    LegacyExists -->|"Yes"| MigrateLegacy["Auto-migrate<br>to Project Folder"]
+    LegacyExists -->|"No"| PromptNew["Prompt for<br>New Project"]
+    SelectLatest --> SetCurrent["Set Current<br>Project"]
+    MigrateLegacy --> SetCurrent
+    PromptNew --> CreateNew["Create New<br>Project"]
+    CreateNew --> SetCurrent
+    SetCurrent --> Complete["Discovery<br>Complete"]
+```
+
+### Project Creation Helper
+
+```javascript
+// Pseudocode for new project creation
+function createNewProject(projectName, stage = 'VAN') {
+  // Validate project name
+  validateProjectName(projectName);
+  
+  // Generate timestamp
+  const now = new Date();
+  const timestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  
+  // Create folder name
+  const folderName = `${projectName} -- ${timestamp} -- ${stage}`;
+  const projectPath = path.join('memory-bank', folderName);
+  
+  // Create project directory
+  fs.mkdirSync(projectPath, { recursive: true });
+  
+  // Initialize project files
+  initializeProjectFiles(projectPath);
+  
+  return projectPath;
+}
+
+function initializeProjectFiles(projectPath) {
+  const requiredFiles = [
+    'tasks.md',
+    'activeContext.md', 
+    'progress.md',
+    'projectbrief.md',
+    'productContext.md',
+    'systemPatterns.md',
+    'techContext.md'
+  ];
+  
+  const requiredDirs = [
+    'creative',
+    'reflection', 
+    'archive'
+  ];
+  
+  // Create subdirectories
+  requiredDirs.forEach(dir => {
+    fs.mkdirSync(path.join(projectPath, dir), { recursive: true });
+  });
+  
+  // Create files with templates
+  requiredFiles.forEach(file => {
+    const filePath = path.join(projectPath, file);
+    const template = getFileTemplate(file);
+    fs.writeFileSync(filePath, template);
+  });
+}
+```
+
+### Legacy Migration Helper
+
+```javascript
+// Pseudocode for legacy file migration
+function migrateLegacyFiles() {
+  const memoryBankDir = 'memory-bank';
+  const legacyFiles = [
+    'tasks.md', 'activeContext.md', 'progress.md',
+    'projectbrief.md', 'productContext.md', 
+    'systemPatterns.md', 'techContext.md'
+  ];
+  
+  // Check if legacy files exist
+  const hasLegacy = legacyFiles.some(file => 
+    fs.existsSync(path.join(memoryBankDir, file))
+  );
+  
+  if (!hasLegacy) return null;
+  
+  // Create legacy project folder
+  const now = new Date();
+  const timestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  const legacyFolder = `legacy -- ${timestamp} -- VAN`;
+  const legacyPath = path.join(memoryBankDir, legacyFolder);
+  
+  fs.mkdirSync(legacyPath, { recursive: true });
+  
+  // Move existing files
+  legacyFiles.forEach(file => {
+    const sourcePath = path.join(memoryBankDir, file);
+    const targetPath = path.join(legacyPath, file);
+    
+    if (fs.existsSync(sourcePath)) {
+      fs.renameSync(sourcePath, targetPath);
+    }
+  });
+  
+  // Move existing subdirectories
+  const legacyDirs = ['creative', 'reflection', 'archive'];
+  legacyDirs.forEach(dir => {
+    const sourcePath = path.join(memoryBankDir, dir);
+    const targetPath = path.join(legacyPath, dir);
+    
+    if (fs.existsSync(sourcePath)) {
+      fs.renameSync(sourcePath, targetPath);
+    }
+  });
+  
+  return legacyPath;
+}
+```
+
+### Project Switching Helper
+
+```javascript
+// Pseudocode for project switching
+function switchProject(targetProjectName, newStage) {
+  const memoryBankDir = 'memory-bank';
+  const projectFolders = scanProjectFolders(memoryBankDir);
+  
+  // Find target project
+  const targetProject = projectFolders.find(p => 
+    p.projectName === targetProjectName
+  );
+  
+  if (!targetProject) {
+    throw new Error(`Project "${targetProjectName}" not found`);
+  }
+  
+  // Update timestamp and stage
+  const now = new Date();
+  const newTimestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  const newFolderName = `${targetProjectName} -- ${newTimestamp} -- ${newStage}`;
+  
+  const oldPath = path.join(memoryBankDir, targetProject.folderName);
+  const newPath = path.join(memoryBankDir, newFolderName);
+  
+  // Rename folder
+  fs.renameSync(oldPath, newPath);
+  
+  return newPath;
+}
+
+function listProjects() {
+  const memoryBankDir = 'memory-bank';
+  const projectFolders = scanProjectFolders(memoryBankDir);
+  
+  return projectFolders.map(p => ({
+    name: p.projectName,
+    timestamp: p.timestamp,
+    stage: p.stage,
+    folderName: p.folderName
+  })).sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+}
 ```
 
 ## 📋 OPTIMIZED DIRECTORY CREATION
@@ -32,19 +209,24 @@ graph TD
 
 ### Platform-Specific Commands
 
-#### Windows (PowerShell)
+#### Windows (PowerShell) - Multi-Project Support
 ```powershell
-# Create all directories in one command
-mkdir memory-bank, docs, docs\archive -ErrorAction SilentlyContinue
+# Create project-specific directories
+$projectPath = "<MB_ROOT>"
+$subdirs = @("creative", "reflection", "archive")
+
+# Create all project subdirectories in one command
+$allDirs = $subdirs | ForEach-Object { "$projectPath\$_" }
+mkdir $allDirs -ErrorAction SilentlyContinue
 
 # Create all required files
-$files = @(".cursorrules", "tasks.md", 
-           "memory-bank\projectbrief.md", 
-           "memory-bank\productContext.md",
-           "memory-bank\systemPatterns.md",
-           "memory-bank\techContext.md",
-           "memory-bank\activeContext.md",
-           "memory-bank\progress.md")
+$files = @("$projectPath\tasks.md", 
+           "$projectPath\projectbrief.md", 
+           "$projectPath\productContext.md",
+           "$projectPath\systemPatterns.md",
+           "$projectPath\techContext.md",
+           "$projectPath\activeContext.md",
+           "$projectPath\progress.md")
 
 foreach ($file in $files) {
     if (-not (Test-Path $file)) {
@@ -53,59 +235,62 @@ foreach ($file in $files) {
 }
 ```
 
-#### Mac/Linux (Bash)
+#### Mac/Linux (Bash) - Multi-Project Support
 ```bash
+# Create project-specific directories
+PROJECT_PATH="<MB_ROOT>"
+
 # Create all directories in one command
-mkdir -p memory-bank docs/archive
+mkdir -p "$PROJECT_PATH"/{creative,reflection,archive}
 
 # Create all required files
-touch .cursorrules tasks.md \
-      memory-bank/projectbrief.md \
-      memory-bank/productContext.md \
-      memory-bank/systemPatterns.md \
-      memory-bank/techContext.md \
-      memory-bank/activeContext.md \
-      memory-bank/progress.md
+touch "$PROJECT_PATH"/tasks.md \
+      "$PROJECT_PATH"/projectbrief.md \
+      "$PROJECT_PATH"/productContext.md \
+      "$PROJECT_PATH"/systemPatterns.md \
+      "$PROJECT_PATH"/techContext.md \
+      "$PROJECT_PATH"/activeContext.md \
+      "$PROJECT_PATH"/progress.md
 ```
 
 ## 📝 STREAMLINED VERIFICATION PROCESS
 
-Instead of checking each component separately, perform batch verification:
+Multi-project verification with batch operations:
 
 ```powershell
-# Windows - PowerShell
-$requiredDirs = @("memory-bank", "docs", "docs\archive")
-$requiredFiles = @(".cursorrules", "tasks.md")
-$mbFiles = @("projectbrief.md", "productContext.md", "systemPatterns.md", 
-             "techContext.md", "activeContext.md", "progress.md")
+# Windows - PowerShell Multi-Project Verification
+$projectPath = "<MB_ROOT>"  # Resolved by platform-awareness
+$requiredDirs = @("creative", "reflection", "archive")
+$requiredFiles = @("tasks.md", "projectbrief.md", "productContext.md", 
+                  "systemPatterns.md", "techContext.md", "activeContext.md", "progress.md")
 
-$missingDirs = $requiredDirs | Where-Object { -not (Test-Path $_) -or -not (Test-Path $_ -PathType Container) }
-$missingFiles = $requiredFiles | Where-Object { -not (Test-Path $_) -or (Test-Path $_ -PathType Container) }
-$missingMBFiles = $mbFiles | ForEach-Object { "memory-bank\$_" } | 
-                  Where-Object { -not (Test-Path $_) -or (Test-Path $_ -PathType Container) }
+$missingDirs = $requiredDirs | ForEach-Object { "$projectPath\$_" } | 
+               Where-Object { -not (Test-Path $_) -or -not (Test-Path $_ -PathType Container) }
+$missingFiles = $requiredFiles | ForEach-Object { "$projectPath\$_" } | 
+                Where-Object { -not (Test-Path $_) -or (Test-Path $_ -PathType Container) }
 
-if ($missingDirs.Count -eq 0 -and $missingFiles.Count -eq 0 -and $missingMBFiles.Count -eq 0) {
-    Write-Output "✓ All required components verified"
+if ($missingDirs.Count -eq 0 -and $missingFiles.Count -eq 0) {
+    Write-Output "✓ All required project components verified for current project"
 } else {
     # Create all missing items at once
     if ($missingDirs.Count -gt 0) {
         $missingDirs | ForEach-Object { mkdir $_ -Force }
     }
-    if ($missingFiles.Count -gt 0 -or $missingMBFiles.Count -gt 0) {
-        $allMissingFiles = $missingFiles + $missingMBFiles
-        $allMissingFiles | ForEach-Object { New-Item -Path $_ -ItemType File -Force }
+    if ($missingFiles.Count -gt 0) {
+        $missingFiles | ForEach-Object { New-Item -Path $_ -ItemType File -Force }
     }
 }
 ```
 
-## 📝 TEMPLATE INITIALIZATION
+## 📝 PROJECT FILE TEMPLATES
 
-Optimize template creation with a single script:
+Optimized template creation for new projects:
 
 ```powershell
-# Windows - PowerShell
+# Windows - PowerShell Project Templates
+$projectPath = "<MB_ROOT>"
 $templates = @{
-    "tasks.md" = @"
+    "$projectPath\tasks.md" = @"
 # Memory Bank: Tasks
 
 ## Current Task
@@ -121,7 +306,7 @@ $templates = @{
 [No requirements defined yet]
 "@
 
-    "memory-bank\activeContext.md" = @"
+    "$projectPath\activeContext.md" = @"
 # Memory Bank: Active Context
 
 ## Current Focus
@@ -134,11 +319,22 @@ $templates = @{
 [No changes recorded]
 "@
 
-    # Add other templates here
+    "$projectPath\projectbrief.md" = @"
+# Project Brief
+
+## Project Overview
+[Project overview to be defined]
+
+## Objectives
+[Project objectives to be defined]
+
+## Scope
+[Project scope to be defined]
+"@
 }
 
 foreach ($file in $templates.Keys) {
-    if (Test-Path $file) {
+    if (-not (Test-Path $file) -or (Get-Content $file -Raw).Trim() -eq "") {
         Set-Content -Path $file -Value $templates[$file]
     }
 }
@@ -146,51 +342,33 @@ foreach ($file in $templates.Keys) {
 
 ## 🔍 PERFORMANCE OPTIMIZATION BEST PRACTICES
 
-1. **Batch Operations**: Always use batch operations instead of individual commands
-   ```
-   # GOOD: Create all directories at once
-   mkdir memory-bank docs docs\archive
-   
-   # BAD: Create directories one at a time
-   mkdir memory-bank
-   mkdir docs
-   mkdir docs\archive
-   ```
-
-2. **Pre-Check Optimization**: Check all requirements first, then create only what's missing
-   ```
-   # First check what's missing
-   $missingItems = ...
-   
-   # Then create only what's missing
-   if ($missingItems) { ... }
-   ```
-
-3. **Error Handling**: Include error handling in all commands
-   ```
-   mkdir memory-bank, docs, docs\archive -ErrorAction SilentlyContinue
-   ```
-
-4. **Platform Adaptation**: Auto-detect platform and use appropriate commands
-   ```
-   if ($IsWindows) {
-       # Windows commands
-   } else {
-       # Unix commands
-   }
-   ```
-
-5. **One-Pass Verification**: Verify directory structure in a single pass
-   ```
-   $requiredPaths = @("memory-bank", "docs", "docs\archive", ".cursorrules", "tasks.md")
-   $missingPaths = $requiredPaths | Where-Object { -not (Test-Path $_) }
-   ```
+1. **Project-Scoped Operations**: All operations are scoped to current project via `<MB_ROOT>`
+2. **Batch Operations**: Create all project components at once
+3. **Discovery Caching**: Cache project discovery results during session
+4. **Lazy Migration**: Migrate legacy files only when needed
+5. **Validation First**: Validate project names before creation
 
 ## 📝 VERIFICATION REPORT FORMAT
 
 ```
-✅ VERIFICATION COMPLETE
+✅ MULTI-PROJECT VERIFICATION COMPLETE
+- Current Project: [project-name -- timestamp -- stage]
+- Project Path: [<MB_ROOT> resolved path]
 - Created directories: [list]
+- Created files: [list]
+- All project components verified
+
+Memory Bank system ready for use.
+```
+
+## 🎯 PROJECT MANAGEMENT COMMANDS
+
+Available in VAN mode and other modes:
+
+- **LIST PROJECTS**: Show all projects with timestamps and stages
+- **SWITCH PROJECT <name>**: Switch to different project context  
+- **CURRENT PROJECT**: Display currently active project
+- **NEW PROJECT <name>**: Create new project with full file structure 
 - Created files: [list]
 - All components verified
 

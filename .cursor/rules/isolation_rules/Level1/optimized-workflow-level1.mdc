@@ -144,7 +144,7 @@ Optimize Memory Bank updates for Level 1 tasks by using a single operation:
 // Pseudocode for optimized Level 1 Memory Bank update
 function updateLevel1MemoryBank(taskInfo) {
   // Read current tasks.md
-  const tasksContent = readFile("tasks.md");
+  const tasksContent = readFile("<MB_ROOT>/tasks.md");
   
   // Create minimal update
   const updateBlock = `
@@ -158,7 +158,7 @@ function updateLevel1MemoryBank(taskInfo) {
   const updatedContent = appendToSection(tasksContent, "Completed Tasks", updateBlock);
   
   // Write in single operation
-  writeFile("tasks.md", updatedContent);
+  writeFile("<MB_ROOT>/tasks.md", updatedContent);
   
   return "Memory Bank updated";
 }

@@ -74,3 +74,6 @@ pids
 #claude.code specific
 .claude/
 CLAUDE.md
+
+#development memory-bank folder
+memory-bank/

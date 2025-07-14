@@ -1,13 +1,26 @@
-# Memory Bank System v0.7-beta
+# Multi-Project Memory Bank
+
+## Background
+
+This project began as a fork of an open-source Memory Bank project.  
+It has since diverged and is now maintained independently, with a primary focus on robust multi-project support and workflow refinements.  
+All future development and issue tracking will happen **here**.
+
+> **Maintainer Note**: I maintain this project in my spare time and welcome constructive feedback. Feel free to open an issue or pull request, or adapt the code to fit your own workflow.
 
 A token-optimized, hierarchical task management system that integrates with Cursor custom modes for efficient development workflows.
 
 ```mermaid
 graph TD
-    Main["Memory Bank System"] --> Modes["Custom Modes"]
+    Main["Multi-Project Memory Bank v0.1.0"] --> MultiProject["Multi-Project Support"]
+    Main --> Modes["Custom Modes"]
     Main --> Rules["Hierarchical Rule Loading"]
     Main --> Visual["Visual Process Maps"]
     Main --> Token["Token Optimization"]
+    
+    MultiProject --> Projects["🗂️ Project Isolation"]
+    MultiProject --> Commands["📋 LIST • SWITCH • CURRENT"]
+    MultiProject --> Legacy["🔄 Legacy Compatibility"]
     
     Modes --> VAN["VAN: Initialization"]
     Modes --> PLAN["PLAN: Task Planning"]
@@ -17,13 +30,15 @@ graph TD
     Modes --> ARCHIVE["ARCHIVE: Documentation"]
     
     style Main fill:#4da6ff,stroke:#0066cc,color:white
+    style MultiProject fill:#ff6b6b,stroke:#e74c3c,color:white
+    style Projects fill:#ffa07a,stroke:#ff6347,color:black
+    style Commands fill:#ffa07a,stroke:#ff6347,color:black
+    style Legacy fill:#ffa07a,stroke:#ff6347,color:black
     style Modes fill:#f8d486,stroke:#e8b84d,color:black
     style Rules fill:#80ffaa,stroke:#4dbb5f,color:black
     style Visual fill:#d9b3ff,stroke:#b366ff,color:black
     style Token fill:#ff9980,stroke:#ff5533,color:black
 ```
-
-> **Personal Note**: Memory Bank is my personal hobby project that I develop for my own use in coding projects. As this is a personal project, I don't maintain an issues tracker or actively collect feedback. However, if you're using these rules and encounter issues, one of the great advantages is that you can ask the Cursor AI directly to modify or update the rules to better suit your specific workflow. The system is designed to be adaptable by the AI, allowing you to customize it for your own needs without requiring external support.
 
 ## About Memory Bank
 
@@ -54,7 +69,7 @@ This approach transforms custom modes from simple AI personalities into componen
 
 ### CREATIVE Mode and Claude's "Think" Tool
 
-The CREATIVE mode in Memory Bank is conceptually based on Anthropic's Claude "Think" tool methodology, as described in their [engineering blog](https://www.anthropic.com/engineering/claude-think-tool). The v0.7-beta implements an optimized version with:
+The CREATIVE mode in Memory Bank is conceptually based on Anthropic's Claude "Think" tool methodology, as described in their [engineering blog](https://www.anthropic.com/engineering/claude-think-tool). The upstream project implemented an optimized version with:
 
 - Progressive documentation with tabular option comparison
 - "Detail-on-demand" approach that preserves token efficiency
@@ -65,12 +80,14 @@ For a detailed explanation of how Memory Bank implements these principles, see t
 
 ## Key Features
 
+- **Multi-Project Support**: Isolated project contexts within a single repository
 - **Hierarchical Rule Loading**: Load only the essential rules with specialized lazy-loading
 - **Progressive Documentation**: Concise templates that scale with task complexity
 - **Unified Context Transfer**: Efficient context preservation between modes
 - **Mode-Specific Visual Maps**: Clear visual representations for each development phase
 - **Level-Specific Workflows**: Adapted processes based on complexity (Levels 1-4)
 - **Platform-Aware Commands**: Automatically adapts commands to your operating system
+- **Legacy Compatibility**: Seamless migration from single-project setups
 
 ## Installation Instructions
 
@@ -87,7 +104,7 @@ For a detailed explanation of how Memory Bank implements these principles, see t
 Simply clone this repository into your project directory:
 
 ```
-git clone https://github.com/vanzan01/cursor-memory-bank.git
+git clone https://github.com/jedita/cursor-memory-bank.git
 ```
 
 #### Alternative (Manual)
@@ -171,17 +188,23 @@ QA is not a separate custom mode but rather a set of validation functions that c
    - Switch to VAN mode in Cursor
    - Type "VAN" to initiate the initialization process
    - VAN will analyze your project structure and determine complexity
+   - **Multi-Project**: VAN will discover existing projects or prompt for new project creation
 
-2. **Follow the Workflow Based on Complexity**:
+2. **Project Management**:
+   - **LIST PROJECTS**: See all available projects with their stages
+   - **SWITCH PROJECT <name>**: Change to different project context
+   - **CURRENT PROJECT**: Display the active project
+   - **NEW PROJECT <name>**: Create new isolated project
+
+3. **Follow the Workflow Based on Complexity**:
    - **Level 1 tasks**: May proceed directly to IMPLEMENT after VAN
    - **Level 2 tasks**: Simplified workflow (VAN → PLAN → IMPLEMENT → REFLECT)
    - **Level 3-4 tasks**: Full workflow (VAN → PLAN → CREATIVE → IMPLEMENT → REFLECT → ARCHIVE)
    - **At any point**: Type "QA" to perform technical validation
 
-
 <img src="assets/chat_van.png" height="50"/> <img src="assets/chat_plan.png" height="50" style="display: inline-block;"/> <img src="assets/chat_implement.png" height="50" style="display: inline-block;"/> <img src="assets/chat_creative.png" height="50" style="display: inline-block;"/> <img src="assets/chat_implement.png" height="50" style="display: inline-block;"/> <img src="assets/chat_reflect.png" height="50" style="display: inline-block;"/> <img src="assets/chat_archive.png" height="50" style="display: inline-block;"/>
 
-3. **Mode-Specific Commands**:
+4. **Mode-Specific Commands**:
    ```
    VAN - Initialize project and determine complexity
    PLAN - Create detailed implementation plan
@@ -192,20 +215,82 @@ QA is not a separate custom mode but rather a set of validation functions that c
    QA - Validate technical implementation (can be called from any mode)
    ```
 
-4. **Starting to work with your project**:
+5. **Multi-Project Workflow Example**:
+   ```
+   VAN → LIST PROJECTS → SWITCH PROJECT my-feature → PLAN → CREATIVE → IMPLEMENT
+   ```
+
+6. **Starting to work with your project**:
    
 After successfully installing Memory Bank...
+
+## Multi-Project Architecture
+
+Multi-Project Memory Bank v0.1.0 introduces **Multi-Project Support**, enabling isolated project contexts within a single repository. Each project maintains its own complete set of Memory Bank files in a dedicated subfolder.
+
+### Project Structure
+
+```mermaid
+graph TD
+    Repo["Repository Root"] --> MB["memory-bank/"]
+    MB --> P1["my-feature -- 2024-06-10 12:30 -- IMPLEMENT/"]
+    MB --> P2["bug-fix -- 2024-06-09 15:45 -- REFLECT/"]
+    MB --> P3["new-api -- 2024-06-08 09:20 -- CREATIVE/"]
+    
+    P1 --> F1["📄 tasks.md<br>📄 activeContext.md<br>📄 progress.md<br>📁 creative/<br>📁 reflection/<br>📁 archive/"]
+    P2 --> F2["📄 tasks.md<br>📄 activeContext.md<br>📄 progress.md<br>📁 creative/<br>📁 reflection/<br>📁 archive/"]
+    P3 --> F3["📄 tasks.md<br>📄 activeContext.md<br>📄 progress.md<br>📁 creative/<br>📁 reflection/<br>📁 archive/"]
+    
+    style Repo fill:#4da6ff,stroke:#0066cc,color:white
+    style MB fill:#ff6b6b,stroke:#e74c3c,color:white
+    style P1 fill:#ffa07a,stroke:#ff6347,color:black
+    style P2 fill:#ffa07a,stroke:#ff6347,color:black
+    style P3 fill:#ffa07a,stroke:#ff6347,color:black
+    style F1 fill:#e6f3ff,stroke:#b3d9ff
+    style F2 fill:#e6f3ff,stroke:#b3d9ff
+    style F3 fill:#e6f3ff,stroke:#b3d9ff
+```
+
+### Project Management Commands
+
+```mermaid
+graph LR
+    Commands["Project Commands"] --> List["📋 LIST PROJECTS<br>Show all projects with stages"]
+    Commands --> Switch["🔄 SWITCH PROJECT<br>Change active project context"]
+    Commands --> Current["📍 CURRENT PROJECT<br>Display active project"]
+    Commands --> New["🆕 NEW PROJECT<br>Create new project folder"]
+    
+    style Commands fill:#4da6ff,stroke:#0066cc,color:white
+    style List fill:#80ffaa,stroke:#4dbb5f,color:black
+    style Switch fill:#ffa64d,stroke:#cc7a30,color:black
+    style Current fill:#d9b3ff,stroke:#b366ff,color:black
+    style New fill:#ff8080,stroke:#ff5555,color:black
+```
+
+### Project Folder Naming Convention
+
+Projects follow the pattern: `<project-name> -- <ISO-timestamp> -- <stage>`
+
+- **Project Name**: Alphanumeric, spaces, underscores, hyphens allowed
+- **ISO Timestamp**: YYYY-MM-DDTHH-MM-SS format, auto-refreshed on transitions
+- **Stage**: van | plan | creative | implement | reflect (auto-updated on mode transitions)
+
+**Examples**:
+- `user-authentication -- 2024-06-10 12:30 -- VAN`
+- `api refactor -- 2024-06-09 15:45 -- IMPLEMENT`
+- `bug_fix_123 -- 2024-06-08 09:20 -- REFLECT`
 
 ## Core Files and Their Purposes
 
 ```mermaid
 graph LR
-    subgraph "Memory Bank Files"
+    subgraph "Project-Scoped Memory Bank Files"
         Tasks["tasks.md<br>Source of Truth"]
         Active["activeContext.md<br>Current Focus"]
         Progress["progress.md<br>Implementation Status"]
-        Creative["creative-*.md<br>Design Decisions"]
-        Reflect["reflect-*.md<br>Review Documents"]
+        Creative["creative/<br>Design Decisions"]
+        Reflect["reflection/<br>Review Documents"]
+        Archive["archive/<br>Task Documentation"]
     end
     
     style Tasks fill:#f9d77e,stroke:#d9b95c,stroke-width:3px
@@ -213,13 +298,15 @@ graph LR
     style Progress fill:#c5e8b7,stroke:#a5c897
     style Creative fill:#f4b8c4,stroke:#d498a4
     style Reflect fill:#b3e6cc,stroke:#66c999
+    style Archive fill:#d4b3ff,stroke:#a066ff
 ```
 
-- **tasks.md**: Central source of truth for task tracking
+- **tasks.md**: Central source of truth for task tracking (project-scoped)
 - **activeContext.md**: Maintains focus of current development phase
 - **progress.md**: Tracks implementation status
-- **creative-*.md**: Design decision documents generated during CREATIVE mode
-- **reflect-*.md**: Review documents created during REFLECT mode
+- **creative/**: Design decision documents generated during CREATIVE mode
+- **reflection/**: Review documents created during REFLECT mode
+- **archive/**: Comprehensive task documentation for completed work
 
 ## Troubleshooting
 
@@ -241,7 +328,7 @@ graph LR
 
 ## Version Information
 
-This is version v0.7-beta of the Memory Bank system. It introduces significant token optimization improvements over v0.6-beta while maintaining all functionality. See the [Release Notes](RELEASE_NOTES.md) for detailed information about the changes.
+This is version v0.1.0 of Multi-Project Memory Bank. It introduces **Multi-Project Support** and comprehensive project isolation capabilities while maintaining all token optimization improvements from the original project.
 
 ### Ongoing Development
 
@@ -260,7 +347,8 @@ The Memory Bank system is actively being developed and improved. Key points to u
 - [Memory Bank Upgrade Guide](memory_bank_upgrade_guide.md)
 - [CREATIVE Mode and Claude's "Think" Tool](creative_mode_think_tool.md)
 - Mode-specific instruction files in the `custom_modes/` directory
+- Original Memory Bank project (upstream inspiration): https://github.com/vanzan01/cursor-memory-bank
 
 ---
 
-*Note: This README is for v0.7-beta and subject to change as the system evolves.*
+*Note: This README refers to v0.1.0 and is subject to change as the system evolves.*
