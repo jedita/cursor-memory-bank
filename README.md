@@ -12,7 +12,7 @@ A token-optimized, hierarchical task management system that integrates with Curs
 
 ```mermaid
 graph TD
-    Main["Multi-Project Memory Bank v0.1.0"] --> MultiProject["Multi-Project Support"]
+    Main["Multi-Project Memory Bank"] --> MultiProject["Multi-Project Support"]
     Main --> Modes["Custom Modes"]
     Main --> Rules["Hierarchical Rule Loading"]
     Main --> Visual["Visual Process Maps"]
@@ -45,8 +45,6 @@ graph TD
 Memory Bank is a personal project that provides a structured approach to development using specialized modes for different phases of the development process. It uses a hierarchical rule loading architecture that loads only the rules needed for each phase, optimizing token usage and providing tailored guidance.
 
 ### Token-Optimized Architecture
-
-Version 0.7-beta introduces significant token optimization improvements:
 
 - **Hierarchical Rule Loading**: Only loads essential rules initially with specialized lazy-loading
 - **Progressive Documentation**: Implements concise templates that scale with task complexity
@@ -226,7 +224,7 @@ After successfully installing Memory Bank...
 
 ## Multi-Project Architecture
 
-Multi-Project Memory Bank v0.1.0 introduces **Multi-Project Support**, enabling isolated project contexts within a single repository. Each project maintains its own complete set of Memory Bank files in a dedicated subfolder.
+Multi-Project Memory Bank introduces **Multi-Project Support**, enabling isolated project contexts within a single repository. Each project maintains its own complete set of Memory Bank files in a dedicated subfolder.
 
 ### Project Structure
 
@@ -326,17 +324,9 @@ graph LR
    - Ensure you're running commands from the correct directory
    - Verify platform-specific commands are being used correctly
 
-## Version Information
-
-This is version v0.1.0 of Multi-Project Memory Bank. It introduces **Multi-Project Support** and comprehensive project isolation capabilities while maintaining all token optimization improvements from the original project.
-
 ## Resources
 
 - [Cursor Custom Modes Documentation](https://docs.cursor.com/chat/custom-modes)
 - [CREATIVE Mode and Claude's "Think" Tool](creative_mode_think_tool.md)
 - Mode-specific instruction files in the `custom_modes/` directory
 - [Original Memory Bank project (upstream inspiration)](https://github.com/vanzan01/cursor-memory-bank)
-
----
-
-*Note: This README refers to v0.1.0 and is subject to change as the system evolves.*
