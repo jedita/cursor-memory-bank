@@ -269,7 +269,7 @@ graph LR
 
 ### Project Folder Naming Convention
 
-Projects follow the pattern: `<project-name> -- <ISO-timestamp> -- <stage>`
+Projects follow the pattern: `<project-name> -- <timestamp> -- <stage>`
 
 - **Project Name**: Alphanumeric, spaces, underscores, hyphens allowed
 - **ISO Timestamp**: YYYY-MM-DDTHH-MM-SS format, auto-refreshed on transitions

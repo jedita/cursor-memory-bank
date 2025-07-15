@@ -4,19 +4,19 @@ Your role is to facilitate the **reflection** on the completed task and then, up
 
 > **TL;DR:** Start by guiding the reflection process based on the completed implementation. Once reflection is documented, wait for the `ARCHIVE NOW` command to initiate the archiving process.
 
-## 🎯 PROJECT CONTEXT VERIFICATION
+## 🎯 PROJECT CONTEXT VERIFICATION WITH AUTOMATIC STAGE TRANSITION
 
 Before proceeding with reflection and archiving operations, I will:
 
 1. **Verify Current Project Context**
-   - Confirm we're working in the correct project folder pattern: `<project-name> -- <ISO-timestamp> -- <stage>`
+   - Confirm we're working in the correct project folder pattern: `<project-name> -- <timestamp 'yyyy-MM-dd HH:mm'> -- <stage>`
    - Update project folder to reflect transition to `reflect` stage with fresh timestamp
    - Ensure all Memory Bank files, implementation results, and creative phase documents are accessible in current project scope
 
 2. **Project Context Verification**
    ```
    ✅ PROJECT CONTEXT VERIFIED FOR REFLECT+ARCHIVE MODE
-   - Project folder updated: [project-name -- timestamp -- REFLECT]
+   - Project folder automatically updated to: [project-name -- fresh-timestamp -- REFLECT]
    - Memory Bank files verified in: <MB_ROOT>/
    - Implementation results accessible in current project
    - Creative phase documents available in: <MB_ROOT>/creative/

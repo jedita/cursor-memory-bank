@@ -1,12 +1,52 @@
 ---
 description: Command execution guidelines for isolation-focused Memory Bank
-globs: command-execution.mdc
+globs: command-execution.mdc, stage-update-handler.mdc
 alwaysApply: false
 ---
 
 # COMMAND EXECUTION SYSTEM
 
 > **TL;DR:** This system provides guidelines for efficient command execution, balancing clarity and token optimization through appropriate command chaining, with proper documentation of commands and results.
+
+## 🔄 STAGE UPDATE SYSTEM
+
+### Automatic Stage Transition
+
+When transitioning between modes, the system automatically updates the project folder to reflect the new stage and timestamp.
+
+### Stage Update Process
+```
+When user requests mode transition (e.g., VAN → PLAN):
+
+1. Identify current project folder in memory-bank/
+2. Extract project name from folder name
+3. Generate fresh timestamp (yyyy-MM-dd HH:mm)
+4. Create new folder name with target stage
+5. Rename folder using appropriate tools
+6. Confirm successful transition
+```
+
+### Stage Update Instructions
+
+Instead of hardcoded commands, follow these simple steps:
+
+```mermaid
+graph TD
+    Request["Stage Update<br>Request"] --> Find["Find Current<br>Project Folder"]
+    Find --> Extract["Extract Project<br>Name"]
+    Extract --> Generate["Generate Fresh<br>Timestamp"]
+    Generate --> Build["Build New<br>Folder Name"]
+    Build --> Rename["Rename Folder<br>Using Available Tools"]
+    Rename --> Confirm["Confirm<br>Success"]
+    
+    style Request fill:#d971ff,stroke:#a33bc2,color:white
+    style Find fill:#ffa64d,stroke:#cc7a30,color:white
+    style Extract fill:#4dbb5f,stroke:#36873f,color:white
+    style Generate fill:#4dbbbb,stroke:#368787,color:white
+    style Build fill:#ff71c2,stroke:#c23b8a,color:white
+    style Rename fill:#5fd94d,stroke:#3da336,color:white
+    style Confirm fill:#8cff8c,stroke:#4dbb5f,color:white
+```
 
 ## 🔍 COMMAND EFFICIENCY WORKFLOW
 
@@ -95,7 +135,6 @@ Effective command chaining patterns include:
 
 ## 📋 COMMAND DOCUMENTATION TEMPLATE
 
-```
 ## Command Execution: [Purpose]
 
 ### Command
@@ -109,10 +148,61 @@ Effective command chaining patterns include:
 ```
 
 ### Effect
+```
 [Brief description of what changed in the system]
+```
 
 ### Next Steps
+```
 [What needs to be done next]
+```
+
+## 📋 STAGE UPDATE COMMAND EXECUTION
+
+### Stage Update Process
+
+When a custom mode invokes the STAGE_UPDATE macro:
+
+```mermaid
+sequenceDiagram
+    participant Mode as Custom Mode
+    participant Macro as STAGE_UPDATE Macro
+    participant Platform as Platform Detection
+    participant Command as Command Execution
+    participant FileSystem as File System
+    
+    Mode->>Macro: {{ STAGE_UPDATE target="PLAN" }}
+    Macro->>Platform: Detect OS (macOS/Linux/Windows)
+    Platform->>Macro: Return platform type
+    Macro->>Command: Generate platform-specific command
+    Command->>FileSystem: Execute folder rename
+    FileSystem->>Command: Return result
+    Command->>Mode: Report success/failure
+```
+
+### Command Documentation Template for Stage Updates
+
+## Stage Update Execution: {SOURCE_STAGE} → {TARGET_STAGE}
+
+### Command
+```
+{platform-specific command}
+```
+
+### Result
+```
+✅ Project folder updated: {project-name} -- {new-timestamp} -- {TARGET_STAGE}
+```
+
+### Effect
+```
+Project folder renamed from {old-name} to {new-name}
+<MB_ROOT> cache updated to point to new location
+```
+
+### Next Steps
+```
+Continue with {TARGET_STAGE} mode operations
 ```
 
 ## 🔍 PLATFORM-SPECIFIC CONSIDERATIONS

@@ -1,0 +1,107 @@
+---
+description: Guidelines for changes depending on updating the stage
+globs: stage-update-handler.mdc
+alwaysApply: false
+---
+
+# STAGE UPDATE HANDLER
+
+> **TL;DR:** This system automatically renames Memory Bank project folders when transitioning between modes, updating both the stage suffix and timestamp to reflect the current working state.
+
+## 🎯 AUTOMATIC STAGE TRANSITION PROTOCOL
+
+### Stage Update Process
+
+```mermaid
+graph TD
+    Start["STAGE_UPDATE<br>Request"] --> Detect["Detect Current<br>Project Folder"]
+    Detect --> Parse["Parse Folder Name<br>Extract: name, timestamp, stage"]
+    Parse --> Generate["Generate Fresh<br>Timestamp"]
+    Generate --> Build["Build New<br>Folder Name"]
+    Build --> Rename["Rename Project<br>Folder"]
+    Rename --> Verify["Verify Rename<br>Success"]
+    Verify --> Complete["Stage Transition<br>Complete"]
+    
+    style Start fill:#4da6ff,stroke:#0066cc,color:white
+    style Detect fill:#ffa64d,stroke:#cc7a30,color:white
+    style Parse fill:#4dbb5f,stroke:#36873f,color:white
+    style Generate fill:#d971ff,stroke:#a33bc2,color:white
+    style Build fill:#4dbbbb,stroke:#368787,color:white
+    style Rename fill:#ff71c2,stroke:#c23b8a,color:white
+    style Verify fill:#80bfff,stroke:#4da6ff,color:white
+    style Complete fill:#8cff8c,stroke:#4dbb5f,color:white
+```
+
+## 🔄 STAGE UPDATE IMPLEMENTATION
+
+### Simple Stage Update Instructions
+
+When transitioning between modes, follow these simple steps:
+
+1. **Find Current Project Folder**
+   - Look in the `memory-bank/` directory
+   - Identify the folder with pattern: `project-name -- timestamp -- stage`
+   - Example: `fix-bug -- 2025-07-15 14:11 -- VAN`
+
+2. **Generate New Folder Name**
+   - Keep the same project name
+   - Generate current timestamp in format: `yyyy-MM-dd HH:mm`
+   - Use the new target stage (VAN, PLAN, CREATIVE, IMPLEMENT, REFLECT, ARCHIVE)
+   - Example: `fix-bug -- 2025-07-15 15:23 -- PLAN`
+
+3. **Rename the Folder**
+   - Use the appropriate tool to rename the folder from old name to new name
+   - Verify the rename was successful
+   - Report the result to the user
+
+### Stage Update Example
+
+```
+User requests transition: VAN → PLAN
+
+1. Current folder: "my-feature -- 2025-07-15 12:30 -- VAN"
+2. New timestamp: "2025-07-15 15:45"
+3. Target stage: "PLAN"
+4. New folder: "my-feature -- 2025-07-15 15:45 -- PLAN"
+5. Execute rename operation
+6. Confirm: "✅ Project folder updated to: my-feature -- 2025-07-15 15:45 -- PLAN"
+```
+
+## 📋 FOLDER NAME PATTERN
+
+### Standard Format
+```
+<project-name> -- <timestamp> -- <stage>
+```
+
+### Components
+- **Project Name**: Alphanumeric characters, spaces, underscores, hyphens
+- **Timestamp**: `YYYY-MM-DD HH:mm` format
+- **Stage**: One of: VAN, PLAN, CREATIVE, IMPLEMENT, REFLECT, ARCHIVE
+
+### Validation Rules
+- Project name cannot be empty
+- Timestamp must be valid and current
+- Stage must be one of the allowed values
+- No duplicate folder names
+
+## 🚦 ERROR HANDLING
+
+### Common Issues
+- **No current project folder found**: Prompt user to create a new project
+- **Invalid folder name format**: Suggest manual correction
+- **Permission denied**: Check directory permissions
+- **Folder already exists**: Wait and retry with new timestamp
+
+### Recovery Actions
+- If rename fails, report the error clearly
+- Suggest corrective actions based on the specific error
+- Maintain system state consistency
+
+## ✅ VERIFICATION
+
+After stage update:
+- Confirm new folder exists with correct name
+- Verify old folder no longer exists
+- Update any internal references to the new path
+- Report success to user

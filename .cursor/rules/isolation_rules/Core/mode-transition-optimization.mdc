@@ -6,88 +6,57 @@ alwaysApply: false
 
 # MODE TRANSITION OPTIMIZATION
 
-> **TL;DR:** This file implements optimized mode transitions to preserve context efficiently between different phases of the Memory Bank system. **NEW: Multi-project support with automatic folder rename on stage transitions.**
+> **TL;DR:** This file implements optimized mode transitions to preserve context efficiently between different phases of the Memory Bank system. **IMPLEMENTED: Multi-project support with automatic folder rename on stage transitions via stage-update-handler.mdc.**
 
 ## 🎯 MULTI-PROJECT TRANSITION PROTOCOL
 
-### Project Folder Stage Transitions
+### Automatic Stage Transitions
 
-When transitioning between modes, the project folder is automatically renamed to reflect the new stage:
+The automatic stage transition system is now implemented via the `stage-update-handler.mdc` core rule:
 
 ```mermaid
 graph TD
-    CurrentProject["Current Project<br><project-name> -- <old-timestamp> -- <old-stage>"] --> DetectTransition["Detect Mode<br>Transition"]
-    DetectTransition --> GenerateTimestamp["Generate Fresh<br>ISO Timestamp"]
+    CurrentProject["Current Project<br><project-name> -- <old-timestamp> -- <old-stage>"] --> StageUpdate["STAGE_UPDATE<br>Handler Invocation"]
+    StageUpdate --> DetectCurrent["Detect Current<br>Project Folder"]
+                DetectCurrent --> GenerateTimestamp["Generate Fresh<br>Timestamp"]
     GenerateTimestamp --> CreateNewName["Create New Folder Name<br><project-name> -- <new-timestamp> -- <new-stage>"]
-    CreateNewName --> RenameFolder["Rename Project Folder<br>Before File Operations"]
+    CreateNewName --> PlatformCommand["Generate Platform-Aware<br>Rename Command"]
+    PlatformCommand --> RenameFolder["Execute Atomic<br>Folder Rename"]
     RenameFolder --> UpdateMacro["Update <MB_ROOT><br>Macro Resolution"]
-    UpdateMacro --> ContinueMode["Continue with<br>New Mode Operations"]
+    UpdateMacro --> Complete["Stage Transition<br>Complete"]
     
     style CurrentProject fill:#e6ccff,stroke:#d9b3ff,color:black
-    style DetectTransition fill:#ffa64d,stroke:#cc7a30,color:white
-    style GenerateTimestamp fill:#4dbb5f,stroke:#36873f,color:white
-    style CreateNewName fill:#4dbbbb,stroke:#368787,color:white
-    style RenameFolder fill:#d971ff,stroke:#a33bc2,color:white
-    style UpdateMacro fill:#ff71c2,stroke:#c23b8a,color:white
-    style ContinueMode fill:#5fd94d,stroke:#3da336,color:white
+    style StageUpdate fill:#ffa64d,stroke:#cc7a30,color:white
+    style DetectCurrent fill:#4dbb5f,stroke:#36873f,color:white
+    style GenerateTimestamp fill:#4dbbbb,stroke:#368787,color:white
+    style CreateNewName fill:#d971ff,stroke:#a33bc2,color:white
+    style PlatformCommand fill:#ff71c2,stroke:#c23b8a,color:white
+    style RenameFolder fill:#5fd94d,stroke:#3da336,color:white
+    style UpdateMacro fill:#80bfff,stroke:#4da6ff,color:white
+    style Complete fill:#8cff8c,stroke:#4dbb5f,color:white
 ```
 
-### Stage Transition Mapping
+### Stage Transition Implementation Status
 
-```javascript
-// Pseudocode for stage transition logic
-const stageTransitions = {
-  'van': 'plan',        // VAN → PLAN
-  'plan': 'creative',   // PLAN → CREATIVE  
-  'creative': 'implement', // CREATIVE → IMPLEMENT
-  'implement': 'reflect',  // IMPLEMENT → REFLECT
-  'reflect': 'van'      // REFLECT → VAN (new task)
-};
+✅ **COMPLETED FEATURES:**
+- Automatic folder renaming with fresh timestamps
+- Platform-aware command generation (Unix/Linux/macOS + Windows)
+- Stage suffix updates (VAN, PLAN, CREATIVE, IMPLEMENT, REFLECT, ARCHIVE)
+- Integration with all custom mode instruction files
+- <MB_ROOT> cache invalidation and refresh
+- Cross-platform timestamp formatting (YYYY-MM-DD HH:mm)
+- Safe path handling with proper quoting
+- Error handling and validation
 
-function transitionProjectStage(currentStage, targetStage) {
-  const currentProject = resolveMBRoot();
-  const projectInfo = parseProjectFolder(currentProject);
-  
-  // Generate new timestamp
-  const now = new Date();
-  const newTimestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-  
-  // Create new folder name
-  const newFolderName = `${projectInfo.projectName} -- ${newTimestamp} -- ${targetStage}`;
-  const newProjectPath = path.join('memory-bank', newFolderName);
-  
-  // Perform atomic rename
-  fs.renameSync(currentProject, newProjectPath);
-  
-  // Update macro resolution
-  updateMBRootCache(newProjectPath);
-  
-  return newProjectPath;
-}
-```
+✅ **INTEGRATED COMPONENTS:**
+- `stage-update-handler.mdc` - Core automatic transition logic
+- `command-execution.mdc` - STAGE_UPDATE macro registration
+- `platform-awareness.mdc` - Enhanced timestamp utilities and path safety
+- All custom mode files updated with automatic transitions
 
-### Atomic Rename Safety
+### Usage in Custom Modes
 
-```mermaid
-graph TD
-    StartRename["Start Folder<br>Rename Operation"] --> CheckLocks["Check for Open<br>File Handles"]
-    CheckLocks --> HasLocks{"Open Files<br>Detected?"}
-    HasLocks -->|"Yes"| WaitRelease["Wait for File<br>Handle Release"]
-    HasLocks -->|"No"| AtomicRename["Perform Atomic<br>Folder Rename"]
-    WaitRelease --> CheckLocks
-    AtomicRename --> VerifySuccess["Verify Rename<br>Success"]
-    VerifySuccess --> UpdateCache["Update <MB_ROOT><br>Cache"]
-    UpdateCache --> Complete["Transition<br>Complete"]
-    
-    style StartRename fill:#4da6ff,stroke:#0066cc,color:white
-    style CheckLocks fill:#ffa64d,stroke:#cc7a30,color:white
-    style HasLocks fill:#d94dbb,stroke:#a3378a,color:white
-    style WaitRelease fill:#ff5555,stroke:#cc0000,color:white
-    style AtomicRename fill:#4dbb5f,stroke:#36873f,color:white
-    style VerifySuccess fill:#4dbbbb,stroke:#368787,color:white
-    style UpdateCache fill:#d971ff,stroke:#a33bc2,color:white
-    style Complete fill:#5fd94d,stroke:#3da336,color:white
-```
+Each custom mode now automatically executes stage transitions using simple instructions that can be implemented with available tools rather than hardcoded platform-specific commands.
 
 ## 🔄 ENHANCED CONTEXT TRANSFER PROTOCOL
 
@@ -145,40 +114,42 @@ Create a standardized transition document when switching modes:
 
 ## 🔍 MODE-SPECIFIC TRANSITION HANDLERS
 
-### VAN → PLAN Transition
+### Automatic Transition Examples (IMPLEMENTED)
 
-```markdown
-### VAN → PLAN
-- Context preserved: Complexity level, platform detection, file structure
-- Files transferred: tasks.md (initialized), activeContext.md (initialized)
-- Rule optimization: Pre-load planning rules based on complexity level
+#### VAN → PLAN Transition
+```
+✅ Automatic Stage Transition: VAN → PLAN
+- Command: STAGE_UPDATE target="PLAN"
+- Result: project-name -- 2025-07-15 14:11 -- PLAN
+- Files transferred: All Memory Bank files remain in project scope
+- <MB_ROOT> automatically updated to new path
 ```
 
-### PLAN → CREATIVE Transition
-
-```markdown
-### PLAN → CREATIVE
-- Context preserved: Task requirements, component list, creative phase flags
-- Files transferred: tasks.md (updated with plan), creative phase components list
-- Rule optimization: Only load creative templates for identified components
+#### PLAN → CREATIVE Transition
+```
+✅ Automatic Stage Transition: PLAN → CREATIVE  
+- Command: STAGE_UPDATE target="CREATIVE"
+- Result: project-name -- 2025-07-15 14:12 -- CREATIVE
+- Files transferred: Planning documents accessible, creative workspace ready
+- <MB_ROOT> automatically updated to new path
 ```
 
-### CREATIVE → IMPLEMENT Transition
-
-```markdown
-### CREATIVE → IMPLEMENT
-- Context preserved: Design decisions, implementation guidelines, requirements
-- Files transferred: tasks.md, design documents, implementation checklist
-- Rule optimization: Pre-load implementation templates based on design decisions
+#### CREATIVE → IMPLEMENT Transition
+```
+✅ Automatic Stage Transition: CREATIVE → IMPLEMENT
+- Command: STAGE_UPDATE target="IMPLEMENT"
+- Result: project-name -- 2025-07-15 14:13 -- IMPLEMENT
+- Files transferred: Creative decisions and implementation plans accessible
+- <MB_ROOT> automatically updated to new path
 ```
 
-### IMPLEMENT → REFLECT Transition
-
-```markdown
-### IMPLEMENT → REFLECT
-- Context preserved: Implementation status, challenges encountered, decisions
-- Files transferred: tasks.md, progress.md, implementation notes
-- Rule optimization: Load reflection templates based on completion status
+#### IMPLEMENT → REFLECT Transition
+```
+✅ Automatic Stage Transition: IMPLEMENT → REFLECT
+- Command: STAGE_UPDATE target="REFLECT"
+- Result: project-name -- 2025-07-15 14:14 -- REFLECT
+- Files transferred: Implementation results and build artifacts accessible
+- <MB_ROOT> automatically updated to new path
 ```
 
 ## 🧠 HIERARCHICAL RULE CACHING
@@ -359,89 +330,3 @@ function registerLazyLoadHandlers(modeName, taskComplexity) {
 }
 ```
 
-## ✅ MODE TRANSITION EXAMPLES
-
-### Example: PLAN → CREATIVE Transition
-
-When transitioning from PLAN to CREATIVE mode:
-
-```markdown
-# MODE TRANSITION: PLAN → CREATIVE
-
-## Context Summary
-- Task: Implement user authentication system
-- Complexity: Level 3
-- Current Phase: Planning completed
-- Progress: 35% (Planning: 100%, Creative: 0%, Implement: 0%)
-
-## Key Decisions
-- Authentication: Requires exploration of options (JWT vs Sessions)
-- User Management: Will use existing database schema
-- Authorization: Role-based access control selected
-
-## Critical Context
-- Components for creative phase: Authentication mechanism, Session management
-- Dependencies: User database, Authorization system
-- Constraints: Must support SSO, Performance requirements
-
-## Next Steps
-1. Explore authentication options (JWT, Sessions, OAuth)
-2. Design session management approach
-3. Document implementation guidelines
-
-## Resource Pointers
-- Planning document: tasks.md (section 3)
-- Requirements: activeContext.md
-- Reference architecture: docs/system-architecture.md
-```
-
-### Example: CREATIVE → IMPLEMENT Transition
-
-When transitioning from CREATIVE to IMPLEMENT mode:
-
-```markdown
-# MODE TRANSITION: CREATIVE → IMPLEMENT
-
-## Context Summary
-- Task: Implement user authentication system
-- Complexity: Level 3
-- Current Phase: Creative completed
-- Progress: 70% (Planning: 100%, Creative: 100%, Implement: 0%)
-
-## Key Decisions
-- Authentication: JWT-based approach selected
-- Token Storage: Secure HttpOnly cookies with CSRF protection
-- Refresh Strategy: Silent refresh with sliding expiration
-
-## Critical Context
-- Implementation order: Auth API endpoints, Middleware, Client integration
-- Testing requirements: Unit tests for JWT validation, Integration tests for auth flow
-- Security considerations: XSS protection, CSRF mitigation, Rate limiting
-
-## Next Steps
-1. Implement JWT generation and validation
-2. Create authentication middleware
-3. Build user login/logout endpoints
-4. Implement client-side auth integration
-
-## Resource Pointers
-- Creative document: creative-auth-decisions.md
-- API specifications: api-spec.yaml
-- Security requirements: security-policy.md
-```
-
-## 🔄 IMPLEMENTATION BENEFITS
-
-This optimization provides:
-
-1. Reduced token usage during mode transitions (~40% reduction)
-2. Better context preservation between modes
-3. Improved efficiency through rule caching
-4. Targeted loading of only necessary rules
-5. Optimized memory bank updates
-6. Clear transition documents that preserve critical context
-2. Better context preservation between modes
-3. Improved efficiency through rule caching
-4. Targeted loading of only necessary rules
-5. Optimized memory bank updates
-6. Clear transition documents that preserve critical context

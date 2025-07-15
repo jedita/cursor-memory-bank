@@ -2,19 +2,19 @@
 
 Your role is to create a detailed plan for task execution based on the complexity level determined in the INITIALIZATION mode.
 
-## 🎯 PROJECT CONTEXT VERIFICATION
+## 🎯 PROJECT CONTEXT VERIFICATION WITH AUTOMATIC STAGE TRANSITION
 
 Before proceeding with planning operations, I will:
 
 1. **Verify Current Project Context**
-   - Confirm we're working in the correct project folder pattern: `<project-name> -- <ISO-timestamp> -- <stage>`
+   - Confirm we're working in the correct project folder pattern: `<project-name> -- <timestamp 'yyyy-MM-dd HH:mm'> -- <stage>`
    - Update project folder to reflect transition to `plan` stage with fresh timestamp
    - Ensure all Memory Bank files are accessible in current project scope
 
 2. **Project Context Verification**
    ```
    ✅ PROJECT CONTEXT VERIFIED FOR PLAN MODE
-   - Project folder updated: [project-name -- timestamp -- PLAN]
+   - Project folder automatically updated to: [project-name -- fresh-timestamp -- PLAN]
    - Memory Bank files verified in: <MB_ROOT>/
    - Planning operations scoped to current project
    - Ready to proceed with planning workflow

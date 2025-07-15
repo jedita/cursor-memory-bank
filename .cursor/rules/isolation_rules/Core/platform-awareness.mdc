@@ -7,7 +7,7 @@ alwaysApply: false
 
 # PLATFORM AWARENESS SYSTEM
 
-> **TL;DR:** This system detects the operating system, path format, and shell environment, then adapts commands accordingly to ensure cross-platform compatibility. It also provides the `<MB_ROOT>` macro resolver for multi-project Memory Bank support.
+> **TL;DR:** This system detects the operating system, path format, and shell environment, then adapts commands accordingly to ensure cross-platform compatibility. It also provides the `<MB_ROOT>` macro resolver for multi-project Memory Bank support and timestamp utilities for automatic stage transitions.
 
 ## 🔍 PLATFORM DETECTION PROCESS
 
@@ -37,6 +37,179 @@ Shell Environment: [PowerShell/Bash/Zsh/Cmd]
 Command Adaptation: [Required/Not Required]
 
 Adapting commands for [detected platform]...
+```
+
+## 🕒 TIMESTAMP UTILITIES FOR STAGE TRANSITIONS
+
+### Cross-Platform Timestamp Generation
+
+The system provides consistent timestamp formatting across all platforms for stage transitions:
+
+```mermaid
+graph TD
+    Request["Timestamp<br>Request"] --> Platform{"Platform<br>Detection"}
+    
+    Platform -->|"macOS/Linux"| Unix["Unix Timestamp<br>Generation"]
+    Platform -->|"Windows"| Win["Windows Timestamp<br>Generation"]
+    
+    Unix --> UnixCmd["date '+%Y-%m-%d %H:%M'"]
+    Win --> WinCmd["Get-Date -Format 'yyyy-MM-dd HH:mm'"]
+    
+    UnixCmd & WinCmd --> Format["Standardized Format<br>YYYY-MM-DD HH:mm"]
+    
+    style Request fill:#d971ff,stroke:#a33bc2,color:white
+    style Platform fill:#ffa64d,stroke:#cc7a30,color:white
+    style Unix fill:#4dbb5f,stroke:#36873f,color:white
+    style Win fill:#4da6ff,stroke:#0066cc,color:white
+    style UnixCmd fill:#d6f5dd,stroke:#a3e0ae,color:black
+    style WinCmd fill:#cce6ff,stroke:#80bfff,color:black
+    style Format fill:#f9d77e,stroke:#d9b95c,color:black
+```
+
+### Platform-Specific Timestamp Commands
+
+#### Unix/Linux/macOS
+```bash
+NOW=$(date '+%Y-%m-%d %H:%M')
+echo "Current timestamp: $NOW"
+# Output: Current timestamp: 2025-07-15 12:34
+```
+
+#### Windows PowerShell
+```powershell
+$NOW = Get-Date -Format 'yyyy-MM-dd HH:mm'
+Write-Host "Current timestamp: $NOW"
+# Output: Current timestamp: 2025-07-15 12:34
+```
+
+### Shell Safety and Quoting Utilities
+
+```mermaid
+graph TD
+    Input["Path/String<br>Input"] --> Analyze["Analyze for<br>Special Characters"]
+    Analyze --> Check{"Requires<br>Quoting?"}
+    
+    Check -->|"No"| Safe["Use As-Is"]
+    Check -->|"Yes"| Quote["Apply Platform<br>Quoting"]
+    
+    Quote --> UnixQuote["Unix: single quotes<br>or double quotes"]
+    Quote --> WinQuote["Windows: double quotes<br>or single quotes"]
+    
+    Safe & UnixQuote & WinQuote --> Output["Safe Command<br>String"]
+    
+    style Input fill:#d971ff,stroke:#a33bc2,color:white
+    style Check fill:#ffa64d,stroke:#cc7a30,color:white
+    style Safe fill:#4dbb5f,stroke:#36873f,color:white
+    style Quote fill:#4da6ff,stroke:#0066cc,color:white
+    style Output fill:#8cff8c,stroke:#4dbb5f,color:white
+```
+
+### Safe Path Handling Rules
+
+```markdown
+## Path Safety Guidelines
+
+### Characters Requiring Quoting
+- Spaces: `my folder` → `"my folder"`
+- Special chars: `folder&name` → `"folder&name"`
+- Unicode: `foldér` → `"foldér"`
+
+### Platform-Specific Considerations
+- **Unix/Linux/macOS**: Use single quotes to prevent variable expansion
+- **Windows**: Use double quotes for compatibility with spaces
+- **Universal**: Escape special regex characters in patterns
+
+### Example Safe Quoting
+```bash
+# Unix - Safe folder name with spaces
+FOLDER_NAME="fix-stage-transition -- 2025-07-15 12:34 -- PLAN"
+mv "$OLD_FOLDER" "$FOLDER_NAME"
+
+# Windows - Same safe handling
+$FolderName = "fix-stage-transition -- 2025-07-15 12:34 -- PLAN"
+Rename-Item $OldFolder $FolderName
+```
+```
+
+## 🎯 MB_ROOT MACRO RESOLVER
+
+### Enhanced Project Discovery
+
+The enhanced `<MB_ROOT>` macro resolver now includes stage transition awareness:
+
+```javascript
+// Enhanced pseudocode for MB_ROOT resolution with stage awareness
+function resolveMBRoot() {
+  const repoRoot = identifyRepoRoot();
+  const memoryBankDir = path.join(repoRoot, 'memory-bank');
+  
+  // Ensure memory-bank directory exists
+  if (!fs.existsSync(memoryBankDir)) {
+    fs.mkdirSync(memoryBankDir, { recursive: true });
+  }
+  
+  // Scan for project folders with enhanced pattern matching
+  const projectFolders = scanProjectFoldersWithStageAwareness(memoryBankDir);
+  
+  if (projectFolders.length === 0) {
+    // Handle legacy migration or new project creation
+    return handleNoProjectsFound(memoryBankDir);
+  }
+  
+  // Select project with latest timestamp (stage-aware)
+  const currentProject = selectLatestProjectWithStageTracking(projectFolders);
+  return path.join(memoryBankDir, currentProject.folderName);
+}
+
+function scanProjectFoldersWithStageAwareness(memoryBankDir) {
+  const regex = /^(.+) -- (\d{4}-\d{2}-\d{2} \d{2}:\d{2}) -- (VAN|PLAN|CREATIVE|IMPLEMENT|REFLECT|ARCHIVE)$/;
+  const folders = fs.readdirSync(memoryBankDir, { withFileTypes: true })
+    .filter(dirent => dirent.isDirectory())
+    .map(dirent => dirent.name)
+    .filter(name => regex.test(name))
+    .map(name => {
+      const match = name.match(regex);
+      return {
+        folderName: name,
+        projectName: match[1],
+        timestamp: match[2],
+        stage: match[3],
+        timestampDate: new Date(match[2].replace(' ', 'T') + ':00') // Convert to Date for sorting
+      };
+    });
+  
+  return folders.sort((a, b) => b.timestampDate.getTime() - a.timestampDate.getTime());
+}
+```
+
+### Stage Transition Cache Invalidation
+
+```javascript
+// Cache invalidation for stage transitions
+let mbRootCache = null;
+let lastKnownProjectFolder = null;
+
+function invalidateMBRootCache() {
+  mbRootCache = null;
+  lastKnownProjectFolder = null;
+}
+
+function updateMBRootCache(newProjectPath) {
+  mbRootCache = newProjectPath;
+  lastKnownProjectFolder = path.basename(newProjectPath);
+}
+
+function resolveMBRootCached() {
+  // Check if we have a valid cache
+  if (mbRootCache && fs.existsSync(mbRootCache)) {
+    return mbRootCache;
+  }
+  
+  // Cache miss or invalid - perform fresh resolution
+  const freshPath = resolveMBRoot();
+  updateMBRootCache(freshPath);
+  return freshPath;
+}
 ```
 
 ## 🎯 MB_ROOT MACRO RESOLVER
@@ -206,6 +379,11 @@ sequenceDiagram
 - MB_ROOT macro resolver functional? [YES/NO]
 - Project discovery working correctly? [YES/NO]
 - Legacy migration operational? [YES/NO]
+
+→ If all YES: Platform adaptation complete
+→ If any NO: Run additional detection steps
+``` 
+- Path format handling configured? [YES/NO]
 
 → If all YES: Platform adaptation complete
 → If any NO: Run additional detection steps

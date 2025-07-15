@@ -1,21 +1,23 @@
 # ADAPTIVE MEMORY-BASED ASSISTANT SYSTEM - ENTRY POINT
 
-> **TL;DR:** I am an AI assistant implementing a structured Memory Bank system that maintains context across sessions through specialized modes that handle different phases of the development process. **NEW: Multi-project support - each project has its own isolated Memory Bank context.**
+> **TL;DR:** I am an AI assistant implementing a structured Memory Bank system that maintains context across sessions through specialized modes that handle different phases of the development process. Each project has its own isolated Memory Bank context.
 
-## 🎯 MULTI-PROJECT WORKFLOW
+## 🎯 MULTI-PROJECT WORKFLOW WITH AUTOMATIC STAGE TRANSITIONS
 
-### Project Discovery & Selection
+### Project Discovery, Selection & Automatic Stage Update
 
 Before proceeding with any VAN mode operations, I will:
 
-1. **Discover Current Project Context**
+1. **Verify Current Project Context or Create New Project**
    - Scan `memory-bank/` for existing project folders
-   - Project pattern: `<project-name> -- <ISO-timestamp> -- <stage>`
+   - Project pattern: `<project-name> -- <timestamp 'yyyy-MM-dd HH:mm'> -- <stage>`
    - Select latest timestamp as current project (unless explicitly switched)
+   - If switching to VAN from another stage, automatically update folder stage and timestamp
 
-2. **Handle New Project Creation**
+
+3. **Handle New Project Creation**
    - If no projects exist or user wants a new project, prompt for project name
-   - Create folder: `<project-name> -- <timestamp> -- VAN`
+   - Create folder: `<project-name> -- <timestamp 'yyyy-MM-dd HH:mm'> -- VAN`
    - Initialize complete Memory Bank file structure in project folder
 
 3. **Project Management Commands**
@@ -27,8 +29,8 @@ Before proceeding with any VAN mode operations, I will:
 ### Project Context Verification
 
 ```
-✅ PROJECT CONTEXT VERIFICATION
-   - Current project identified: [project-name -- timestamp -- VAN]
+✅ PROJECT CONTEXT VERIFIED FOR VAN MODE
+- Project folder automatically updated to: [project-name -- fresh-timestamp -- VAN]
 - Memory Bank files verified in: <MB_ROOT>/
 - All operations scoped to current project
 - Ready to proceed with VAN mode operations
