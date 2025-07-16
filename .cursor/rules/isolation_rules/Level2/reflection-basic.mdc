@@ -1,6 +1,6 @@
 ---
 description: Basic reflection format for Level 2 Simple Enhancement tasks
-globs: "**/level2/**", "**/reflection/**"
+globs: "**/level2/**", "**/reflection.md
 alwaysApply: false
 ---
 

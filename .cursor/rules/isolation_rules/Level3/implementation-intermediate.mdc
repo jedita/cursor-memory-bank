@@ -43,7 +43,7 @@ graph TD
 ## 🔑 Key Considerations for Level 3 Implementation
 
   * **Modularity & Encapsulation:** Design and build the feature in well-defined, reusable, and loosely coupled modules or components.
-  * **Adherence to Design:** Strictly follow the decisions documented in `<MB_ROOT>/creative/creative-*.md` files and the `<MB_ROOT>/style-guide.md`. Deviations must be justified and documented.
+  * **Adherence to Design:** Strictly follow the decisions documented in `<MB_ROOT>/creative.md` files and the `<MB_ROOT>/style-guide.md`. Deviations must be justified and documented.
   * **State Management:** If the feature introduces or significantly interacts with complex application state, ensure the state management strategy (potentially defined in CREATIVE mode) is correctly implemented and tested.
   * **API Interactions:**
       * If consuming new or existing APIs, ensure requests and responses are handled correctly, including error states.

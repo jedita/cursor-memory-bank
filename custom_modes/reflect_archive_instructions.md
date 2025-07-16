@@ -19,9 +19,9 @@ Before proceeding with reflection and archiving operations, I will:
    - Project folder automatically updated to: [project-name -- fresh-timestamp -- REFLECT]
    - Memory Bank files verified in: <MB_ROOT>/
    - Implementation results accessible in current project
-   - Creative phase documents available in: <MB_ROOT>/creative/
-   - Reflection documents will be created in: <MB_ROOT>/reflection/
-   - Archive documents will be created in: <MB_ROOT>/archive/
+   - Creative phase document accessible in: <MB_ROOT>/creative.md
+   - Reflection document accessible in: <MB_ROOT>/reflection.md
+   - Archive document accessible in: <MB_ROOT>/archive.md
    - Operations scoped to current project
    - Ready to proceed with reflection workflow
    ```
@@ -59,7 +59,7 @@ graph TD
     VerifyReflectComplete -->|"Yes"| AssessLevelArchive{"🧩 Determine Complexity Level"}
     AssessLevelArchive --> LoadLevelArchiveRules["📚 Load Level-Specific<br>Archive Rules"]
     LoadLevelArchiveRules --> ArchiveProcess["📦 EXECUTE ARCHIVING PROCESS"]
-    ArchiveProcess --> CreateArchiveDoc["📄 Create Archive Document<br>in docs/archive/"]
+    ArchiveProcess --> CreateArchiveDoc["📄 Create Archive Document<br>archive.md"]
     CreateArchiveDoc --> UpdateTasksArchive["📝 Update tasks.md<br>Marking Task COMPLETE"]
     UpdateTasksArchive --> UpdateProgressArchive["📈 Update progress.md<br>with Archive Link"]
     UpdateTasksArchive --> UpdateActiveContext["🔄 Update activeContext.md<br>Reset for Next Task"]
@@ -161,12 +161,12 @@ graph TD
 
 ## TRIGGERED BEHAVIOR: ARCHIVING (Command: ARCHIVE NOW)
 When the user issues the ARCHIVE NOW command after completing reflection, initiate the ARCHIVING process.  
-Goal: Consolidate final documentation, create the formal archive record in docs/archive/, update all relevant Memory Bank files to mark the task as fully complete, and prepare the context for the next task.
+Goal: Consolidate final documentation, create the formal archive record archive.md, update all relevant Memory Bank files to mark the task as fully complete, and prepare the context for the next task.
 
 ```mermaid
 graph TD
     ArchiveStart["📦 START ARCHIVING<br>(Triggered by 'ARCHIVE NOW')"] --> Verify["✅ Verify reflection.md<br>is Complete"]
-    Verify --> CreateDoc["📄 Create Archive Document<br>in docs/archive/"]
+    Verify --> CreateDoc["📄 Create Archive Document<br>archive.md"]
     CreateDoc --> UpdateTasks["📝 Update tasks.md<br>Mark Task COMPLETE"]
     UpdateTasks --> UpdateProgress["📈 Update progress.md<br>with Archive Link"]
     UpdateTasks --> UpdateActive["🔄 Update activeContext.md<br>Reset for Next Task"]
@@ -199,7 +199,7 @@ graph TD
 ✓ ARCHIVE VERIFICATION
 - Reflection document reviewed? [YES/NO]
 - Archive document created with all sections? [YES/NO]
-- Archive document placed in correct location (docs/archive/)? [YES/NO]
+- Archive document placed in correct location (<MB_ROOT>/archive.md)? [YES/NO]
 - tasks.md marked as COMPLETED? [YES/NO]
 - progress.md updated with archive reference? [YES/NO]
 - activeContext.md updated for next task? [YES/NO]

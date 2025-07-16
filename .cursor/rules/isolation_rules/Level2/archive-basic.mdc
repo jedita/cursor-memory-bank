@@ -1,6 +1,6 @@
 ---
 description: Basic archiving approach for Level 2 Simple Enhancement tasks
-globs: "**/level2/**", "**/archive/**", "**/completion/**"
+globs: "**/level2/**", "**/archive.md", "**/completion/**"
 alwaysApply: false
 ---
 
@@ -64,16 +64,8 @@ YYYY-MM-DD
 
 ## 📋 ARCHIVE LOCATION
 
-Store archives in an organized structure:
+Store archives in <MB_ROOT>/archive.md:
 
-```
-docs/
-└── archive/
-    └── enhancements/
-        └── YYYY-MM/
-            ├── feature-name-1.md
-            └── feature-name-2.md
-```
 
 ## 📋 ARCHIVING PROCESS
 
@@ -106,19 +98,19 @@ When creating cross-references:
 1. **In <MB_ROOT>/tasks.md**:
    ```markdown
    ## Completed Enhancements
-   - [X] [Feature Name] (YYYY-MM-DD) - [Archive Link](../docs/archive/enhancements/YYYY-MM/feature-name.md)
+   - [X] [Feature Name] (YYYY-MM-DD) - [Archive Link](../archive.md)
    ```
 
 2. **In <MB_ROOT>/progress.md**:
    ```markdown
    ## Completed Milestones
-   - [Feature Name] enhancement completed on YYYY-MM-DD. See [archive entry](../docs/archive/enhancements/YYYY-MM/feature-name.md).
+   - [Feature Name] enhancement completed on YYYY-MM-DD. See [archive entry](../archive.md).
    ```
 
 3. **In <MB_ROOT>/activeContext.md**:
    ```markdown
    ## Recently Completed
-   - [Feature Name] enhancement is now complete. Archive: [link](../docs/archive/enhancements/YYYY-MM/feature-name.md)
+   - [Feature Name] enhancement is now complete. Archive: [link](../archive.md)
    
    ## Current Focus
    - Moving to [Next Task Name]

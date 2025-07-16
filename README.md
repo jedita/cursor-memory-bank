@@ -235,9 +235,9 @@ graph TD
     MB --> P2["bug-fix -- 2024-06-09 15:45 -- REFLECT/"]
     MB --> P3["new-api -- 2024-06-08 09:20 -- CREATIVE/"]
     
-    P1 --> F1["📄 tasks.md<br>📄 activeContext.md<br>📄 progress.md<br>📁 creative/<br>📁 reflection/<br>📁 archive/"]
-    P2 --> F2["📄 tasks.md<br>📄 activeContext.md<br>📄 progress.md<br>📁 creative/<br>📁 reflection/<br>📁 archive/"]
-    P3 --> F3["📄 tasks.md<br>📄 activeContext.md<br>📄 progress.md<br>📁 creative/<br>📁 reflection/<br>📁 archive/"]
+    P1 --> F1["📄 tasks.md<br>📄 activeContext.md<br>📄 progress.md<br>📁 creative.md<br>📁 reflection.md<br>📁 archive.md"]
+    P2 --> F2["📄 tasks.md<br>📄 activeContext.md<br>📄 progress.md<br>📁 creative.md<br>📁 reflection.md<br>📁 archive.md"]
+    P3 --> F3["📄 tasks.md<br>📄 activeContext.md<br>📄 progress.md<br>📁 creative.md<br>📁 reflection.md<br>📁 archive.md"]
     
     style Repo fill:#4da6ff,stroke:#0066cc,color:white
     style MB fill:#ff6b6b,stroke:#e74c3c,color:white
@@ -286,9 +286,9 @@ graph LR
         Tasks["tasks.md<br>Source of Truth"]
         Active["activeContext.md<br>Current Focus"]
         Progress["progress.md<br>Implementation Status"]
-        Creative["creative/<br>Design Decisions"]
-        Reflect["reflection/<br>Review Documents"]
-        Archive["archive/<br>Task Documentation"]
+        Creative["creative.md<br>Design Decisions"]
+        Reflect["reflection.md<br>Review Documents"]
+        Archive["archive.md<br>Task Documentation"]
     end
     
     style Tasks fill:#f9d77e,stroke:#d9b95c,stroke-width:3px
@@ -302,9 +302,9 @@ graph LR
 - **tasks.md**: Central source of truth for task tracking (project-scoped)
 - **activeContext.md**: Maintains focus of current development phase
 - **progress.md**: Tracks implementation status
-- **creative/**: Design decision documents generated during CREATIVE mode
-- **reflection/**: Review documents created during REFLECT mode
-- **archive/**: Comprehensive task documentation for completed work
+- **creative.md**: Design decision document generated during CREATIVE mode
+- **reflection.md** Review document created during REFLECT mode
+- **archive.md**: Comprehensive task documentation for completed work
 
 ## Troubleshooting
 

@@ -77,19 +77,11 @@ function initializeProjectFiles(projectPath) {
     'projectbrief.md',
     'productContext.md',
     'systemPatterns.md',
-    'techContext.md'
-  ];
-  
-  const requiredDirs = [
-    'creative',
-    'reflection', 
-    'archive'
-  ];
-  
-  // Create subdirectories
-  requiredDirs.forEach(dir => {
-    fs.mkdirSync(path.join(projectPath, dir), { recursive: true });
-  });
+    'techContext.md',
+    'creative.md',
+    'reflection.md',
+    'archive.md'
+];
   
   // Create files with templates
   requiredFiles.forEach(file => {
@@ -136,18 +128,7 @@ function migrateLegacyFiles() {
       fs.renameSync(sourcePath, targetPath);
     }
   });
-  
-  // Move existing subdirectories
-  const legacyDirs = ['creative', 'reflection', 'archive'];
-  legacyDirs.forEach(dir => {
-    const sourcePath = path.join(memoryBankDir, dir);
-    const targetPath = path.join(legacyPath, dir);
-    
-    if (fs.existsSync(sourcePath)) {
-      fs.renameSync(sourcePath, targetPath);
-    }
-  });
-  
+
   return legacyPath;
 }
 ```
@@ -213,11 +194,6 @@ graph TD
 ```powershell
 # Create project-specific directories
 $projectPath = "<MB_ROOT>"
-$subdirs = @("creative", "reflection", "archive")
-
-# Create all project subdirectories in one command
-$allDirs = $subdirs | ForEach-Object { "$projectPath\$_" }
-mkdir $allDirs -ErrorAction SilentlyContinue
 
 # Create all required files
 $files = @("$projectPath\tasks.md", 
@@ -226,6 +202,9 @@ $files = @("$projectPath\tasks.md",
            "$projectPath\systemPatterns.md",
            "$projectPath\techContext.md",
            "$projectPath\activeContext.md",
+           "$projectPath\creative.md",
+           "$projectPath\reflection.md",
+           "$projectPath\archive.md",
            "$projectPath\progress.md")
 
 foreach ($file in $files) {
@@ -240,9 +219,6 @@ foreach ($file in $files) {
 # Create project-specific directories
 PROJECT_PATH="<MB_ROOT>"
 
-# Create all directories in one command
-mkdir -p "$PROJECT_PATH"/{creative,reflection,archive}
-
 # Create all required files
 touch "$PROJECT_PATH"/tasks.md \
       "$PROJECT_PATH"/projectbrief.md \
@@ -250,6 +226,9 @@ touch "$PROJECT_PATH"/tasks.md \
       "$PROJECT_PATH"/systemPatterns.md \
       "$PROJECT_PATH"/techContext.md \
       "$PROJECT_PATH"/activeContext.md \
+      "$PROJECT_PATH"/creative.md \
+      "$PROJECT_PATH"/reflection.md \
+      "$PROJECT_PATH"/archive.md \
       "$PROJECT_PATH"/progress.md
 ```
 
@@ -260,22 +239,14 @@ Multi-project verification with batch operations:
 ```powershell
 # Windows - PowerShell Multi-Project Verification
 $projectPath = "<MB_ROOT>"  # Resolved by platform-awareness
-$requiredDirs = @("creative", "reflection", "archive")
-$requiredFiles = @("tasks.md", "projectbrief.md", "productContext.md", 
-                  "systemPatterns.md", "techContext.md", "activeContext.md", "progress.md")
+$requiredFiles = @("tasks.md", "projectbrief.md", "productContext.md", "systemPatterns.md", "techContext.md", "activeContext.md", "progress.md","creative.md", "reflection.md", "archive.md")
 
-$missingDirs = $requiredDirs | ForEach-Object { "$projectPath\$_" } | 
-               Where-Object { -not (Test-Path $_) -or -not (Test-Path $_ -PathType Container) }
 $missingFiles = $requiredFiles | ForEach-Object { "$projectPath\$_" } | 
                 Where-Object { -not (Test-Path $_) -or (Test-Path $_ -PathType Container) }
 
-if ($missingDirs.Count -eq 0 -and $missingFiles.Count -eq 0) {
+if ($missingFiles.Count -eq 0) {
     Write-Output "✓ All required project components verified for current project"
 } else {
-    # Create all missing items at once
-    if ($missingDirs.Count -gt 0) {
-        $missingDirs | ForEach-Object { mkdir $_ -Force }
-    }
     if ($missingFiles.Count -gt 0) {
         $missingFiles | ForEach-Object { New-Item -Path $_ -ItemType File -Force }
     }
@@ -354,7 +325,6 @@ foreach ($file in $templates.Keys) {
 ✅ MULTI-PROJECT VERIFICATION COMPLETE
 - Current Project: [project-name -- timestamp -- stage]
 - Project Path: [<MB_ROOT> resolved path]
-- Created directories: [list]
 - Created files: [list]
 - All project components verified
 
@@ -369,6 +339,11 @@ Available in VAN mode and other modes:
 - **SWITCH PROJECT <name>**: Switch to different project context  
 - **CURRENT PROJECT**: Display currently active project
 - **NEW PROJECT <name>**: Create new project with full file structure 
+- Created files: [list]
+- All components verified
+
+Memory Bank system ready for use.
+``` 
 - Created files: [list]
 - All components verified
 

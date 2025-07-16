@@ -3,6 +3,7 @@ description: Visual process map for VAN mode file verification
 globs: van-file-verification.mdc
 alwaysApply: false
 ---
+
 # OPTIMIZED FILE VERIFICATION SYSTEM
 
 🚨 CRITICAL: MEMORY BANK VERIFICATION REQUIRED 🚨
@@ -70,14 +71,6 @@ function verifyMemoryBank() {
     return verifyMemoryBankCreation();
   }
   
-  // Check required subdirectories
-  const requiredDirs = [
-    "<MB_ROOT>/active-context",
-    "<MB_ROOT>/system-patterns",
-    "<MB_ROOT>/creative-phase",
-    "<MB_ROOT>/implementation"
-  ];
-  
   const missingDirs = requiredDirs.filter(dir => !checkDirectoryExists(dir));
   if (missingDirs.length > 0) {
     console.error(`⛔ CRITICAL ERROR: Missing Memory Bank directories: ${missingDirs.join(", ")}`);
@@ -87,8 +80,8 @@ function verifyMemoryBank() {
   
   // Check critical files
   const criticalFiles = [
-    "<MB_ROOT>/active-context/activeContext.md",
-    "<MB_ROOT>/system-patterns/systemPatterns.md"
+    "<MB_ROOT>/activeContext.md",
+    "<MB_ROOT>/systemPatterns.md"
   ];
   
   const missingFiles = criticalFiles.filter(file => !checkFileExists(file));
@@ -139,16 +132,25 @@ graph TD
 #### Windows (PowerShell)
 ```powershell
 # Create all directories in one command
-mkdir memory-bank, docs, docs\archive -ErrorAction SilentlyContinue
+# Resolve current project path (multi-project aware)
+$projectPath = "<MB_ROOT>"
+
+# Create all directories in one command (quote the path to handle spaces and special characters)
+mkdir -Path "$projectPath" -ErrorAction SilentlyContinue
 
 # Create all required files
-$files = @(".cursorrules", "tasks.md", 
-           "memory-bank\projectbrief.md", 
-           "memory-bank\productContext.md",
-           "memory-bank\systemPatterns.md",
-           "memory-bank\techContext.md",
-           "memory-bank\activeContext.md",
-           "memory-bank\progress.md")
+$files = @(
+    "$projectPath\tasks.md",
+    "$projectPath\projectbrief.md",
+    "$projectPath\productContext.md",
+    "$projectPath\systemPatterns.md",
+    "$projectPath\techContext.md",
+    "$projectPath\activeContext.md",
+    "$projectPath\creative.md",
+    "$projectPath\reflection.md",
+    "$projectPath\archive.md",
+    "$projectPath\progress.md"
+)
 
 foreach ($file in $files) {
     if (-not (Test-Path $file)) {
@@ -160,16 +162,21 @@ foreach ($file in $files) {
 #### Mac/Linux (Bash)
 ```bash
 # Create all directories in one command
-mkdir -p memory-bank docs/archive
+PROJECT_PATH="<MB_ROOT>"
+
+mkdir -p "$PROJECT_PATH"
 
 # Create all required files
-touch .cursorrules tasks.md \
-    <MB_ROOT>/projectbrief.md \
-    <MB_ROOT>/productContext.md \
-    <MB_ROOT>/systemPatterns.md \
-    <MB_ROOT>/techContext.md \
-    <MB_ROOT>/activeContext.md \
-    <MB_ROOT>/progress.md
+touch "$PROJECT_PATH"/tasks.md \
+      "$PROJECT_PATH"/projectbrief.md \
+      "$PROJECT_PATH"/productContext.md \
+      "$PROJECT_PATH"/systemPatterns.md \
+      "$PROJECT_PATH"/techContext.md \
+      "$PROJECT_PATH"/activeContext.md \
+      "$PROJECT_PATH"/creative.md \
+      "$PROJECT_PATH"/reflection.md \
+      "$PROJECT_PATH"/archive.md \
+      "$PROJECT_PATH"/progress.md
 ```
 
 ## 📝 STREAMLINED VERIFICATION PROCESS
@@ -178,10 +185,10 @@ Instead of checking each component separately, perform batch verification:
 
 ```powershell
 # Windows - PowerShell
-$requiredDirs = @("memory-bank", "docs", "docs\archive")
-$requiredFiles = @(".cursorrules", "tasks.md")
+$requiredDirs = @("memory-bank")
+$requiredFiles = @("tasks.md")
 $mbFiles = @("projectbrief.md", "productContext.md", "systemPatterns.md", 
-             "techContext.md", "activeContext.md", "progress.md")
+             "techContext.md", "activeContext.md", "creative.md", "reflection.md", "archive.md", "progress.md")
 
 $missingDirs = $requiredDirs | Where-Object { -not (Test-Path $_) -or -not (Test-Path $_ -PathType Container) }
 $missingFiles = $requiredFiles | Where-Object { -not (Test-Path $_) -or (Test-Path $_ -PathType Container) }
@@ -253,12 +260,11 @@ foreach ($file in $templates.Keys) {
 1. **Batch Operations**: Always use batch operations instead of individual commands
    ```
    # GOOD: Create all directories at once
-   mkdir memory-bank docs docs\archive
+   mkdir memory-bank
    
    # BAD: Create directories one at a time
    mkdir memory-bank
-   mkdir docs
-   mkdir docs\archive
+   # docs directory no longer required
    ```
 
 2. **Pre-Check Optimization**: Check all requirements first, then create only what's missing
@@ -272,7 +278,7 @@ foreach ($file in $templates.Keys) {
 
 3. **Error Handling**: Include error handling in all commands
    ```
-   mkdir memory-bank, docs, docs\archive -ErrorAction SilentlyContinue
+   mkdir memory-bank -ErrorAction SilentlyContinue
    ```
 
 4. **Platform Adaptation**: Auto-detect platform and use appropriate commands
@@ -286,7 +292,7 @@ foreach ($file in $templates.Keys) {
 
 5. **One-Pass Verification**: Verify directory structure in a single pass
    ```
-   $requiredPaths = @("memory-bank", "docs", "docs\archive", ".cursorrules", "tasks.md")
+   $requiredPaths = @("memory-bank", "tasks.md")
    $missingPaths = $requiredPaths | Where-Object { -not (Test-Path $_) }
    ```
 

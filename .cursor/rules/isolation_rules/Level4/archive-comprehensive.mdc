@@ -1,6 +1,6 @@
 ---
 description: Comprehensive archiving approach for Level 4 Complex System tasks
-globs: "**/level4/**", "**/archive/**"
+globs: "**/level4/**", "**/archive.md"
 alwaysApply: false
 ---
 

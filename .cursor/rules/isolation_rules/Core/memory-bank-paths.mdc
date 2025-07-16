@@ -27,9 +27,9 @@ The Memory Bank now supports multiple isolated project contexts within a single 
 * **System Patterns File:** `<MB_ROOT>/systemPatterns.md`
 * **Tech Context File:** `<MB_ROOT>/techContext.md`
 * **Style Guide File:** `<MB_ROOT>/style-guide.md`
-* **Creative Phase Docs:** `<MB_ROOT>/creative/creative-[feature_name].md`
-* **Reflection Docs:** `<MB_ROOT>/reflection/reflection-[task_id].md`
-* **Archive Directory:** `<MB_ROOT>/archive/archive-[task_id].md`
+* **Creative Phase Docs:** `<MB_ROOT>/creative.md`
+* **Reflection Docs:** `<MB_ROOT>/reflection.md`
+* **Archive Directory:** `<MB_ROOT>/archive.md`
 
 ## Project Management Commands
 

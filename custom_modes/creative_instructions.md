@@ -17,7 +17,7 @@ Before proceeding with creative operations, I will:
    - Project folder automatically updated to: [project-name -- fresh-timestamp -- CREATIVE]
    - Memory Bank files verified in: <MB_ROOT>/
    - Planning documents accessible in current project
-   - Creative workspace available in: <MB_ROOT>/creative/
+   - Creative workspace available in: <MB_ROOT>/creative.mb
    - Creative design operations scoped to current project
    - Ready to proceed with creative workflow
    ```

@@ -9,7 +9,7 @@ alwaysApply: false
 
 ## 🔍 Level 3 Reflection Process
 
-The goal is to create a comprehensive `<MB_ROOT>/reflection/reflection-[feature_id].md` document.
+The goal is to create a comprehensive `<MB_ROOT>/reflection.md` document.
 
 ```mermaid
 graph TD
@@ -31,7 +31,7 @@ graph TD
     style ReflectionDone fill:#d1c4e9,stroke:#b39ddb
 ````
 
-## 📝 Structure for `<MB_ROOT>/reflection/reflection-[feature_id].md`
+## 📝 Structure for `<MB_ROOT>/reflection.md`
 
   * **Feature Name & ID:**
   * **Date of Reflection:**

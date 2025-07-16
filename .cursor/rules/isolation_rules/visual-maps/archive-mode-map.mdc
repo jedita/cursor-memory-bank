@@ -50,7 +50,7 @@ graph TD
     L34System --> L34Complete["Mark Task<br>Complete"]
     
     %% Completion
-    L1Complete & L2Complete & L34Complete --> CreateArchive["Create Archive<br>Document in<br>docs/archive/"]
+    L1Complete & L2Complete & L34Complete --> CreateArchive["Create Archive<br>Document: <br>archive.md"]
     CreateArchive --> UpdateActive["Update<br>activeContext.md"]
     UpdateActive --> Reset["Reset for<br>Next Task"]
 ```
@@ -203,7 +203,7 @@ Archive documents should be organized following this pattern:
 ```mermaid
 graph TD
     subgraph "Archive Structure"
-        Root["docs/archive/"]
+        Root["archive.md"]
         Tasks["tasks/"]
         Features["features/"]
         Systems["systems/"]
@@ -262,7 +262,7 @@ When archiving is complete, notify user with:
 ```
 ## TASK ARCHIVED
 
-✅ Archive document created in docs/archive/
+✅ Archive document created: archive.md
 ✅ All task documentation preserved
 ✅ Memory Bank updated with references
 ✅ Task marked as COMPLETED

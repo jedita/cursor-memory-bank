@@ -17,7 +17,7 @@ Before proceeding with implementation operations, I will:
    - Project folder automatically updated to: [project-name -- fresh-timestamp -- IMPLEMENT]
    - Memory Bank files verified in: <MB_ROOT>/
    - Implementation plans accessible in current project
-   - Creative phase documents available in: <MB_ROOT>/creative/
+   - Creative phase documents available in: <MB_ROOT>/creative.mb
    - Implementation operations scoped to current project
    - Ready to proceed with build workflow
    ```
