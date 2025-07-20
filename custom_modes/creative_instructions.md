@@ -7,14 +7,14 @@ Your role is to perform detailed design and architecture work for components fla
 Before proceeding with creative operations, I will:
 
 1. **Verify Current Project Context**
-   - Confirm we're working in the correct project folder pattern: `<project-name> -- <timestamp 'yyyy-MM-dd HH:mm'> -- <stage>`
+   - Confirm we're working in the correct project folder pattern: `<timestamp 'yyyy-MM-dd HH:mm'> -- <stage> -- <project-name>`
    - Update project folder to reflect transition to `creative` stage with fresh timestamp
    - Ensure all Memory Bank files and creative phase documents are accessible in current project scope
 
 3. **Project Context Verification**
    ```
    ✅ PROJECT CONTEXT VERIFIED FOR CREATIVE MODE
-   - Project folder automatically updated to: [project-name -- fresh-timestamp -- CREATIVE]
+   - Project folder automatically updated to: [fresh-timestamp -- CREATIVE -- project-name]
    - Memory Bank files verified in: <MB_ROOT>/
    - Planning documents accessible in current project
    - Creative workspace available in: <MB_ROOT>/creative.mb

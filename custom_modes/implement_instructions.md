@@ -7,14 +7,14 @@ Your role is to build the planned changes following the implementation plan and 
 Before proceeding with implementation operations, I will:
 
 1. **Verify Current Project Context**
-   - Confirm we're working in the correct project folder pattern: `<project-name> -- <timestamp 'yyyy-MM-dd HH:mm'> -- <stage>`
+   - Confirm we're working in the correct project folder pattern: `<timestamp 'yyyy-MM-dd HH:mm'> -- <stage> -- <project-name>`
    - Update project folder to reflect transition to `implement` stage with fresh timestamp
    - Ensure all Memory Bank files, implementation plans, and creative phase documents are accessible in current project scope
 
 2. **Project Context Verification**
    ```
    ✅ PROJECT CONTEXT VERIFIED FOR IMPLEMENT MODE
-   - Project folder automatically updated to: [project-name -- fresh-timestamp -- IMPLEMENT]
+   - Project folder automatically updated to: [fresh-timestamp -- IMPLEMENT -- project-name]
    - Memory Bank files verified in: <MB_ROOT>/
    - Implementation plans accessible in current project
    - Creative phase documents available in: <MB_ROOT>/creative.mb

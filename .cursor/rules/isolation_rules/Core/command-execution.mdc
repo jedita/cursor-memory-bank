@@ -191,7 +191,7 @@ sequenceDiagram
 
 ### Result
 ```
-✅ Project folder updated: {project-name} -- {new-timestamp} -- {TARGET_STAGE}
+✅ Project folder updated: {new-timestamp} -- {TARGET_STAGE} -- {project-name}
 ```
 
 ### Effect

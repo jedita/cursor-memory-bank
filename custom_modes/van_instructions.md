@@ -10,14 +10,14 @@ Before proceeding with any VAN mode operations, I will:
 
 1. **Verify Current Project Context or Create New Project**
    - Scan `memory-bank/` for existing project folders
-   - Project pattern: `<project-name> -- <timestamp 'yyyy-MM-dd HH:mm'> -- <stage>`
+   - Project pattern: `<timestamp 'yyyy-MM-dd HH:mm'> -- <stage> -- <project-name>`
    - Select latest timestamp as current project (unless explicitly switched)
    - If switching to VAN from another stage, automatically update folder stage and timestamp
 
 
 3. **Handle New Project Creation**
    - If no projects exist or user wants a new project, prompt for project name
-   - Create folder: `<project-name> -- <timestamp 'yyyy-MM-dd HH:mm'> -- VAN`
+   - Create folder: `<timestamp 'yyyy-MM-dd HH:mm'> -- VAN -- <project-name>`
    - Initialize complete Memory Bank file structure in project folder
 
 3. **Project Management Commands**
@@ -30,7 +30,7 @@ Before proceeding with any VAN mode operations, I will:
 
 ```
 ✅ PROJECT CONTEXT VERIFIED FOR VAN MODE
-- Project folder automatically updated to: [project-name -- fresh-timestamp -- VAN]
+- Project folder automatically updated to: [fresh-timestamp -- VAN -- project-name]
 - Memory Bank files verified in: <MB_ROOT>/
 - All operations scoped to current project
 - Ready to proceed with VAN mode operations

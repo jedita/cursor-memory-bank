@@ -267,16 +267,16 @@ graph LR
 
 ### Project Folder Naming Convention
 
-Projects follow the pattern: `<project-name> -- <timestamp> -- <stage>`
+Projects follow the pattern: `<timestamp> -- <stage> -- <project-name>`
 
 - **Project Name**: Alphanumeric, spaces, underscores, hyphens allowed
-- **ISO Timestamp**: YYYY-MM-DDTHH-MM-SS format, auto-refreshed on transitions
+- **Timestamp**: YYYY-MM-DD HH-MM format, auto-refreshed on transitions
 - **Stage**: van | plan | creative | implement | reflect (auto-updated on mode transitions)
 
 **Examples**:
-- `user-authentication -- 2024-06-10 12:30 -- VAN`
-- `api refactor -- 2024-06-09 15:45 -- IMPLEMENT`
-- `bug_fix_123 -- 2024-06-08 09:20 -- REFLECT`
+- `2024-06-10 12:30 -- VAN -- user-authentication`
+- `2024-06-09 15:45 -- IMPLEMENT -- api refactor`
+- `2024-06-08 09:20 -- REFLECT -- bug_fix_123`
 
 ## Core Files and Their Purposes
 

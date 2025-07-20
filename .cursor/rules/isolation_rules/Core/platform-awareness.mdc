@@ -133,12 +133,33 @@ Rename-Item $OldFolder $FolderName
 
 ## 🎯 MB_ROOT MACRO RESOLVER
 
-### Enhanced Project Discovery
+### Enhanced Project Discovery with Stage Transition Support
 
-The enhanced `<MB_ROOT>` macro resolver now includes stage transition awareness:
+The enhanced `<MB_ROOT>` macro resolver now includes stage transition awareness and automated timestamp refresh during mode transitions:
 
 ```javascript
 // Enhanced pseudocode for MB_ROOT resolution with stage awareness
+function identifyRepoRoot() {
+  const CURSOR_WORKSPACE = process.env.INIT_CWD || process.cwd();
+  let dir = CURSOR_WORKSPACE;
+
+  while (true) {
+    // Prefer folder containing .git as repo root
+    if (fs.existsSync(path.join(dir, '.git'))) {
+      return dir;
+    }
+
+    const parent = path.dirname(dir);
+
+    // If we have reached filesystem root OR would move above workspace boundary, stop.
+    if (parent === dir || parent.length < CURSOR_WORKSPACE.length) {
+      return CURSOR_WORKSPACE;
+    }
+
+    dir = parent;
+  }
+}
+
 function resolveMBRoot() {
   const repoRoot = identifyRepoRoot();
   const memoryBankDir = path.join(repoRoot, 'memory-bank');
@@ -162,7 +183,7 @@ function resolveMBRoot() {
 }
 
 function scanProjectFoldersWithStageAwareness(memoryBankDir) {
-  const regex = /^(.+) -- (\d{4}-\d{2}-\d{2} \d{2}:\d{2}) -- (VAN|PLAN|CREATIVE|IMPLEMENT|REFLECT|ARCHIVE)$/;
+  const regex = /^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}) -- (VAN|PLAN|CREATIVE|IMPLEMENT|REFLECT|ARCHIVE) -- (.+)$/;
   const folders = fs.readdirSync(memoryBankDir, { withFileTypes: true })
     .filter(dirent => dirent.isDirectory())
     .map(dirent => dirent.name)
@@ -171,10 +192,10 @@ function scanProjectFoldersWithStageAwareness(memoryBankDir) {
       const match = name.match(regex);
       return {
         folderName: name,
-        projectName: match[1],
-        timestamp: match[2],
-        stage: match[3],
-        timestampDate: new Date(match[2].replace(' ', 'T') + ':00') // Convert to Date for sorting
+        timestamp: match[1],
+        stage: match[2],
+        projectName: match[3],
+        timestampDate: new Date(match[1].replace(' ', 'T') + ':00') // Convert to Date for sorting
       };
     });
   
@@ -239,13 +260,13 @@ graph TD
 
 ### Project Folder Naming Convention
 
-**Pattern**: `<project-name> -- <timestamp> -- <stage>`
+**Pattern**: `<timestamp> -- <stage> -- <project-name>`
 
-**Regex**: `^(.+) -- (\d{4}-\d{2}-\d{2} \d{2}:\d{2}) -- (VAN|PLAN|CREATIVE|IMPLEMENT|REFLECT|ARCHIVE)$`
+**Regex**: `^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}) -- (VAN|PLAN|CREATIVE|IMPLEMENT|REFLECT|ARCHIVE) -- (.+)$`
 
 **Examples**:
-- `my-feature -- 2024-06-10 12:30 -- VAN`
-- `user-auth -- 2024-06-09 15:45 -- IMPLEMENT`
+- `2024-06-10 12:30 -- VAN -- my-feature`
+- `2024-06-09 15:45 -- IMPLEMENT -- user-auth`
 - `legacy -- 2024-06-08 10:00 -- VAN`
 
 ### Resolver Implementation
@@ -289,7 +310,7 @@ function resolveMBRoot() {
 }
 
 function scanProjectFolders(memoryBankDir) {
-  const regex = /^(.+) -- (\d{4}-\d{2}-\d{2} \d{2}:\d{2}) -- (VAN|PLAN|CREATIVE|IMPLEMENT|REFLECT|ARCHIVE)$/;
+  const regex = /^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}) -- (VAN|PLAN|CREATIVE|IMPLEMENT|REFLECT|ARCHIVE) -- (.+)$/;
   const folders = fs.readdirSync(memoryBankDir, { withFileTypes: true })
     .filter(dirent => dirent.isDirectory())
     .map(dirent => dirent.name)
@@ -298,9 +319,9 @@ function scanProjectFolders(memoryBankDir) {
       const match = name.match(regex);
       return {
         folderName: name,
-        projectName: match[1],
-        timestamp: match[2],
-        stage: match[3]
+        timestamp: match[1],
+        stage: match[2],
+        projectName: match[3]
       };
     });
   
@@ -382,14 +403,9 @@ sequenceDiagram
 
 → If all YES: Platform adaptation complete
 → If any NO: Run additional detection steps
-``` 
-- Path format handling configured? [YES/NO]
+```
+- Legacy migration operational? [YES/NO]
 
 → If all YES: Platform adaptation complete
 → If any NO: Run additional detection steps
-``` 
-- Path format handling configured? [YES/NO]
-
-→ If all YES: Platform adaptation complete
-→ If any NO: Run additional detection steps
-``` 
+```

@@ -9,14 +9,14 @@ Your role is to facilitate the **reflection** on the completed task and then, up
 Before proceeding with reflection and archiving operations, I will:
 
 1. **Verify Current Project Context**
-   - Confirm we're working in the correct project folder pattern: `<project-name> -- <timestamp 'yyyy-MM-dd HH:mm'> -- <stage>`
+   - Confirm we're working in the correct project folder pattern: `<timestamp 'yyyy-MM-dd HH:mm'> -- <stage> -- <project-name>`
    - Update project folder to reflect transition to `reflect` stage with fresh timestamp
    - Ensure all Memory Bank files, implementation results, and creative phase documents are accessible in current project scope
 
 2. **Project Context Verification**
    ```
    ✅ PROJECT CONTEXT VERIFIED FOR REFLECT+ARCHIVE MODE
-   - Project folder automatically updated to: [project-name -- fresh-timestamp -- REFLECT]
+   - Project folder automatically updated to: [fresh-timestamp -- REFLECT -- project-name]
    - Memory Bank files verified in: <MB_ROOT>/
    - Implementation results accessible in current project
    - Creative phase document accessible in: <MB_ROOT>/creative.md

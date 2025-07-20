@@ -323,7 +323,7 @@ foreach ($file in $templates.Keys) {
 
 ```
 ✅ MULTI-PROJECT VERIFICATION COMPLETE
-- Current Project: [project-name -- timestamp -- stage]
+- Current Project: [timestamp -- stage -- project-name]
 - Project Path: [<MB_ROOT> resolved path]
 - Created files: [list]
 - All project components verified

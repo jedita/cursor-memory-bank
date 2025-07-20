@@ -11,11 +11,11 @@ alwaysApply: true
 
 The Memory Bank now supports multiple isolated project contexts within a single repository. Each project has its own complete set of Memory Bank files in a dedicated sub-folder under `memory-bank/`.
 
-**Project Folder Pattern**: `memory-bank/<project-name> -- <timestamp> -- <stage>/`
+**Project Folder Pattern**: `memory-bank/<timestamp> -- <stage> -- <project-name>/`
 
 **Examples**:
-- `memory-bank/my-feature -- 2024-06-10 12:30 -- VAN/`
-- `memory-bank/user-auth -- 2024-06-09 15:45 -- IMPLEMENT/`
+- `memory-bank/2024-06-10 12:30 -- VAN -- my-feature/`
+- `memory-bank/2024-06-09 15:45 -- IMPLEMENT -- user-auth/`
 
 ## Core File Locations (Project-Scoped)
 
@@ -48,7 +48,3 @@ The `<MB_ROOT>` macro is resolved by the platform-awareness system:
 4. **Legacy Support**: Auto-migrate legacy files to `legacy -- <timestamp> -- van/` if found
 
 **Verification Mandate:** Before any `create_file` or `edit_file` operation on these core files, verify the path starts with `<MB_ROOT>/`. The macro will be resolved to the appropriate project folder at runtime. If attempting to create a new core file (e.g., `tasks.md` at the start of a project), ensure it is created at `<MB_ROOT>/tasks.md`.
-
-## Backward Compatibility
-
-Legacy repositories with files directly in `memory-bank/` (without project sub-folders) are automatically migrated on first write operation. The legacy files are moved to a new project folder named `legacy -- <timestamp> -- VAN/`.

@@ -18,7 +18,7 @@ The automatic stage transition system is now implemented via the `stage-update-h
 graph TD
     CurrentProject["Current Project<br><project-name> -- <old-timestamp> -- <old-stage>"] --> StageUpdate["STAGE_UPDATE<br>Handler Invocation"]
     StageUpdate --> DetectCurrent["Detect Current<br>Project Folder"]
-                DetectCurrent --> GenerateTimestamp["Generate Fresh<br>Timestamp"]
+    DetectCurrent --> GenerateTimestamp["Generate Fresh<br>Timestamp"]
     GenerateTimestamp --> CreateNewName["Create New Folder Name<br><project-name> -- <new-timestamp> -- <new-stage>"]
     CreateNewName --> PlatformCommand["Generate Platform-Aware<br>Rename Command"]
     PlatformCommand --> RenameFolder["Execute Atomic<br>Folder Rename"]
@@ -120,7 +120,7 @@ Create a standardized transition document when switching modes:
 ```
 ✅ Automatic Stage Transition: VAN → PLAN
 - Command: STAGE_UPDATE target="PLAN"
-- Result: project-name -- 2025-07-15 14:11 -- PLAN
+- Result: 2025-07-15 14:11 -- PLAN -- project-name
 - Files transferred: All Memory Bank files remain in project scope
 - <MB_ROOT> automatically updated to new path
 ```
@@ -129,7 +129,7 @@ Create a standardized transition document when switching modes:
 ```
 ✅ Automatic Stage Transition: PLAN → CREATIVE  
 - Command: STAGE_UPDATE target="CREATIVE"
-- Result: project-name -- 2025-07-15 14:12 -- CREATIVE
+- Result: 2025-07-15 14:12 -- CREATIVE -- project-name
 - Files transferred: Planning documents accessible, creative workspace ready
 - <MB_ROOT> automatically updated to new path
 ```
@@ -138,7 +138,7 @@ Create a standardized transition document when switching modes:
 ```
 ✅ Automatic Stage Transition: CREATIVE → IMPLEMENT
 - Command: STAGE_UPDATE target="IMPLEMENT"
-- Result: project-name -- 2025-07-15 14:13 -- IMPLEMENT
+- Result: 2025-07-15 14:13 -- IMPLEMENT -- project-name
 - Files transferred: Creative decisions and implementation plans accessible
 - <MB_ROOT> automatically updated to new path
 ```
@@ -147,7 +147,7 @@ Create a standardized transition document when switching modes:
 ```
 ✅ Automatic Stage Transition: IMPLEMENT → REFLECT
 - Command: STAGE_UPDATE target="REFLECT"
-- Result: project-name -- 2025-07-15 14:14 -- REFLECT
+- Result: 2025-07-15 14:14 -- REFLECT -- project-name
 - Files transferred: Implementation results and build artifacts accessible
 - <MB_ROOT> automatically updated to new path
 ```
