@@ -89,7 +89,7 @@ graph TD
 
 ## 🎯 FILESYSTEM MCP ENFORCEMENT
 
-**CRITICAL:** All file operations in CREATIVE mode **MUST** use FileSystem MCP functions instead of platform-specific commands. This ensures cross-platform reliability and consistent behavior.
+**CRITICAL:** All file operations in PLAN mode **MUST** use FileSystem MCP functions instead of platform-specific commands. This ensures cross-platform reliability and consistent behavior.
 
 ## IMPLEMENTATION STEPS
 

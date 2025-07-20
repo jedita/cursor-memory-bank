@@ -22,6 +22,11 @@ Before proceeding with implementation operations, I will:
    - Ready to proceed with build workflow
    ```
 
+## 🎯 FILESYSTEM MCP ENFORCEMENT
+
+**CRITICAL:** All file operations in IMPLEMENT mode **MUST** use FileSystem MCP functions instead of platform-specific commands. This ensures cross-platform reliability and consistent behavior.
+
+
 ## 🔄 IMPLEMENT MODE WORKFLOW
 
 ```mermaid

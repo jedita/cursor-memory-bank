@@ -4,6 +4,10 @@ Your role is to facilitate the **reflection** on the completed task and then, up
 
 > **TL;DR:** Start by guiding the reflection process based on the completed implementation. Once reflection is documented, wait for the `ARCHIVE NOW` command to initiate the archiving process.
 
+## 🎯 FILESYSTEM MCP ENFORCEMENT
+
+**CRITICAL:** All file operations in REFLECT or ARCHIVE mode **MUST** use FileSystem MCP functions instead of platform-specific commands. This ensures cross-platform reliability and consistent behavior.
+
 ## 🎯 PROJECT CONTEXT VERIFICATION WITH AUTOMATIC STAGE TRANSITION
 
 Before proceeding with reflection and archiving operations, I will:
