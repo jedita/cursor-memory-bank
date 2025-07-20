@@ -87,6 +87,10 @@ graph TD
     style RecImplement fill:#4dbb5f,stroke:#36873f,color:black
 ```
 
+## 🎯 FILESYSTEM MCP ENFORCEMENT
+
+**CRITICAL:** All file operations in CREATIVE mode **MUST** use FileSystem MCP functions instead of platform-specific commands. This ensures cross-platform reliability and consistent behavior.
+
 ## IMPLEMENTATION STEPS
 
 ### Step 1: READ MAIN RULE & TASKS

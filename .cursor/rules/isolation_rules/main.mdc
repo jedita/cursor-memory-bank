@@ -132,15 +132,67 @@ sequenceDiagram
     end
 ```
 
-## 💻 PLATFORM-SPECIFIC COMMANDS
+## 🎯 FILESYSTEM MCP ENFORCEMENT - MANDATORY
 
-| Action | Windows | Mac/Linux |
-|--------|---------|-----------|
-| Create file | `echo. > file.ext` | `touch file.ext` |
-| Create directory | `mkdir directory` | `mkdir -p directory` |
-| Change directory | `cd directory` | `cd directory` |
-| List files | `dir` | `ls` |
-| Show file content | `type file.ext` | `cat file.ext` |
+**CRITICAL:** All file and directory operations MUST use FileSystem MCP functions instead of platform-specific commands. This ensures cross-platform reliability and consistent behavior across all modes.
+
+### ✅ MCP Operations (PREFERRED)
+
+| Operation | MCP Function | Traditional Command | Benefits |
+|-----------|--------------|-------------------|----------|
+| **Create Directory** | `mcp_filesystem_create_directory` | `mkdir`, `New-Item` | Cross-platform, recursive, validation |
+| **Write File** | `mcp_filesystem_write_file` | `echo`, `Out-File` | Atomic, encoding-safe, validation |
+| **Read File** | `mcp_filesystem_read_file` | `cat`, `Get-Content` | Consistent, encoding-handling |
+| **List Directory** | `mcp_filesystem_list_directory` | `ls`, `Get-ChildItem` | Unified format, metadata |
+| **Move/Rename** | `mcp_filesystem_move_file` | `mv`, `Move-Item` | Safe, validation, atomic |
+| **File Info** | `mcp_filesystem_get_file_info` | `test -f`, `Test-Path` | Detailed metadata |
+| **Search Files** | `mcp_filesystem_search_files` | `find`, `Get-ChildItem -Recurse` | Pattern-based, efficient |
+| **Edit File** | `mcp_filesystem_edit_file` | `sed`, `PowerShell` | Line-based, safe |
+
+### ❌ Platform Commands (AVOID)
+
+**DO NOT USE** platform-specific commands for file operations:
+
+```bash
+# ❌ AVOID - Platform-specific
+mkdir -p directory
+touch file.txt
+echo "content" > file.txt
+cat file.txt
+ls -la
+mv source dest
+```
+
+```powershell
+# ❌ AVOID - Platform-specific
+New-Item -ItemType Directory
+echo. > file.txt
+Get-Content file.txt
+Get-ChildItem
+Move-Item source dest
+```
+
+### 📋 MCP Usage Examples
+
+```javascript
+// ✅ CORRECT - MCP Directory Creation
+mcp_filesystem_create_directory({
+    path: "memory-bank/2025-07-20 12:30 -- VAN -- project-name"
+});
+
+// ✅ CORRECT - MCP File Writing
+mcp_filesystem_write_file({
+    path: "memory-bank/2025-07-20 12:30 -- VAN -- project-name/tasks.md",
+    content: "# Task: Project Name\n\n## Description\n..."
+});
+
+// ✅ CORRECT - MCP File Reading
+mcp_filesystem_read_file({
+    path: "memory-bank/2025-07-20 12:30 -- VAN -- project-name/tasks.md"
+});
+```
+
+**Refer to [filesystem-mcp-enforcement.mdc](mdc:.cursor/rules/isolation_rules/Core/filesystem-mcp-enforcement.mdc) for comprehensive MCP guidelines.**
 
 ## ⚠️ COMMAND EFFICIENCY GUIDANCE
 
@@ -148,9 +200,10 @@ For optimal performance, use efficient command chaining when appropriate:
 
 ```
 # Efficient command chaining examples:
-mkdir -p project/{src,tests,docs} && cd project
-grep "TODO" $(find . -name "*.js")
 npm install && npm start
+git add . && git commit -m "Update"
 ```
 
-Refer to [command-execution.mdc](mdc:.cursor/rules/isolation_rules/Core/command-execution.mdc) for detailed guidance. 
+**Note:** File operations should use MCP functions instead of command chaining.
+
+Refer to [command-execution.mdc](mdc:.cursor/rules/isolation_rules/Core/command-execution.mdc) for detailed guidance.

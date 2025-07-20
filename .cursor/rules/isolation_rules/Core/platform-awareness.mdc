@@ -182,24 +182,218 @@ function resolveMBRoot() {
   return path.join(memoryBankDir, currentProject.folderName);
 }
 
+// Enhanced MB_ROOT resolver with stage transition awareness
+function resolveMBRootWithStageAwareness(targetStage = null) {
+  const repoRoot = identifyRepoRoot();
+  const memoryBankDir = path.join(repoRoot, 'memory-bank');
+  
+  // Ensure memory-bank directory exists
+  if (!fs.existsSync(memoryBankDir)) {
+    fs.mkdirSync(memoryBankDir, { recursive: true });
+  }
+  
+  // Scan for existing projects with duplicate prevention
+  const projectData = scanProjectFoldersWithStageAwareness(memoryBankDir);
+  
+  if (projectData.length === 0) {
+    // Handle legacy migration or new project creation
+    return handleNoProjectsFound(memoryBankDir);
+  }
+  
+  // Get current project (latest by timestamp)
+  const currentProject = projectData[0]; // Already sorted newest first
+  
+  // If targetStage specified, handle stage transition
+  if (targetStage && currentProject) {
+    return handleStageTransition(currentProject, targetStage, memoryBankDir);
+  }
+  
+  // Return current project path
+  return path.join(memoryBankDir, currentProject.folderName);
+}
+
+// Handle stage transitions with atomic folder operations
+function handleStageTransition(currentProject, targetStage, memoryBankDir) {
+  // If already in target stage, no transition needed
+  if (currentProject.stage === targetStage) {
+    return path.join(memoryBankDir, currentProject.folderName);
+  }
+  
+  // Generate new folder name with fresh timestamp
+  const newTimestamp = generateCrossPlatformTimestamp();
+  const newFolderName = `${newTimestamp} -- ${targetStage} -- ${currentProject.projectName}`;
+  const currentPath = path.join(memoryBankDir, currentProject.folderName);
+  const newPath = path.join(memoryBankDir, newFolderName);
+  
+  // Perform atomic rename operation
+  try {
+    // Validate target stage
+    const validStages = ['VAN', 'PLAN', 'CREATIVE', 'IMPLEMENT', 'REFLECT', 'ARCHIVE'];
+    if (!validStages.includes(targetStage)) {
+      throw new Error(`Invalid target stage: ${targetStage}`);
+    }
+    
+    // Ensure source path exists
+    if (!fs.existsSync(currentPath)) {
+      throw new Error(`Source project folder not found: ${currentPath}`);
+    }
+    
+    // Ensure target path doesn't exist (prevent conflicts)
+    if (fs.existsSync(newPath)) {
+      throw new Error(`Target project folder already exists: ${newPath}`);
+    }
+    
+    // Atomic rename operation
+    fs.renameSync(currentPath, newPath);
+    
+    // Invalidate cache after successful transition
+    invalidateMBRootCache();
+    
+    return newPath;
+    
+  } catch (error) {
+    console.error(`Stage transition failed: ${error.message}`);
+    // Fallback to current path on failure
+    return currentPath;
+  }
+}
+
+// Generate cross-platform timestamp
+function generateCrossPlatformTimestamp() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  
+  return `${year}-${month}-${day} ${hours}:${minutes}`;
+}
+
 function scanProjectFoldersWithStageAwareness(memoryBankDir) {
   const regex = /^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}) -- (VAN|PLAN|CREATIVE|IMPLEMENT|REFLECT|ARCHIVE) -- (.+)$/;
+  
+  // Get all folders and extract project information
   const folders = fs.readdirSync(memoryBankDir, { withFileTypes: true })
     .filter(dirent => dirent.isDirectory())
     .map(dirent => dirent.name)
-    .filter(name => regex.test(name))
-    .map(name => {
-      const match = name.match(regex);
-      return {
-        folderName: name,
-        timestamp: match[1],
-        stage: match[2],
-        projectName: match[3],
-        timestampDate: new Date(match[1].replace(' ', 'T') + ':00') // Convert to Date for sorting
-      };
-    });
+    .map(name => extractProjectInfoRobust(name))
+    .filter(info => info.isValid);
   
-  return folders.sort((a, b) => b.timestampDate.getTime() - a.timestampDate.getTime());
+  // Group projects by name to detect duplicates
+  const projectGroups = {};
+  folders.forEach(folder => {
+    const projectName = folder.projectName;
+    if (!projectGroups[projectName]) {
+      projectGroups[projectName] = [];
+    }
+    projectGroups[projectName].push(folder);
+  });
+  
+  // For each project, return only the latest folder (prevents duplicates)
+  const latestProjects = Object.values(projectGroups).map(group => {
+    return group.sort((a, b) => b.timestampDate.getTime() - a.timestampDate.getTime())[0];
+  });
+  
+  // Sort by timestamp (newest first) and return
+  return latestProjects.sort((a, b) => b.timestampDate.getTime() - a.timestampDate.getTime());
+}
+
+// Robust project information extraction with validation and sanitization
+function extractProjectInfoRobust(folderName) {
+  try {
+    // Primary pattern matching with Unicode support
+    const regex = /^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}) -- (VAN|PLAN|CREATIVE|IMPLEMENT|REFLECT|ARCHIVE) -- (.+)$/u;
+    const match = folderName.match(regex);
+    
+    if (match) {
+      const [, timestamp, stage, projectName] = match;
+      
+      // Validate timestamp format
+      const timestampDate = parseTimestamp(timestamp);
+      if (!timestampDate) return { isValid: false, error: 'Invalid timestamp' };
+      
+      // Validate stage
+      const validStages = ['VAN', 'PLAN', 'CREATIVE', 'IMPLEMENT', 'REFLECT', 'ARCHIVE'];
+      if (!validStages.includes(stage)) {
+        return { isValid: false, error: 'Invalid stage' };
+      }
+      
+      // Validate and sanitize project name
+      const sanitizedName = sanitizeProjectName(projectName);
+      if (!sanitizedName) return { isValid: false, error: 'Invalid project name' };
+      
+      return {
+        folderName,
+        timestamp,
+        stage,
+        projectName: sanitizedName,
+        originalName: projectName,
+        timestampDate,
+        isValid: true
+      };
+    }
+    
+    // Attempt recovery for legacy or corrupted names
+    return attemptNameRecovery(folderName);
+    
+  } catch (error) {
+    return { isValid: false, error: error.message };
+  }
+}
+
+// Parse and validate timestamp
+function parseTimestamp(timestamp) {
+  try {
+    const timestampDate = new Date(timestamp.replace(' ', 'T') + ':00');
+    return isNaN(timestampDate.getTime()) ? null : timestampDate;
+  } catch (error) {
+    return null;
+  }
+}
+
+// Sanitize project names to handle special characters
+function sanitizeProjectName(projectName) {
+  // Allow alphanumeric, spaces, hyphens, underscores, and common Unicode
+  const allowedPattern = /^[\w\s\-_.À-ÿ]+$/u;
+  
+  if (!allowedPattern.test(projectName)) {
+    // Attempt to clean the name
+    const cleaned = projectName.replace(/[^\w\s\-_.À-ÿ]/gu, '_');
+    if (cleaned.length > 0) {
+      return cleaned;
+    }
+    return null; // Cannot sanitize
+  }
+  
+  return projectName;
+}
+
+// Recovery for corrupted folder names
+function attemptNameRecovery(folderName) {
+  // Try common corruption patterns
+  const recoveryPatterns = [
+    // Missing stage
+    /^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}) -- (.+)$/,
+    // Missing timestamp
+    /^(VAN|PLAN|CREATIVE|IMPLEMENT|REFLECT|ARCHIVE) -- (.+)$/,
+    // Completely malformed but has project indicator
+    /.*\-\- (.+)$/
+  ];
+  
+  for (const pattern of recoveryPatterns) {
+    const match = folderName.match(pattern);
+    if (match) {
+      return {
+        isValid: false,
+        isRecoverable: true,
+        possibleName: match[match.length - 1],
+        suggestedAction: 'manual_review'
+      };
+    }
+  }
+  
+  return { isValid: false, isRecoverable: false };
 }
 ```
 
@@ -399,11 +593,6 @@ sequenceDiagram
 - Path format handling configured? [YES/NO]
 - MB_ROOT macro resolver functional? [YES/NO]
 - Project discovery working correctly? [YES/NO]
-- Legacy migration operational? [YES/NO]
-
-→ If all YES: Platform adaptation complete
-→ If any NO: Run additional detection steps
-```
 - Legacy migration operational? [YES/NO]
 
 → If all YES: Platform adaptation complete

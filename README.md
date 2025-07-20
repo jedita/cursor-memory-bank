@@ -8,7 +8,7 @@ All future development and issue tracking will happen **here**.
 
 > **Maintainer Note**: I maintain this project in my spare time and welcome constructive feedback. Feel free to open an issue or pull request, or adapt the code to fit your own workflow.
 
-A token-optimized, hierarchical task management system that integrates with Cursor custom modes for efficient development workflows.
+A token-optimized, hierarchical task management system that integrates with Cursor custom modes for efficient development workflows. Enhanced with FileSystem MCP integration for reliable, cross-platform file operations.
 
 ```mermaid
 graph TD

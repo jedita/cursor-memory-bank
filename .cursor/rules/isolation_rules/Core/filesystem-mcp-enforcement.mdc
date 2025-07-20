@@ -1,0 +1,270 @@
+---
+description: Centralized FileSystem MCP enforcement for all modes
+globs: filesystem-mcp-enforcement.mdc
+alwaysApply: false
+---
+
+# 🎯 FILESYSTEM MCP ENFORCEMENT - CENTRALIZED RULE
+
+> **TL;DR:** This rule enforces the use of FileSystem MCP functions across ALL modes instead of platform-specific commands. It provides a unified approach to file operations that eliminates cross-platform inconsistencies and improves reliability.
+
+## 🚨 MANDATORY MCP USAGE - ALL MODES
+
+**CRITICAL:** All file and directory operations MUST use FileSystem MCP functions when available. This rule applies to VAN, PLAN, CREATIVE, IMPLEMENT, REFLECT, and ARCHIVE modes.
+
+### ✅ MCP Operations (PREFERRED)
+
+| Operation | MCP Function | Traditional Command | Benefits |
+|-----------|--------------|-------------------|----------|
+| **Create Directory** | `mcp_filesystem_create_directory` | `mkdir`, `New-Item` | Cross-platform, recursive, validation |
+| **Write File** | `mcp_filesystem_write_file` | `echo`, `Out-File` | Atomic, encoding-safe, validation |
+| **Read File** | `mcp_filesystem_read_file` | `cat`, `Get-Content` | Consistent, encoding-handling |
+| **List Directory** | `mcp_filesystem_list_directory` | `ls`, `Get-ChildItem` | Unified format, metadata |
+| **Move/Rename** | `mcp_filesystem_move_file` | `mv`, `Move-Item` | Safe, validation, atomic |
+| **File Info** | `mcp_filesystem_get_file_info` | `test -f`, `Test-Path` | Detailed metadata |
+| **Search Files** | `mcp_filesystem_search_files` | `find`, `Get-ChildItem -Recurse` | Pattern-based, efficient |
+| **Edit File** | `mcp_filesystem_edit_file` | `sed`, `PowerShell` | Line-based, safe |
+| **Create Multiple** | `mcp_filesystem_write_file` (multiple calls) | `touch file1 file2` | Individual control |
+
+### ❌ Platform Commands (AVOID)
+
+**DO NOT USE** these platform-specific commands for file operations:
+
+```bash
+# ❌ AVOID - Platform-specific
+mkdir -p directory
+touch file.txt
+echo "content" > file.txt
+cat file.txt
+ls -la
+mv source dest
+test -f file.txt
+find . -name "*.js"
+```
+
+```powershell
+# ❌ AVOID - Platform-specific
+New-Item -ItemType Directory
+echo. > file.txt
+Get-Content file.txt
+Get-ChildItem
+Move-Item source dest
+Test-Path file.txt
+Get-ChildItem -Recurse -Filter "*.js"
+```
+
+## 🔄 MCP INTEGRATION WORKFLOW
+
+```mermaid
+graph TD
+    FileOp["File Operation<br>Required"] --> MCPCheck{"MCP Function<br>Available?"}
+    
+    MCPCheck -->|"Yes"| UseMCP["✅ Use FileSystem MCP<br>Function"]
+    MCPCheck -->|"No"| PlatformCmd["⚠️ Use Platform Command<br>with Documentation"]
+    
+    UseMCP --> MCPBenefits["Benefits:<br>• Cross-platform reliability<br>• Consistent error handling<br>• Built-in validation<br>• Atomic operations"]
+    PlatformCmd --> PlatformLimits["Limitations:<br>• Platform-specific behavior<br>• Varied error handling<br>• Manual validation required"]
+    
+    MCPBenefits --> Document["📝 Document MCP Operation"]
+    PlatformLimits --> DocumentPlatform["📝 Document Platform Command<br>with Justification"]
+    
+    Document --> Verify["✅ Verify Operation Success"]
+    DocumentPlatform --> Verify
+    
+    style UseMCP fill:#10b981,stroke:#059669,color:white
+    style MCPBenefits fill:#d4edda,stroke:#10b981,color:black
+    style PlatformCmd fill:#ff9800,stroke:#f57c00,color:white
+    style PlatformLimits fill:#fff3e0,stroke:#ff9800,color:black
+```
+
+## 📋 MCP OPERATION TEMPLATES
+
+### Directory Creation
+```javascript
+// ✅ CORRECT - MCP Directory Creation
+mcp_filesystem_create_directory({
+    path: "memory-bank/2025-07-20 12:30 -- VAN -- project-name"
+});
+
+// ❌ INCORRECT - Platform Command
+run_terminal_cmd({
+    command: "mkdir -p memory-bank/2025-07-20 12:30 -- VAN -- project-name",
+    is_background: false
+});
+```
+
+### File Writing
+```javascript
+// ✅ CORRECT - MCP File Writing
+mcp_filesystem_write_file({
+    path: "memory-bank/2025-07-20 12:30 -- VAN -- project-name/tasks.md",
+    content: "# Task: Project Name\n\n## Description\n..."
+});
+
+// ❌ INCORRECT - Platform Command
+run_terminal_cmd({
+    command: "echo '# Task: Project Name' > memory-bank/2025-07-20 12:30 -- VAN -- project-name/tasks.md",
+    is_background: false
+});
+```
+
+### File Reading
+```javascript
+// ✅ CORRECT - MCP File Reading
+mcp_filesystem_read_file({
+    path: "memory-bank/2025-07-20 12:30 -- VAN -- project-name/tasks.md"
+});
+
+// ❌ INCORRECT - Platform Command
+run_terminal_cmd({
+    command: "cat memory-bank/2025-07-20 12:30 -- VAN -- project-name/tasks.md",
+    is_background: false
+});
+```
+
+### Directory Listing
+```javascript
+// ✅ CORRECT - MCP Directory Listing
+mcp_filesystem_list_directory({
+    path: "memory-bank"
+});
+
+// ❌ INCORRECT - Platform Command
+run_terminal_cmd({
+    command: "ls -la memory-bank",
+    is_background: false
+});
+```
+
+### File Moving/Renaming
+```javascript
+// ✅ CORRECT - MCP File Moving
+mcp_filesystem_move_file({
+    source: "memory-bank/2025-07-20 12:30 -- VAN -- project-name",
+    destination: "memory-bank/2025-07-20 12:35 -- PLAN -- project-name"
+});
+
+// ❌ INCORRECT - Platform Command
+run_terminal_cmd({
+    command: "mv memory-bank/2025-07-20 12:30 -- VAN -- project-name memory-bank/2025-07-20 12:35 -- PLAN -- project-name",
+    is_background: false
+});
+```
+
+## 🎯 MODE-SPECIFIC MCP REQUIREMENTS
+
+### VAN Mode
+- ✅ **Project Creation**: Use `mcp_filesystem_create_directory` for project folders
+- ✅ **File Initialization**: Use `mcp_filesystem_write_file` for all Memory Bank files
+- ✅ **Project Detection**: Use `mcp_filesystem_list_directory` for scanning projects
+
+### PLAN Mode
+- ✅ **File Reading**: Use `mcp_filesystem_read_file` for tasks.md and other files
+- ✅ **Plan Writing**: Use `mcp_filesystem_write_file` for implementation plans
+- ✅ **Stage Transition**: Use `mcp_filesystem_move_file` for folder renaming
+
+### CREATIVE Mode
+- ✅ **Design Documents**: Use `mcp_filesystem_write_file` for creative phase docs
+- ✅ **Template Creation**: Use `mcp_filesystem_write_file` for design templates
+- ✅ **File Updates**: Use `mcp_filesystem_edit_file` for incremental updates
+
+### IMPLEMENT Mode
+- ✅ **Code Files**: Use `mcp_filesystem_write_file` for new code files
+- ✅ **File Modifications**: Use `mcp_filesystem_edit_file` for code changes
+- ✅ **Progress Tracking**: Use `mcp_filesystem_write_file` for progress.md
+
+### REFLECT Mode
+- ✅ **Reflection Documents**: Use `mcp_filesystem_write_file` for reflection.md
+- ✅ **File Analysis**: Use `mcp_filesystem_read_file` for reviewing files
+- ✅ **Documentation**: Use `mcp_filesystem_write_file` for lessons learned
+
+### ARCHIVE Mode
+- ✅ **Archive Creation**: Use `mcp_filesystem_write_file` for archive.md
+- ✅ **File Organization**: Use `mcp_filesystem_move_file` for organizing archives
+- ✅ **Final Updates**: Use `mcp_filesystem_write_file` for final documentation
+
+## ⚠️ EXCEPTIONS AND FALLBACKS
+
+### When MCP is Not Available
+If FileSystem MCP functions are not available, document the reason and use platform commands:
+
+```javascript
+// ⚠️ EXCEPTION - Platform Command with Justification
+// Reason: FileSystem MCP not available in current environment
+run_terminal_cmd({
+    command: "mkdir -p memory-bank/2025-07-20 12:30 -- VAN -- project-name",
+    is_background: false,
+    explanation: "Creating project directory - MCP not available"
+});
+```
+
+### Complex Operations
+For operations that require multiple steps or complex logic:
+
+```javascript
+// ✅ CORRECT - Complex Operation with MCP
+// Step 1: Create directory
+mcp_filesystem_create_directory({
+    path: "memory-bank/2025-07-20 12:30 -- VAN -- project-name"
+});
+
+// Step 2: Create multiple files
+const files = ['tasks.md', 'activeContext.md', 'projectbrief.md'];
+files.forEach(file => {
+    mcp_filesystem_write_file({
+        path: `memory-bank/2025-07-20 12:30 -- VAN -- project-name/${file}`,
+        content: getTemplateContent(file)
+    });
+});
+```
+
+## 📊 MCP USAGE VERIFICATION
+
+### Success Metrics
+- ✅ **100% MCP Usage**: All file operations use MCP functions
+- ✅ **Zero Platform Commands**: No platform-specific file commands
+- ✅ **Consistent Behavior**: Same operations work across all platforms
+- ✅ **Better Error Handling**: MCP provides standardized error responses
+
+### Verification Checklist
+```
+✓ MCP ENFORCEMENT CHECKLIST
+- All file operations use MCP functions? [YES/NO]
+- Platform commands documented with justification? [YES/NO/NA]
+- MCP operations properly documented? [YES/NO]
+- Error handling consistent across operations? [YES/NO]
+- Cross-platform compatibility verified? [YES/NO]
+
+→ If all YES: MCP enforcement complete
+→ If any NO: Address missing elements
+```
+
+## 🔧 INTEGRATION WITH EXISTING RULES
+
+This rule works in conjunction with:
+
+- **command-execution.mdc**: Provides MCP integration guidelines
+- **file-verification.mdc**: Uses MCP for file operations
+- **platform-awareness.mdc**: MCP eliminates platform-specific needs
+- **All Mode Instructions**: Updated to reference MCP enforcement
+
+## 🚀 BENEFITS OF MCP ENFORCEMENT
+
+### Technical Benefits
+- **Cross-Platform Reliability**: Eliminates Windows vs Unix differences
+- **Atomic Operations**: MCP provides safer file operations
+- **Consistent Error Handling**: Standardized responses across all operations
+- **Better Encoding Support**: Automatic handling of text encoding
+- **Path Security**: Built-in validation prevents path traversal attacks
+
+### Operational Benefits
+- **Reduced Complexity**: Single implementation for all platforms
+- **Improved Reliability**: MCP provides better error handling
+- **Future-Proof**: Ready for additional MCP capabilities
+- **Maintenance**: Easier to maintain and update
+
+### Quality Benefits
+- **Consistency**: Same behavior across all environments
+- **Documentation**: Better tracking of file operations
+- **Debugging**: Clearer error messages and operation logs
+- **Testing**: More predictable behavior for testing

@@ -12,13 +12,14 @@ Before proceeding with any VAN mode operations, I will:
    - Scan `memory-bank/` for existing project folders
    - Project pattern: `<timestamp 'yyyy-MM-dd HH:mm'> -- <stage> -- <project-name>`
    - Select latest timestamp as current project (unless explicitly switched)
-   - If switching to VAN from another stage, automatically update folder stage and timestamp
+   - When switching stages, automatically update folder stage and timestamp
 
 
-3. **Handle New Project Creation**
+3. **Handle New Project Creation (FileSystem MCP Enhanced)**
    - If no projects exist or user wants a new project, prompt for project name
-   - Create folder: `<timestamp 'yyyy-MM-dd HH:mm'> -- VAN -- <project-name>`
-   - Initialize complete Memory Bank file structure in project folder
+   - Use `mcp_filesystem_create_directory` to create folder: `<timestamp 'yyyy-MM-dd HH:mm'> -- VAN -- <project-name>`
+   - Use `mcp_filesystem_write_file` to initialize complete Memory Bank file structure
+   - Leverage FileSystem MCP for reliable, cross-platform project creation
 
 3. **Project Management Commands**
    - **LIST PROJECTS**: Show all available projects with timestamps and stages

@@ -205,6 +205,120 @@ Project folder renamed from {old-name} to {new-name}
 Continue with {TARGET_STAGE} mode operations
 ```
 
+## 🔄 ENHANCED STAGE TRANSITION SYSTEM
+
+### Project-Aware Stage Transitions
+
+The enhanced stage transition system prevents duplicate folder creation through intelligent project detection:
+
+```mermaid
+graph TD
+    Request["Stage Transition<br>Request"] --> Detect["Detect Current<br>Project"]
+    Detect --> Check{"Project<br>Exists?"}
+    Check -->|"Yes"| Update["Update Existing<br>Project Folder"]
+    Check -->|"No"| Create["Create New<br>Project Folder"]
+    Update --> Rename["Atomic Folder<br>Rename Operation"]
+    Rename --> Verify["Verify<br>Transition Success"]
+    Create --> Initialize["Initialize New<br>Project Structure"]
+    Initialize --> Verify
+    Verify --> Cache["Update<br>MB_ROOT Cache"]
+    Cache --> Complete["Transition<br>Complete"]
+    
+    style Request fill:#d971ff,stroke:#a33bc2,color:white
+    style Detect fill:#ffa64d,stroke:#cc7a30,color:white
+    style Check fill:#4dbb5f,stroke:#36873f,color:white
+    style Update fill:#4dbbbb,stroke:#368787,color:white
+    style Rename fill:#ff71c2,stroke:#c23b8a,color:white
+    style Verify fill:#5fd94d,stroke:#3da336,color:white
+    style Complete fill:#8cff8c,stroke:#4dbb5f,color:white
+```
+
+### Stage Transition Command Interface
+
+```javascript
+// Enhanced stage transition command interface
+function executeStageTransition(targetStage, projectName = null) {
+  try {
+    // Use enhanced MB_ROOT resolver with stage awareness
+    const newProjectPath = resolveMBRootWithStageAwareness(targetStage);
+    
+    if (newProjectPath) {
+      return {
+        success: true,
+        newPath: newProjectPath,
+        stage: targetStage,
+        message: `✅ Project transitioned to ${targetStage} stage`
+      };
+    } else {
+      throw new Error('Stage transition failed - unable to resolve project path');
+    }
+    
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message,
+      stage: targetStage,
+      message: `❌ Stage transition failed: ${error.message}`
+    };
+  }
+}
+
+// Conflict resolution integration
+function executeStageTransitionWithConflictResolution(targetStage) {
+  try {
+    // First, resolve any existing conflicts
+    const memoryBankDir = path.join(identifyRepoRoot(), 'memory-bank');
+    const conflictResolution = matchAndResolveProjects(memoryBankDir);
+    
+    if (!conflictResolution.success) {
+      console.warn('Conflict resolution had issues:', conflictResolution.error);
+    }
+    
+    // Then execute stage transition
+    return executeStageTransition(targetStage);
+    
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message,
+      message: `❌ Stage transition with conflict resolution failed: ${error.message}`
+    };
+  }
+}
+```
+
+### Project Detection Command Documentation
+
+## Project Detection Execution
+
+### Command
+```javascript
+// Detect existing projects with duplicate prevention
+const projectData = scanProjectFoldersWithStageAwareness(memoryBankDir);
+const conflicts = detectConflicts(groupProjectsByName(projectData));
+```
+
+### Result
+```
+✅ Project detection complete
+- Found {X} unique projects
+- Detected {Y} conflicts
+- Resolution plan created for {Z} duplicates
+```
+
+### Effect
+```
+Project structure analyzed and conflicts identified
+Duplicate projects grouped by name
+Merge strategies determined for conflict resolution
+```
+
+### Next Steps
+```
+Execute conflict resolution if needed
+Proceed with stage transition
+```
+
 ## 🔍 PLATFORM-SPECIFIC CONSIDERATIONS
 
 ```mermaid
@@ -305,9 +419,98 @@ graph TD
 → If any NO: Address missing elements
 ```
 
+## 🔧 FILESYSTEM MCP INTEGRATION GUIDELINES
+
+### 🎯 Preferred MCP Operations
+
+Replace platform-specific commands with FileSystem MCP functions:
+
+| Traditional Command | FileSystem MCP Function | Benefits |
+|---------------------|-------------------------|----------|
+| `mkdir -p`, `New-Item -ItemType Directory` | `mcp_filesystem_create_directory` | Cross-platform, recursive creation |
+| `touch`, `echo. >` | `mcp_filesystem_write_file` | Atomic operations, proper encoding |
+| `cat`, `Get-Content` | `mcp_filesystem_read_file` | Consistent reading, encoding handling |
+| `ls`, `Get-ChildItem` | `mcp_filesystem_list_directory` | Unified directory listing |
+| `mv`, `Move-Item` | `mcp_filesystem_move_file` | Safe moves with validation |
+| `test -f`, `Test-Path` | `mcp_filesystem_get_file_info` | Detailed metadata access |
+| `find`, `Get-ChildItem -Recurse` | `mcp_filesystem_search_files` | Pattern-based search |
+
+### ✅ MCP Integration Best Practices
+
+```mermaid
+graph TD
+    Decision["File Operation<br>Required"] --> MCPCheck{"MCP Function<br>Available?"}
+    
+    MCPCheck -->|"Yes"| UseMCP["Use FileSystem MCP<br>Function"]
+    MCPCheck -->|"No"| PlatformCmd["Use Platform-Specific<br>Command"]
+    
+    UseMCP --> MCPBenefits["Benefits:<br>• Cross-platform<br>• Consistent errors<br>• Better validation"]
+    PlatformCmd --> PlatformLimits["Limitations:<br>• Platform-specific<br>• Varied error handling<br>• Manual validation"]
+    
+    style UseMCP fill:#10b981,stroke:#059669,color:white
+    style MCPBenefits fill:#d4edda,stroke:#10b981,color:black
+    style PlatformLimits fill:#f8d7da,stroke:#dc3545,color:black
+```
+
+### 📋 MCP Command Execution Template
+
+```javascript
+// Template for MCP-based file operations
+function executeFileOperationWithMCP(operation) {
+    try {
+        let result;
+        
+        switch(operation.type) {
+            case 'create_directory':
+                result = mcp_filesystem_create_directory({
+                    path: operation.path
+                });
+                break;
+                
+            case 'write_file':
+                result = mcp_filesystem_write_file({
+                    path: operation.path,
+                    content: operation.content
+                });
+                break;
+                
+            case 'read_file':
+                result = mcp_filesystem_read_file({
+                    path: operation.path
+                });
+                break;
+                
+            case 'list_directory':
+                result = mcp_filesystem_list_directory({
+                    path: operation.path
+                });
+                break;
+                
+            case 'move_file':
+                result = mcp_filesystem_move_file({
+                    source: operation.source,
+                    destination: operation.destination
+                });
+                break;
+        }
+        
+        // Document the operation
+        console.log(`✅ MCP Operation: ${operation.type}`);
+        console.log(`📁 Path: ${operation.path || operation.source}`);
+        console.log(`✓ Success: ${result.success ? 'Yes' : 'No'}`);
+        
+        return result;
+        
+    } catch (error) {
+        console.log(`❌ MCP Error: ${error.message}`);
+        throw error;
+    }
+}
+```
+
 ## 🚨 COMMAND EXECUTION WARNINGS
 
-Avoid these common command issues:
+### Enhanced Warning System with MCP Guidance
 
 ```mermaid
 graph TD
@@ -316,10 +519,15 @@ graph TD
     Warning --> W3["Unnecessary<br>Complexity"]
     Warning --> W4["Destructive<br>Operations Without<br>Confirmation"]
     Warning --> W5["Wrong Directory<br>Execution"]
+    Warning --> W6["Not Using MCP<br>When Available"]
     
     W1 --> S1["Use flags to reduce<br>unnecessary output"]
     W2 --> S2["Include error handling<br>in command chains"]
     W3 --> S3["Prefer built-in<br>command capabilities"]
     W4 --> S4["Show confirmation<br>before destructive actions"]
     W5 --> S5["Verify directory before<br>npm/build commands"]
+    W6 --> S6["Check MCP alternatives<br>before platform commands"]
+    
+    style W6 fill:#ff9800,stroke:#f57c00,color:white
+    style S6 fill:#fff3e0,stroke:#ff9800,color:black
 ``` 

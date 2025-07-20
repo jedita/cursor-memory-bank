@@ -60,36 +60,43 @@ function createNewProject(projectName, stage = 'VAN') {
   const folderName = `${projectName} -- ${timestamp} -- ${stage}`;
   const projectPath = path.join('memory-bank', folderName);
   
-  // Create project directory
-  fs.mkdirSync(projectPath, { recursive: true });
+  // Create project directory using FileSystem MCP
+  mcp_filesystem_create_directory({
+    path: projectPath
+  });
   
-  // Initialize project files
-  initializeProjectFiles(projectPath);
+  // Initialize project files using FileSystem MCP
+  initializeProjectFilesWithMCP(projectPath);
   
   return projectPath;
 }
 
-function initializeProjectFiles(projectPath) {
+function initializeProjectFilesWithMCP(projectPath) {
   const requiredFiles = [
-    'tasks.md',
-    'activeContext.md', 
-    'progress.md',
-    'projectbrief.md',
-    'productContext.md',
-    'systemPatterns.md',
-    'techContext.md',
-    'creative.md',
-    'reflection.md',
-    'archive.md'
-];
+    { name: 'tasks.md', template: '# Tasks\n' },
+    { name: 'activeContext.md', template: '# Active Context\n' },
+    { name: 'progress.md', template: '# Progress\n' },
+    { name: 'projectbrief.md', template: '# Project Brief\n' },
+    { name: 'productContext.md', template: '# Product Context\n' },
+    { name: 'systemPatterns.md', template: '# System Patterns\n' },
+    { name: 'techContext.md', template: '# Tech Context\n' },
+    { name: 'style-guide.md', template: '# Style Guide\n' },
+    { name: 'creative.md', template: '# Creative Phase Notes\n' },
+    { name: 'reflection.md', template: '# Reflection\n' },
+    { name: 'archive.md', template: '# Archive\n' }
+  ];
   
-  // Create files with templates
+  // Create files using FileSystem MCP
   requiredFiles.forEach(file => {
-    const filePath = path.join(projectPath, file);
-    const template = getFileTemplate(file);
-    fs.writeFileSync(filePath, template);
+    mcp_filesystem_write_file({
+      path: `${projectPath}/${file.name}`,
+      content: file.template
+    });
   });
 }
+
+// DEPRECATED: Legacy function replaced by MCP implementation
+// function initializeProjectFiles(projectPath) { ... }
 ```
 
 ### Legacy Migration Helper

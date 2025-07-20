@@ -1,0 +1,57 @@
+---
+description: Project conflict resolution and duplicate management system
+globs: project-conflict-resolution.mdc
+alwaysApply: false
+---
+
+# PROJECT CONFLICT RESOLUTION SYSTEM
+
+> **TL;DR:** This system provides intelligent conflict resolution for duplicate project folders, implementing merge-based cleanup with data preservation and rollback capabilities.
+
+## 🔍 CONFLICT DETECTION AND RESOLUTION
+
+### Main Conflict Resolution Algorithm
+
+```javascript
+// Main project matching and conflict resolution algorithm
+function matchAndResolveProjects(memoryBankDir) {
+  // Phase 1: Discovery and extraction
+  const rawFolders = fs.readdirSync(memoryBankDir, { withFileTypes: true })
+    .filter(dirent => dirent.isDirectory())
+    .map(dirent => dirent.name);
+    
+  const projectData = rawFolders.map(folder => ({
+    folderName: folder,
+    ...extractProjectInfoRobust(folder)
+  })).filter(p => p.isValid);
+  
+  // Phase 2: Grouping and conflict detection
+  const projectGroups = groupProjectsByName(projectData);
+  const conflicts = detectConflicts(projectGroups);
+  
+  // Phase 3: Conflict resolution
+  if (conflicts.length > 0) {
+    const resolutionPlan = createResolutionPlan(conflicts);
+    return executeResolution(resolutionPlan);
+  }
+  
+  return { success: true, projects: projectGroups, conflicts: [] };
+}
+```
+
+## 📊 CONFLICT RESOLUTION CHECKLIST
+
+```
+✓ CONFLICT RESOLUTION VERIFICATION
+- All project duplicates identified? [YES/NO]
+- Content analysis completed for each duplicate? [YES/NO]
+- Merge strategies determined based on analysis? [YES/NO]
+- Rollback points created before operations? [YES/NO]
+- All operations executed successfully? [YES/NO]
+- Data preservation verified? [YES/NO]
+- Cleanup operations completed? [YES/NO]
+- Resolution summary generated? [YES/NO]
+
+→ If all YES: Conflict resolution complete
+→ If any NO: Review and fix issues before proceeding
+```
