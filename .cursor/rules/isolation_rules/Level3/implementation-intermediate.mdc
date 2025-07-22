@@ -3,7 +3,7 @@ description: Intermediate implementation approach for Level 3 feature tasks
 globs: implementation-intermediate.mdc
 alwaysApply: false
 ---
-# LEVEL 3 IMPLEMENTATION: BUILDING INTERMEDIATE FEATURES
+# LEVEL 3 IMPLEMENTATION: IMPLEMENTING INTERMEDIATE FEATURES
 
 > **TL;DR:** This guide focuses on the systematic implementation of a planned and designed Level 3 feature. It emphasizes modular development, strict adherence to creative decisions and the style guide, integration with existing systems, and thorough feature-specific testing.
 

@@ -6,7 +6,7 @@ alwaysApply: false
 
 # MODE TRANSITION OPTIMIZATION
 
-> **TL;DR:** This file implements optimized mode transitions to preserve context efficiently between different phases of the Memory Bank system. **IMPLEMENTED: Multi-project support with automatic folder rename on stage transitions via stage-update-handler.mdc.**
+> **TL;DR:** This file implements optimized mode transitions to preserve context efficiently between different phases of the Memory Bank system.
 
 ## 🎯 MULTI-PROJECT TRANSITION PROTOCOL
 
@@ -20,7 +20,7 @@ graph TD
     StageUpdate --> DetectCurrent["Detect Current<br>Project Folder"]
     DetectCurrent --> GenerateTimestamp["Generate Fresh<br>Timestamp"]
     GenerateTimestamp --> CreateNewName["Create New Folder Name<br><project-name> -- <new-timestamp> -- <new-stage>"]
-    CreateNewName --> PlatformCommand["Generate Platform-Aware<br>Rename Command"]
+    CreateNewName --> PlatformCommand["Generate <br>Rename Command"]
     PlatformCommand --> RenameFolder["Execute Atomic<br>Folder Rename"]
     RenameFolder --> UpdateMacro["Update <MB_ROOT><br>Macro Resolution"]
     UpdateMacro --> Complete["Stage Transition<br>Complete"]

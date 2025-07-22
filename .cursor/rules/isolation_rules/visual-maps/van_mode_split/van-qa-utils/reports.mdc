@@ -18,10 +18,10 @@ After all four validation points pass, generate this success report:
 │ 1️⃣ DEPENDENCIES: ✓ Compatible                                       │
 │ 2️⃣ CONFIGURATION: ✓ Valid & Compatible                             │
 │ 3️⃣ ENVIRONMENT: ✓ Ready                                             │
-│ 4️⃣ MINIMAL BUILD: ✓ Successful & Passed                            │
+│ 4️⃣ MINIMAL IMPLEMENT: ✓ Successful & Passed                            │
 ├─────────────────────────────────────────────────────────────────────┤
 │ 🚨 FINAL VERDICT: PASS                                              │
-│ ➡️ Clear to proceed to BUILD mode                                   │
+│ ➡️ Clear to proceed to IMPLEMENT mode                                   │
 ╚═════════════════════════════════════════════════════════════════════╝
 ```
 
@@ -41,14 +41,14 @@ function Generate-SuccessReport {
 │ 1️⃣ DEPENDENCIES: ✓ Compatible                                       │
 │ 2️⃣ CONFIGURATION: ✓ Valid & Compatible                             │
 │ 3️⃣ ENVIRONMENT: ✓ Ready                                             │
-│ 4️⃣ MINIMAL BUILD: ✓ Successful & Passed                            │
+│ 4️⃣ MINIMAL IMPLEMENT: ✓ Successful & Passed                            │
 ├─────────────────────────────────────────────────────────────────────┤
 │ 🚨 FINAL VERDICT: PASS                                              │
-│ ➡️ Clear to proceed to BUILD mode                                   │
+│ ➡️ Clear to proceed to IMPLEMENT mode                                   │
 ╚═════════════════════════════════════════════════════════════════════╝
 "@
     
-    # Save validation status (used by BUILD mode prevention mechanism)
+    # Save validation status (used by IMPLEMENT mode prevention mechanism)
     "PASS" | Set-Content -Path "<MB_ROOT>\.qa_validation_status"
     
     return $report
@@ -62,7 +62,7 @@ If any validation step fails, generate this detailed failure report:
 ```
 ⚠️⚠️⚠️ QA VALIDATION FAILED ⚠️⚠️⚠️
 
-The following issues must be resolved before proceeding to BUILD mode:
+The following issues must be resolved before proceeding to IMPLEMENT mode:
 
 1️⃣ DEPENDENCY ISSUES:
 - [Detailed description of dependency issues]
@@ -76,11 +76,11 @@ The following issues must be resolved before proceeding to BUILD mode:
 - [Detailed description of environment issues]
 - [Recommended fix]
 
-4️⃣ BUILD TEST ISSUES:
+4️⃣ IMPLEMENT TEST ISSUES:
 - [Detailed description of build test issues]
 - [Recommended fix]
 
-⚠️ BUILD MODE IS BLOCKED until these issues are resolved.
+⚠️ IMPLEMENT MODE IS BLOCKED until these issues are resolved.
 Type 'VAN QA' after fixing the issues to re-validate.
 ```
 
@@ -97,7 +97,7 @@ function Generate-FailureReport {
     $report = @"
 ⚠️⚠️⚠️ QA VALIDATION FAILED ⚠️⚠️⚠️
 
-The following issues must be resolved before proceeding to BUILD mode:
+The following issues must be resolved before proceeding to IMPLEMENT mode:
 
 "@
     
@@ -127,23 +127,23 @@ $(($EnvironmentIssues | ForEach-Object { "- $_" }) -join "`n")
     
     if ($BuildIssues.Count -gt 0) {
         $report += @"
-4️⃣ BUILD TEST ISSUES:
+4️⃣ IMPLEMENT TEST ISSUES:
 $(($BuildIssues | ForEach-Object { "- $_" }) -join "`n")
 
 "@
     }
     
     $report += @"
-⚠️ BUILD MODE IS BLOCKED until these issues are resolved.
+⚠️ IMPLEMENT MODE IS BLOCKED until these issues are resolved.
 Type 'VAN QA' after fixing the issues to re-validate.
 "@
     
-    # Save validation status (used by BUILD mode prevention mechanism)
+    # Save validation status (used by IMPLEMENT mode prevention mechanism)
     "FAIL" | Set-Content -Path "<MB_ROOT>\.qa_validation_status"
     
     return $report
 }
 ```
 
-**Next Step (on SUCCESS):** Load `van-qa-utils/mode-transitions.mdc` to handle BUILD mode transition.
+**Next Step (on SUCCESS):** Load `van-qa-utils/mode-transitions.mdc` to handle IMPLEMENT mode transition.
 **Next Step (on FAILURE):** Load `van-qa-utils/common-fixes.mdc` for issue remediation guidance. 

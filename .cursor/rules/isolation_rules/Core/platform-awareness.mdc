@@ -129,7 +129,6 @@ mv "$OLD_FOLDER" "$FOLDER_NAME"
 $FolderName = "fix-stage-transition -- 2025-07-15 12:34 -- PLAN"
 Rename-Item $OldFolder $FolderName
 ```
-```
 
 ## 🎯 MB_ROOT MACRO RESOLVER
 

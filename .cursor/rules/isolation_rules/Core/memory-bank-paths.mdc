@@ -5,7 +5,7 @@ alwaysApply: true
 ---
 # CORE MEMORY BANK FILE LOCATIONS
 
-**CRITICAL:** All core Memory Bank files reside within the current project directory resolved by `<MB_ROOT>`. The `<MB_ROOT>` macro dynamically resolves to the active project folder (e.g., `memory-bank/my-project -- 2024-06-10 12:30 -- VAN/`). Do NOT create or modify these files outside the current project directory unless explicitly instructed for archiving purposes.
+**CRITICAL:** All core Memory Bank files reside within the current project directory resolved by `<MB_ROOT>`. The `<MB_ROOT>` macro dynamically resolves to the active project folder (e.g., `memory-bank/2024-06-10 12:30 -- VAN -- my-project/`). Do NOT create or modify these files outside the current project directory unless explicitly instructed for archiving purposes.
 
 ## Multi-Project Architecture
 
@@ -45,6 +45,5 @@ The `<MB_ROOT>` macro is resolved by the platform-awareness system:
 1. **Discovery**: Scan `memory-bank/` for project folders matching the naming pattern
 2. **Selection**: Choose project with latest timestamp as current (unless explicitly switched)
 3. **Resolution**: Return absolute path to current project folder
-4. **Legacy Support**: Auto-migrate legacy files to `legacy -- <timestamp> -- van/` if found
 
 **Verification Mandate:** Before any `create_file` or `edit_file` operation on these core files, verify the path starts with `<MB_ROOT>/`. The macro will be resolved to the appropriate project folder at runtime. If attempting to create a new core file (e.g., `tasks.md` at the start of a project), ensure it is created at `<MB_ROOT>/tasks.md`.

@@ -8,37 +8,6 @@ alwaysApply: false
 
 > **TL;DR:** This system provides intelligent conflict resolution for duplicate project folders, implementing merge-based cleanup with data preservation and rollback capabilities.
 
-## 🔍 CONFLICT DETECTION AND RESOLUTION
-
-### Main Conflict Resolution Algorithm
-
-```javascript
-// Main project matching and conflict resolution algorithm
-function matchAndResolveProjects(memoryBankDir) {
-  // Phase 1: Discovery and extraction
-  const rawFolders = fs.readdirSync(memoryBankDir, { withFileTypes: true })
-    .filter(dirent => dirent.isDirectory())
-    .map(dirent => dirent.name);
-    
-  const projectData = rawFolders.map(folder => ({
-    folderName: folder,
-    ...extractProjectInfoRobust(folder)
-  })).filter(p => p.isValid);
-  
-  // Phase 2: Grouping and conflict detection
-  const projectGroups = groupProjectsByName(projectData);
-  const conflicts = detectConflicts(projectGroups);
-  
-  // Phase 3: Conflict resolution
-  if (conflicts.length > 0) {
-    const resolutionPlan = createResolutionPlan(conflicts);
-    return executeResolution(resolutionPlan);
-  }
-  
-  return { success: true, projects: projectGroups, conflicts: [] };
-}
-```
-
 ## 📊 CONFLICT RESOLUTION CHECKLIST
 
 ```

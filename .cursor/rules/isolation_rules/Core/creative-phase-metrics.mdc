@@ -105,11 +105,11 @@ graph TD
 
 ```mermaid
 graph TD
-    Start["Start<br>Evaluation"] --> Doc["1. Score<br>Documentation"]
-    Doc --> Dec["2. Assess<br>Decisions"]
-    Dec --> Opt["3. Review<br>Options"]
-    Opt --> Imp["4. Evaluate<br>Impact"]
-    Imp --> Ver["5. Verify<br>Completeness"]
+    Start["Start<br>Evaluation"] --> Doc["1 Score<br>Documentation"]
+    Doc --> Dec["2 Assess<br>Decisions"]
+    Dec --> Opt["3 Review<br>Options"]
+    Opt --> Imp["4 Evaluate<br>Impact"]
+    Imp --> Ver["5 Verify<br>Completeness"]
     Ver --> Total["Calculate<br>Total Score"]
     Total --> Check{"Meets<br>Threshold?"}
     Check -->|No| Return["Return for<br>Improvements"]

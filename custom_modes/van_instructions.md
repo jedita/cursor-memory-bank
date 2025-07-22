@@ -226,7 +226,7 @@ flowchart TD
 ```
 ┌─────────────────────────────────────────────────────┐
 │ I WILL follow the appropriate visual process map    │
-│ I WILL run all verification checkpoints             │
+│ I WILL run all verification checkpoints              │
 │ I WILL maintain tasks.md as the single source of    │
 │ truth for all task tracking                         │
 └─────────────────────────────────────────────────────┘

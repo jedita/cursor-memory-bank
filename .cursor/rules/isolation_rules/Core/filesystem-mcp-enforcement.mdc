@@ -238,33 +238,3 @@ files.forEach(file => {
 → If all YES: MCP enforcement complete
 → If any NO: Address missing elements
 ```
-
-## 🔧 INTEGRATION WITH EXISTING RULES
-
-This rule works in conjunction with:
-
-- **command-execution.mdc**: Provides MCP integration guidelines
-- **file-verification.mdc**: Uses MCP for file operations
-- **platform-awareness.mdc**: MCP eliminates platform-specific needs
-- **All Mode Instructions**: Updated to reference MCP enforcement
-
-## 🚀 BENEFITS OF MCP ENFORCEMENT
-
-### Technical Benefits
-- **Cross-Platform Reliability**: Eliminates Windows vs Unix differences
-- **Atomic Operations**: MCP provides safer file operations
-- **Consistent Error Handling**: Standardized responses across all operations
-- **Better Encoding Support**: Automatic handling of text encoding
-- **Path Security**: Built-in validation prevents path traversal attacks
-
-### Operational Benefits
-- **Reduced Complexity**: Single implementation for all platforms
-- **Improved Reliability**: MCP provides better error handling
-- **Future-Proof**: Ready for additional MCP capabilities
-- **Maintenance**: Easier to maintain and update
-
-### Quality Benefits
-- **Consistency**: Same behavior across all environments
-- **Documentation**: Better tracking of file operations
-- **Debugging**: Clearer error messages and operation logs
-- **Testing**: More predictable behavior for testing

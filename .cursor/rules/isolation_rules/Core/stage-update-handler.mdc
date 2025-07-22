@@ -1,7 +1,7 @@
 
 # STAGE UPDATE HANDLER
 
-> **TL;DR:** This system automatically renames Memory Bank project folders when transitioning between modes, updating both the stage suffix and timestamp to reflect the current working state.
+> **TL;DR:** This system automatically renames Memory Bank project folders when transitioning between modes, updating both the stage and timestamp to reflect the current working state.
 
 ## 🎯 AUTOMATIC STAGE TRANSITION PROTOCOL
 
@@ -64,138 +64,6 @@ User requests transition: VAN → PLAN
 
 ## 🛠️ PRACTICAL STAGE TRANSITION IMPLEMENTATION
 
-### Cross-Platform Stage Update Function
-
-#### PowerShell Implementation (Windows)
-```powershell
-function Update-MemoryBankStage {
-    param(
-        [Parameter(Mandatory=$true)]
-        [string]$TargetStage,
-        
-        [Parameter(Mandatory=$false)]
-        [string]$MemoryBankPath = "memory-bank"
-    )
-    
-    # Find current project folder
-    $folders = Get-ChildItem -Path $MemoryBankPath -Directory
-    $currentProject = $null
-    
-    foreach ($folder in $folders) {
-        if ($folder.Name -match "^(\d{4}-\d{2}-\d{2} \d{2}:\d{2})\s*--\s*(\w+)\s*--\s*(.+)$") {
-            $currentProject = @{
-                FolderName = $folder.Name
-                FullPath = $folder.FullName
-                Timestamp = $matches[1]
-                Stage = $matches[2]
-                ProjectName = $matches[3]
-            }
-            break # Take the first matching project (should be the most recent)
-        }
-    }
-    
-    if (-not $currentProject) {
-        Write-Output "❌ No current project folder found in $MemoryBankPath"
-        return
-    }
-    
-    # Generate fresh timestamp
-    $newTimestamp = Get-Date -Format "yyyy-MM-dd HH:mm"
-    $newFolderName = "$newTimestamp -- $TargetStage -- $($currentProject.ProjectName)"
-    $newFullPath = Join-Path $MemoryBankPath $newFolderName
-    
-    try {
-        # Rename the project folder
-        Rename-Item -Path $currentProject.FullPath -NewName $newFolderName -ErrorAction Stop
-        
-        Write-Output "✅ Project folder updated to: $newFolderName"
-        Write-Output "🕒 Timestamp refreshed: $($currentProject.Timestamp) → $newTimestamp"
-        Write-Output "🏷️ Stage updated: $($currentProject.Stage) → $TargetStage"
-        
-        return @{
-            Success = $true
-            OldFolder = $currentProject.FolderName
-            NewFolder = $newFolderName
-            OldTimestamp = $currentProject.Timestamp
-            NewTimestamp = $newTimestamp
-            ProjectName = $currentProject.ProjectName
-        }
-        
-    } catch {
-        Write-Output "❌ Error updating project stage: $($_.Exception.Message)"
-        Write-Output "Please ensure the project folder is not in use"
-        return @{ Success = $false; Error = $_.Exception.Message }
-    }
-}
-
-# Usage examples:
-# Update-MemoryBankStage -TargetStage "PLAN"
-# Update-MemoryBankStage -TargetStage "IMPLEMENT"
-# Update-MemoryBankStage -TargetStage "REFLECT"
-```
-
-#### Bash/Zsh Implementation (Unix/Linux/macOS)
-```bash
-#!/bin/bash
-
-update_memory_bank_stage() {
-    local target_stage="$1"
-    local memory_bank_path="${2:-memory-bank}"
-    
-    if [ -z "$target_stage" ]; then
-        echo "❌ Error: Target stage is required"
-        echo "Usage: update_memory_bank_stage TARGET_STAGE [MEMORY_BANK_PATH]"
-        return 1
-    fi
-    
-    # Find current project folder
-    local current_folder=""
-    local project_name=""
-    local old_timestamp=""
-    local old_stage=""
-    
-    for folder in "$memory_bank_path"/*; do
-        if [ -d "$folder" ]; then
-            local folder_name=$(basename "$folder")
-            if [[ $folder_name =~ ^([0-9]{4}-[0-9]{2}-[0-9]{2}\ [0-9]{2}:[0-9]{2})\ --\ ([A-Z]+)\ --\ (.+)$ ]]; then
-                current_folder="$folder"
-                old_timestamp="${BASH_REMATCH[1]}"
-                old_stage="${BASH_REMATCH[2]}"
-                project_name="${BASH_REMATCH[3]}"
-                break
-            fi
-        fi
-    done
-    
-    if [ -z "$current_folder" ]; then
-        echo "❌ No current project folder found in $memory_bank_path"
-        return 1
-    fi
-    
-    # Generate fresh timestamp
-    local new_timestamp=$(date '+%Y-%m-%d %H:%M')
-    local new_folder_name="$new_timestamp -- $target_stage -- $project_name"
-    local new_full_path="$memory_bank_path/$new_folder_name"
-    
-    # Rename the project folder
-    if mv "$current_folder" "$new_full_path" 2>/dev/null; then
-        echo "✅ Project folder updated to: $new_folder_name"
-        echo "🕒 Timestamp refreshed: $old_timestamp → $new_timestamp"
-        echo "🏷️ Stage updated: $old_stage → $target_stage"
-        return 0
-    else
-        echo "❌ Error updating project stage"
-        echo "Please ensure the project folder is not in use"
-        return 1
-    fi
-}
-
-# Usage examples:
-# update_memory_bank_stage "PLAN"
-# update_memory_bank_stage "IMPLEMENT"
-# update_memory_bank_stage "REFLECT"
-```
-
 ### Integration with Custom Modes
 
 Custom mode instructions should call these functions when transitioning stages:
@@ -205,20 +73,17 @@ Custom mode instructions should call these functions when transitioning stages:
 
 When a custom mode needs to transition to a new stage:
 
-1. **Detect Platform**: Use platform-awareness to determine OS
-2. **Call Update Function**: Execute the appropriate stage update function
-3. **Verify Result**: Confirm the folder was renamed successfully
-4. **Continue**: Proceed with the new mode operations
-
-### Example Integration:
+1. **Call Update Function**: Execute the appropriate stage update function
+2. **Verify Result**: Confirm the folder was renamed successfully
+3. **Continue**: Proceed with the new mode operations
 ```
+
 # At the start of PLAN mode
 Before proceeding with planning operations, update project folder:
 1. Call: update_memory_bank_stage "PLAN"
 2. Verify: Project folder now shows current timestamp + PLAN stage
 3. Continue: Proceed with PLAN mode workflow
-```
-```
+
 
 ## 📋 FOLDER NAME PATTERN
 

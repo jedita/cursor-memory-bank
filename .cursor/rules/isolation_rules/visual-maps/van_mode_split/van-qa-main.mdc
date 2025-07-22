@@ -5,7 +5,7 @@ alwaysApply: false
 ---
 # VAN MODE: QA TECHNICAL VALIDATION (Main Entry)
 
-> **TL;DR:** This is the entry point for the QA validation process that executes *after* CREATIVE mode and *before* BUILD mode. It ensures technical requirements are met before implementation begins.
+> **TL;DR:** This is the entry point for the QA validation process that executes *after* CREATIVE mode and *before* IMPLEMENT mode. It ensures technical requirements are met before implementation begins.
 
 ## 📣 HOW TO USE THESE QA RULES
 
@@ -69,7 +69,7 @@ graph TD
     Load: van-qa-checks/config-check.mdc"]
     ConfigCheck --> EnvCheck["3️⃣ ENVIRONMENT VALIDATION
     Load: van-qa-checks/environment-check.mdc"]
-    EnvCheck --> MinBuildCheck["4️⃣ MINIMAL BUILD TEST
+    EnvCheck --> MinBuildCheck["4️⃣ MINIMAL IMPLEMENT TEST
     Load: van-qa-checks/build-test.mdc"]
     
     MinBuildCheck --> ValidationResults{"All Checks<br>Passed?"}
@@ -78,7 +78,7 @@ graph TD
     ValidationResults -->|"No"| FailureReport["GENERATE FAILURE REPORT
     Load: van-qa-utils/reports.mdc"]
     
-    SuccessReport --> BUILD_Transition["Trigger BUILD Mode
+    SuccessReport --> IMPLEMENT_Transition["Trigger IMPLEMENT Mode
     Load: van-qa-utils/mode-transitions.mdc"]
     FailureReport --> FixIssues["Fix Technical Issues
     Load: van-qa-utils/common-fixes.mdc"]
@@ -88,7 +88,7 @@ graph TD
     style VANQA fill:#4da6ff,stroke:#0066cc,color:white
     style FourChecks fill:#f6546a,stroke:#c30052,color:white
     style ValidationResults fill:#f6546a,stroke:#c30052,color:white
-    style BUILD_Transition fill:#10b981,stroke:#059669,color:white
+    style IMPLEMENT_Transition fill:#10b981,stroke:#059669,color:white
     style FixIssues fill:#ff5555,stroke:#dd3333,color:white
 ```
 
@@ -134,9 +134,9 @@ The QA validation process follows this selective loading sequence:
 - Environment Validation Passed? [YES/NO]
 - Minimal Build Test Passed? [YES/NO]
 
-→ If all YES: Ready for BUILD mode transition.
+→ If all YES: Ready for IMPLEMENT mode transition.
 → If any NO: Fix identified issues and re-run VAN QA.
 ```
 
-**Next Step (on PASS):** Trigger BUILD mode (load `van-qa-utils/mode-transitions.mdc`).
+**Next Step (on PASS):** Trigger IMPLEMENT mode (load `van-qa-utils/mode-transitions.mdc`).
 **Next Step (on FAIL):** Address issues (load `van-qa-utils/common-fixes.mdc`) and re-run `VAN QA`. 

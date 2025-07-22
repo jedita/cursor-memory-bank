@@ -1,18 +1,18 @@
 ---
-description: Visual process map for BUILD mode (Code Implementation)
+description: Visual process map for IMPLEMENT mode (Code Implementation)
 globs: implementation-mode-map.mdc
 alwaysApply: false
 ---
 
-# BUILD MODE: CODE EXECUTION PROCESS MAP
+# IMPLEMENT MODE: CODE EXECUTION PROCESS MAP
 
-> **TL;DR:** This visual map guides the BUILD mode process, focusing on efficient code implementation based on the planning and creative phases, with proper command execution and progress tracking.
+> **TL;DR:** This visual map guides the IMPLEMENT mode process, focusing on efficient code implementation based on the planning and creative phases, with proper command execution and progress tracking.
 
-## 🧭 BUILD MODE PROCESS FLOW
+## 🧭 IMPLEMENT MODE PROCESS FLOW
 
 ```mermaid
 graph TD
-    Start["START BUILD MODE"] --> ReadDocs["Read Reference Documents<br>Core/command-execution.md"]
+    Start["START IMPLEMENT MODE"] --> ReadDocs["Read Reference Documents<br>Core/command-execution.md"]
     
     %% Initialization
     ReadDocs --> CheckLevel{"Determine<br>Complexity Level<br>from tasks.md"}
@@ -159,7 +159,7 @@ graph TD
     Document --> Next["Next<br>Command"]
 ```
 
-## 📋 LEVEL-SPECIFIC BUILD APPROACHES
+## 📋 LEVEL-SPECIFIC IMPLEMENT APPROACHES
 
 ```mermaid
 graph TD
@@ -191,7 +191,7 @@ graph TD
     L3A --> L3B --> L3C --> L3D --> L3E --> L3F
 ```
 
-## 📝 BUILD DOCUMENTATION FORMAT
+## 📝 IMPLEMENT DOCUMENTATION FORMAT
 
 Document builds with:
 
@@ -284,10 +284,10 @@ Update progress.md with:
 - **Next Steps**: [What comes next]
 ```
 
-## 📊 BUILD VERIFICATION CHECKLIST
+## 📊 IMPLEMENT VERIFICATION CHECKLIST
 
 ```
-✓ BUILD VERIFICATION
+✓ IMPLEMENT VERIFICATION
 - Directory structure created correctly? [YES/NO]
 - All files created in correct locations? [YES/NO]
 - All file paths verified with absolute paths? [YES/NO]
@@ -308,7 +308,7 @@ Update progress.md with:
 When the build is complete, notify user with:
 
 ```
-## BUILD COMPLETE
+## IMPLEMENT COMPLETE
 
 ✅ Directory structure verified
 ✅ All files created in correct locations

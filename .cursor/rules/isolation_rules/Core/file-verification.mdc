@@ -94,51 +94,9 @@ function initializeProjectFilesWithMCP(projectPath) {
     });
   });
 }
-
-// DEPRECATED: Legacy function replaced by MCP implementation
-// function initializeProjectFiles(projectPath) { ... }
 ```
 
-### Legacy Migration Helper
 
-```javascript
-// Pseudocode for legacy file migration
-function migrateLegacyFiles() {
-  const memoryBankDir = 'memory-bank';
-  const legacyFiles = [
-    'tasks.md', 'activeContext.md', 'progress.md',
-    'projectbrief.md', 'productContext.md', 
-    'systemPatterns.md', 'techContext.md'
-  ];
-  
-  // Check if legacy files exist
-  const hasLegacy = legacyFiles.some(file => 
-    fs.existsSync(path.join(memoryBankDir, file))
-  );
-  
-  if (!hasLegacy) return null;
-  
-  // Create legacy project folder
-  const now = new Date();
-  const timestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-  const legacyFolder = `legacy -- ${timestamp} -- VAN`;
-  const legacyPath = path.join(memoryBankDir, legacyFolder);
-  
-  fs.mkdirSync(legacyPath, { recursive: true });
-  
-  // Move existing files
-  legacyFiles.forEach(file => {
-    const sourcePath = path.join(memoryBankDir, file);
-    const targetPath = path.join(legacyPath, file);
-    
-    if (fs.existsSync(sourcePath)) {
-      fs.renameSync(sourcePath, targetPath);
-    }
-  });
-
-  return legacyPath;
-}
-```
 
 ### Project Switching Helper
 

@@ -218,23 +218,6 @@ graph TD
 - implement-mode-map.mdc (Mode)
 ```
 
-## 🚀 IMPLEMENTATION BENEFITS
-
-The hierarchical loading system provides:
-
-1. **Reduced Initial Loading**: Only essential rules loaded at start (~70% token reduction)
-2. **Cached Core Rules**: Rules shared between modes are cached
-3. **Specialized Rule Loading**: Specialized rules loaded only when needed
-4. **Complexity-Based Loading**: Only load rules appropriate for task complexity
-
-## 📈 TOKEN USAGE COMPARISON
-
-| Approach | Initial Tokens | Specialized Tokens | Total Tokens |
-|----------|---------------|-------------------|--------------|
-| Original System | ~70,000 | Included in initial | ~70,000 |
-| Hierarchical System | ~15,000 | ~10,000 (on demand) | ~25,000 |
-| **Token Reduction** | **~55,000 (78%)** | **N/A** | **~45,000 (64%)** |
-
 ## 🔄 USAGE EXAMPLE
 
 ### Example: Creative Phase with Architecture Rule
@@ -267,5 +250,3 @@ To ensure the rule loading system is working optimally:
 Current Token Usage: [X] tokens
 Potential Token Savings: [Y] tokens
 ```
-
-This hierarchical approach ensures optimal token usage while maintaining all functionality.

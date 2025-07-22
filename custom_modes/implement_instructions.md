@@ -1,6 +1,6 @@
-# MEMORY BANK BUILD MODE
+# MEMORY BANK IMPLEMENT MODE
 
-Your role is to build the planned changes following the implementation plan and creative phase decisions.
+Your role is to implement the planned changes following the implementation plan and creative phase decisions.
 
 ## 🎯 PROJECT CONTEXT VERIFICATION WITH AUTOMATIC STAGE TRANSITION
 
@@ -19,7 +19,7 @@ Before proceeding with implementation operations, I will:
    - Implementation plans accessible in current project
    - Creative phase documents available in: <MB_ROOT>/creative.mb
    - Implementation operations scoped to current project
-   - Ready to proceed with build workflow
+   - Ready to proceed with implement workflow
    ```
 
 ## 🎯 FILESYSTEM MCP ENFORCEMENT
@@ -31,7 +31,7 @@ Before proceeding with implementation operations, I will:
 
 ```mermaid
 graph TD
-    Start["🚀 START BUILD MODE"] --> ReadDocs["📚 Read Reference Documents<br>.cursor/rules/isolation_rules/Core/command-execution.mdc"]
+    Start["🚀 START IMPLEMENT MODE"] --> ReadDocs["📚 Read Reference Documents<br>.cursor/rules/isolation_rules/Core/command-execution.mdc"]
     
     %% Initialization
     ReadDocs --> CheckLevel{"🧩 Determine<br>Complexity Level<br>from tasks.md"}
@@ -46,7 +46,7 @@ graph TD
     
     %% Level 2 Implementation
     CheckLevel -->|"Level 2<br>Simple Enhancement"| L2Process["🔨 LEVEL 2 PROCESS<br>.cursor/rules/isolation_rules/visual-maps/implement-mode-map.mdc"]
-    L2Process --> L2Review["🔍 Review Build<br>Plan"]
+    L2Process --> L2Review["🔍 Review Implement<br>Plan"]
     L2Review --> L2Examine["👁️ Examine Relevant<br>Code Areas"]
     L2Examine --> L2Implement["⚒️ Implement Changes<br>Sequentially"]
     L2Implement --> L2Test["✅ Test<br>Changes"]
@@ -55,10 +55,10 @@ graph TD
     %% Level 3-4 Implementation
     CheckLevel -->|"Level 3-4<br>Feature/System"| L34Process["🏗️ LEVEL 3-4 PROCESS<br>.cursor/rules/isolation_rules/visual-maps/implement-mode-map.mdc"]
     L34Process --> L34Review["🔍 Review Plan &<br>Creative Decisions"]
-    L34Review --> L34Phase{"📋 Select<br>Build<br>Phase"}
+    L34Review --> L34Phase{"📋 Select<br>Implement<br>Phase"}
     
     %% Implementation Phases
-    L34Phase --> L34Phase1["⚒️ Phase 1<br>Build"]
+    L34Phase --> L34Phase1["⚒️ Phase 1<br>Implement"]
     L34Phase1 --> L34Test1["✅ Test<br>Phase 1"]
     L34Test1 --> L34Document1["📝 Document<br>Phase 1"]
     L34Document1 --> L34Next1{"📋 Next<br>Phase?"}
@@ -73,15 +73,15 @@ graph TD
     CommandExec --> DocCommands["📝 Document Commands<br>& Results"]
     
     %% Implementation Documentation
-    DocCommands -.-> DocTemplate["📋 BUILD DOC:<br>- Code Changes<br>- Commands Executed<br>- Results/Observations<br>- Status"]
+    DocCommands -.-> DocTemplate["📋 IMPLEMENT DOC:<br>- Code Changes<br>- Commands Executed<br>- Results/Observations<br>- Status"]
     
     %% Completion & Transition
-    L1Update & L2Update & L34Update --> VerifyComplete["✅ Verify Build<br>Complete"]
+    L1Update & L2Update & L34Update --> VerifyComplete["✅ Verify Implement<br>Complete"]
     VerifyComplete --> UpdateTasks["📝 Final Update to<br>tasks.md"]
     UpdateTasks --> Transition["⏭️ NEXT MODE:<br>REFLECT MODE"]
     
     %% Validation Options
-    Start -.-> Validation["🔍 VALIDATION OPTIONS:<br>- Review build plans<br>- Show code build<br>- Document command execution<br>- Test builds<br>- Show mode transition"]
+    Start -.-> Validation["🔍 VALIDATION OPTIONS:<br>- Review implement plans<br>- Show code implement<br>- Document command execution<br>- Test implements<br>- Show mode transition"]
     
     %% Styling
     style Start fill:#4da6ff,stroke:#0066cc,color:white
@@ -95,7 +95,7 @@ graph TD
     style Transition fill:#5fd94d,stroke:#3da336,color:white
 ```
 
-## BUILD STEPS
+## IMPLEMENT STEPS
 
 ### Step 1: READ COMMAND EXECUTION RULES
 ```
@@ -158,17 +158,17 @@ read_file({
 })
 ```
 
-## BUILD APPROACH
+## IMPLEMENT APPROACH
 
-Your task is to build the changes defined in the implementation plan, following the decisions made during the creative phases if applicable. Execute changes systematically, document results, and verify that all requirements are met.
+Your task is to implement the changes defined in the implementation plan, following the decisions made during the creative phases if applicable. Execute changes systematically, document results, and verify that all requirements are met.
 
-### Level 1: Quick Bug Fix Build
+### Level 1: Quick Bug Fix Implement
 
 For Level 1 tasks, focus on implementing targeted fixes for specific issues. Understand the bug, examine the relevant code, implement a precise fix, and verify that the issue is resolved.
 
 ```mermaid
 graph TD
-    L1["🔧 LEVEL 1 BUILD"] --> Review["Review the issue carefully"]
+    L1["🔧 LEVEL 1 IMPLEMENT"] --> Review["Review the issue carefully"]
     Review --> Locate["Locate specific code causing the issue"]
     Locate --> Fix["Implement focused fix"]
     Fix --> Test["Test thoroughly to verify resolution"]
@@ -182,17 +182,17 @@ graph TD
     style Doc fill:#d6f5dd,stroke:#a3e0ae,color:black
 ```
 
-### Level 2: Enhancement Build
+### Level 2: Enhancement Implement
 
 For Level 2 tasks, implement changes according to the plan created during the planning phase. Ensure each step is completed and tested before moving to the next, maintaining clarity and focus throughout the process.
 
 ```mermaid
 graph TD
-    L2["🔨 LEVEL 2 BUILD"] --> Plan["Follow build plan"]
-    Plan --> Components["Build each component"]
+    L2["🔨 LEVEL 2 IMPLEMENT"] --> Plan["Follow implement plan"]
+    Plan --> Components["Implement each component"]
     Components --> Test["Test each component"]
     Test --> Integration["Verify integration"]
-    Integration --> Doc["Document build details"]
+    Integration --> Doc["Document implement details"]
     
     style L2 fill:#ffa64d,stroke:#cc7a30,color:white
     style Plan fill:#ffe6cc,stroke:#ffa64d,color:black
@@ -202,14 +202,14 @@ graph TD
     style Doc fill:#ffe6cc,stroke:#ffa64d,color:black
 ```
 
-### Level 3-4: Phased Build
+### Level 3-4: Phased Implement
 
 For Level 3-4 tasks, implement using a phased approach as defined in the implementation plan. Each phase should be built, tested, and documented before proceeding to the next, with careful attention to integration between components.
 
 ```mermaid
 graph TD
-    L34["🏗️ LEVEL 3-4 BUILD"] --> CreativeReview["Review creative phase decisions"]
-    CreativeReview --> Phases["Build in planned phases"]
+    L34["🏗️ LEVEL 3-4 IMPLEMENT"] --> CreativeReview["Review creative phase decisions"]
+    CreativeReview --> Phases["Implement in planned phases"]
     Phases --> Phase1["Phase 1: Core components"]
     Phases --> Phase2["Phase 2: Secondary components"]
     Phases --> Phase3["Phase 3: Integration & polish"]
@@ -228,7 +228,7 @@ graph TD
 
 ## COMMAND EXECUTION PRINCIPLES
 
-When building changes, follow these command execution principles for optimal results:
+When implementing changes, follow these command execution principles for optimal results:
 
 ```mermaid
 graph TD
@@ -244,16 +244,16 @@ graph TD
     style Testing fill:#e6b3ff,stroke:#d971ff,color:black
 ```
 
-Focus on effective building while adapting your approach to the platform environment. Trust your capabilities to execute appropriate commands for the current system without excessive prescriptive guidance.
+Focus on effective implementing while adapting your approach to the platform environment. Trust your capabilities to execute appropriate commands for the current system without excessive prescriptive guidance.
 
 ## VERIFICATION
 
 ```mermaid
 graph TD
-    V["✅ VERIFICATION CHECKLIST"] --> I["All build steps completed?"]
+    V["✅ VERIFICATION CHECKLIST"] --> I["All implement steps completed?"]
     V --> T["Changes thoroughly tested?"]
-    V --> R["Build meets requirements?"]
-    V --> D["Build details documented?"]
+    V --> R["Implement meets requirements?"]
+    V --> D["Implement details documented?"]
     V --> U["tasks.md updated with status?"]
     
     I & T & R & D & U --> Decision{"All Verified?"}
@@ -266,4 +266,4 @@ graph TD
     style Fix fill:#ff5555,stroke:#cc0000,color:white
 ```
 
-Before completing the build phase, verify that all build steps have been completed, changes have been thoroughly tested, the build meets all requirements, details have been documented, and tasks.md has been updated with the current status. Once verified, prepare for the reflection phase. 
+Before completing the implement phase, verify that all implement steps have been completed, changes have been thoroughly tested, the implement meets all requirements, details have been documented, and tasks.md has been updated with the current status. Once verified, prepare for the reflection phase. 
