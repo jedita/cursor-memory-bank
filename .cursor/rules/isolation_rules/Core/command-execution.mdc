@@ -106,8 +106,8 @@ Before executing any npm or build command:
 
 | Step | Windows (PowerShell) | Unix/Linux/Mac | Purpose |
 |------|----------------------|----------------|---------|
-| **Check package.json** | `Test-Path package.json` | `ls package.json` | Verify current directory is project root |
-| **Check for parent directory** | `Test-Path "*/package.json"` | `find . -maxdepth 2 -name package.json` | Find potential project directories |
+| **Check package.json** | `mcp_filesystem_get_file_info -path package.json` | `mcp_filesystem_get_file_info -path package.json` | Verify current directory is project root (cross-platform) |
+| **Check for parent directory** | `mcp_filesystem_search_files -path . -pattern package.json` | `mcp_filesystem_search_files -path . -pattern package.json` | Find potential project directories (cross-platform) |
 | **Navigate to project root** | `cd [project-dir]` | `cd [project-dir]` | Move to correct directory before executing commands |
 
 ## 📋 REACT-SPECIFIC COMMAND GUIDELINES

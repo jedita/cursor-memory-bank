@@ -47,11 +47,15 @@ function Validate-Configurations {
     $incompatibleConfigs = @()
     
     foreach ($configFile in $configFiles) {
-        if (Test-Path $configFile) {
+        try {
+            # Check if file exists using FileSystem MCP
+            mcp_filesystem_get_file_info -path $configFile | Out-Null
+            
             # Check JSON syntax for JSON files
             if ($configFile -match "\.json$") {
                 try {
-                    Get-Content $configFile -Raw | ConvertFrom-Json | Out-Null
+                    $content = mcp_filesystem_read_file -path $configFile
+                    $content | ConvertFrom-Json | Out-Null
                 } catch {
                     $invalidConfigs += "$configFile (JSON syntax error: $($_.Exception.Message))"
                     continue
@@ -60,13 +64,13 @@ function Validate-Configurations {
             
             # Specific configuration compatibility checks
             if ($configFile -eq "vite.config.js") {
-                $content = Get-Content $configFile -Raw
+                $content = mcp_filesystem_read_file -path $configFile
                 # Check for React plugin in Vite config
                 if ($content -notmatch "react\(\)") {
                     $incompatibleConfigs += "$configFile (Missing React plugin for React project)"
                 }
             }
-        } else {
+        } catch {
             $invalidConfigs += "$configFile (file not found)"
         }
     }

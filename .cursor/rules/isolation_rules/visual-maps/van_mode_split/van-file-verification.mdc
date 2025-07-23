@@ -127,97 +127,111 @@ graph TD
     Verify --> Complete["Directory Setup<br>Complete"]
 ```
 
-### Platform-Specific Commands
+### FileSystem MCP Commands (Cross-Platform)
 
-#### Windows (PowerShell)
-```powershell
-# Create all directories in one command
-# Resolve current project path (multi-project aware)
-$projectPath = "<MB_ROOT>"
+#### FileSystem MCP File Creation
+```javascript
+// Use FileSystem MCP for cross-platform operations
+// Resolve current project path (multi-project aware)
+const projectPath = "<MB_ROOT>";
 
-# Create all directories in one command (quote the path to handle spaces and special characters)
-mkdir -Path "$projectPath" -ErrorAction SilentlyContinue
+// Create directory using MCP (handles spaces and special characters)
+try {
+    await mcp_filesystem_create_directory({ path: projectPath });
+} catch (error) {
+    console.log(`Directory already exists or created: ${projectPath}`);
+}
 
-# Create all required files
-$files = @(
-    "$projectPath\tasks.md",
-    "$projectPath\projectbrief.md",
-    "$projectPath\productContext.md",
-    "$projectPath\systemPatterns.md",
-    "$projectPath\techContext.md",
-    "$projectPath\activeContext.md",
-    "$projectPath\creative.md",
-    "$projectPath\reflection.md",
-    "$projectPath\archive.md",
-    "$projectPath\progress.md"
-)
+// Create all required files using MCP
+const files = [
+    "tasks.md", "projectbrief.md", "productContext.md",
+    "systemPatterns.md", "techContext.md", "activeContext.md",
+    "creative.md", "reflection.md", "archive.md", "progress.md"
+];
 
-foreach ($file in $files) {
-    if (-not (Test-Path $file)) {
-        New-Item -Path $file -ItemType File -Force
+for (const fileName of files) {
+    const filePath = `${projectPath}/${fileName}`;
+    try {
+        await mcp_filesystem_get_file_info({ path: filePath });
+        // File exists, skip creation
+    } catch {
+        // File doesn't exist, create it
+        await mcp_filesystem_write_file({ 
+            path: filePath, 
+            content: `# ${fileName.replace('.md', '').replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}\n`
+        });
     }
 }
 ```
 
-#### Mac/Linux (Bash)
-```bash
-# Create all directories in one command
-PROJECT_PATH="<MB_ROOT>"
-
-mkdir -p "$PROJECT_PATH"
-
-# Create all required files
-touch "$PROJECT_PATH"/tasks.md \
-      "$PROJECT_PATH"/projectbrief.md \
-      "$PROJECT_PATH"/productContext.md \
-      "$PROJECT_PATH"/systemPatterns.md \
-      "$PROJECT_PATH"/techContext.md \
-      "$PROJECT_PATH"/activeContext.md \
-      "$PROJECT_PATH"/creative.md \
-      "$PROJECT_PATH"/reflection.md \
-      "$PROJECT_PATH"/archive.md \
-      "$PROJECT_PATH"/progress.md
-```
+#### ⚠️ Legacy Platform Commands (Deprecated)
+Platform-specific commands have been replaced by FileSystem MCP:
+- **PowerShell**: `mkdir`, `Test-Path`, `New-Item` → `mcp_filesystem_create_directory`, `mcp_filesystem_get_file_info`, `mcp_filesystem_write_file`
+- **Bash**: `mkdir -p`, `touch` → `mcp_filesystem_create_directory`, `mcp_filesystem_write_file`
 
 ## 📝 STREAMLINED VERIFICATION PROCESS
 
-Instead of checking each component separately, perform batch verification:
+Using FileSystem MCP for batch verification:
 
-```powershell
-# Windows - PowerShell
-$requiredDirs = @("memory-bank")
-$requiredFiles = @("tasks.md")
-$mbFiles = @("projectbrief.md", "productContext.md", "systemPatterns.md", 
-             "techContext.md", "activeContext.md", "creative.md", "reflection.md", "archive.md", "progress.md")
+```javascript
+// FileSystem MCP Batch Verification
+const projectPath = "<MB_ROOT>";
+const requiredFiles = [
+    "tasks.md", "projectbrief.md", "productContext.md", "systemPatterns.md", 
+    "techContext.md", "activeContext.md", "creative.md", "reflection.md", 
+    "archive.md", "progress.md"
+];
 
-$missingDirs = $requiredDirs | Where-Object { -not (Test-Path $_) -or -not (Test-Path $_ -PathType Container) }
-$missingFiles = $requiredFiles | Where-Object { -not (Test-Path $_) -or (Test-Path $_ -PathType Container) }
-$missingMBFiles = $mbFiles | ForEach-Object { "memory-bank\$_" } | 
-                  Where-Object { -not (Test-Path $_) -or (Test-Path $_ -PathType Container) }
+// Check missing directories and files using MCP
+const missingDirs = [];
+const missingFiles = [];
 
-if ($missingDirs.Count -eq 0 -and $missingFiles.Count -eq 0 -and $missingMBFiles.Count -eq 0) {
-    Write-Output "✓ All required components verified"
+// Check if project directory exists
+try {
+    await mcp_filesystem_get_file_info({ path: projectPath });
+} catch {
+    missingDirs.push(projectPath);
+}
+
+// Check for missing files
+for (const fileName of requiredFiles) {
+    const filePath = `${projectPath}/${fileName}`;
+    try {
+        await mcp_filesystem_get_file_info({ path: filePath });
+    } catch {
+        missingFiles.push(filePath);
+    }
+}
+
+if (missingDirs.length === 0 && missingFiles.length === 0) {
+    console.log("✓ All required components verified");
 } else {
-    # Create all missing items at once
-    if ($missingDirs.Count -gt 0) {
-        $missingDirs | ForEach-Object { mkdir $_ -Force }
+    // Create all missing items using MCP
+    for (const dirPath of missingDirs) {
+        await mcp_filesystem_create_directory({ path: dirPath });
     }
-    if ($missingFiles.Count -gt 0 -or $missingMBFiles.Count -gt 0) {
-        $allMissingFiles = $missingFiles + $missingMBFiles
-        $allMissingFiles | ForEach-Object { New-Item -Path $_ -ItemType File -Force }
+    
+    for (const filePath of missingFiles) {
+        const fileName = filePath.split('/').pop();
+        await mcp_filesystem_write_file({ 
+            path: filePath, 
+            content: `# ${fileName.replace('.md', '').replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}\n`
+        });
     }
+    
+    console.log(`✓ Created ${missingDirs.length} directories and ${missingFiles.length} files`);
 }
 ```
 
 ## 📝 TEMPLATE INITIALIZATION
 
-Optimize template creation with a single script:
+Optimize template creation using FileSystem MCP:
 
-```powershell
-# Windows - PowerShell
-$templates = @{
-    "tasks.md" = @"
-# Memory Bank: Tasks
+```javascript
+// FileSystem MCP Template Creation
+const projectPath = "<MB_ROOT>";
+const templates = {
+    "tasks.md": `# Memory Bank: Tasks
 
 ## Current Task
 [Task not yet defined]
@@ -230,10 +244,9 @@ $templates = @{
 
 ## Requirements
 [No requirements defined yet]
-"@
+`,
 
-    "memory-bank\activeContext.md" = @"
-# Memory Bank: Active Context
+    "activeContext.md": `# Memory Bank: Active Context
 
 ## Current Focus
 [No active focus defined]
@@ -243,14 +256,24 @@ $templates = @{
 
 ## Latest Changes
 [No changes recorded]
-"@
+`,
 
-    # Add other templates here
-}
+    // Add other templates here
+};
 
-foreach ($file in $templates.Keys) {
-    if (Test-Path $file) {
-        Set-Content -Path $file -Value $templates[$file]
+// Create templates using MCP
+for (const [fileName, content] of Object.entries(templates)) {
+    const filePath = `${projectPath}/${fileName}`;
+    try {
+        await mcp_filesystem_get_file_info({ path: filePath });
+        // File exists, potentially update if empty
+        const existingContent = await mcp_filesystem_read_file({ path: filePath });
+        if (!existingContent.trim()) {
+            await mcp_filesystem_write_file({ path: filePath, content });
+        }
+    } catch {
+        // File doesn't exist, create it
+        await mcp_filesystem_write_file({ path: filePath, content });
     }
 }
 ```

@@ -150,81 +150,86 @@ graph TD
     Verify --> Complete["Directory Setup<br>Complete"]
 ```
 
-### Platform-Specific Commands
+### FileSystem MCP Commands (Cross-Platform)
 
-#### Windows (PowerShell) - Multi-Project Support
-```powershell
-# Create project-specific directories
-$projectPath = "<MB_ROOT>"
+#### FileSystem MCP Multi-Project Support
+```javascript
+// Use FileSystem MCP for cross-platform file operations
+const projectPath = "<MB_ROOT>";
 
-# Create all required files
-$files = @("$projectPath\tasks.md", 
-           "$projectPath\projectbrief.md", 
-           "$projectPath\productContext.md",
-           "$projectPath\systemPatterns.md",
-           "$projectPath\techContext.md",
-           "$projectPath\activeContext.md",
-           "$projectPath\creative.md",
-           "$projectPath\reflection.md",
-           "$projectPath\archive.md",
-           "$projectPath\progress.md")
+// Create all required files using MCP
+const files = [
+    "tasks.md", "projectbrief.md", "productContext.md", 
+    "systemPatterns.md", "techContext.md", "activeContext.md",
+    "creative.md", "reflection.md", "archive.md", "progress.md"
+];
 
-foreach ($file in $files) {
-    if (-not (Test-Path $file)) {
-        New-Item -Path $file -ItemType File -Force
-    }
-}
+files.forEach(fileName => {
+    const filePath = `${projectPath}/${fileName}`;
+    // Check if file exists using MCP, create if missing
+    mcp_filesystem_get_file_info({ path: filePath })
+        .catch(() => {
+            // File doesn't exist, create it using MCP
+            mcp_filesystem_write_file({ 
+                path: filePath, 
+                content: `# ${fileName.replace('.md', '').replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}\n` 
+            });
+        });
+});
 ```
 
-#### Mac/Linux (Bash) - Multi-Project Support
-```bash
-# Create project-specific directories
-PROJECT_PATH="<MB_ROOT>"
-
-# Create all required files
-touch "$PROJECT_PATH"/tasks.md \
-      "$PROJECT_PATH"/projectbrief.md \
-      "$PROJECT_PATH"/productContext.md \
-      "$PROJECT_PATH"/systemPatterns.md \
-      "$PROJECT_PATH"/techContext.md \
-      "$PROJECT_PATH"/activeContext.md \
-      "$PROJECT_PATH"/creative.md \
-      "$PROJECT_PATH"/reflection.md \
-      "$PROJECT_PATH"/archive.md \
-      "$PROJECT_PATH"/progress.md
-```
+#### ⚠️ Legacy Platform Commands (Deprecated)
+The following platform-specific commands have been replaced by FileSystem MCP:
+- **PowerShell**: `Test-Path`, `New-Item` → `mcp_filesystem_get_file_info`, `mcp_filesystem_write_file`
+- **Bash**: `touch` → `mcp_filesystem_write_file`
 
 ## 📝 STREAMLINED VERIFICATION PROCESS
 
-Multi-project verification with batch operations:
+Multi-project verification with FileSystem MCP:
 
-```powershell
-# Windows - PowerShell Multi-Project Verification
-$projectPath = "<MB_ROOT>"  # Resolved by platform-awareness
-$requiredFiles = @("tasks.md", "projectbrief.md", "productContext.md", "systemPatterns.md", "techContext.md", "activeContext.md", "progress.md","creative.md", "reflection.md", "archive.md")
+```javascript
+// FileSystem MCP Multi-Project Verification
+const projectPath = "<MB_ROOT>";  // Resolved by platform-awareness
+const requiredFiles = [
+    "tasks.md", "projectbrief.md", "productContext.md", 
+    "systemPatterns.md", "techContext.md", "activeContext.md", 
+    "progress.md", "creative.md", "reflection.md", "archive.md"
+];
 
-$missingFiles = $requiredFiles | ForEach-Object { "$projectPath\$_" } | 
-                Where-Object { -not (Test-Path $_) -or (Test-Path $_ -PathType Container) }
-
-if ($missingFiles.Count -eq 0) {
-    Write-Output "✓ All required project components verified for current project"
-} else {
-    if ($missingFiles.Count -gt 0) {
-        $missingFiles | ForEach-Object { New-Item -Path $_ -ItemType File -Force }
+// Check for missing files using MCP
+const missingFiles = [];
+for (const fileName of requiredFiles) {
+    const filePath = `${projectPath}/${fileName}`;
+    try {
+        await mcp_filesystem_get_file_info({ path: filePath });
+    } catch {
+        missingFiles.push(filePath);
     }
+}
+
+if (missingFiles.length === 0) {
+    console.log("✓ All required project components verified for current project");
+} else {
+    // Create missing files using MCP
+    for (const filePath of missingFiles) {
+        await mcp_filesystem_write_file({ 
+            path: filePath, 
+            content: `# ${path.basename(filePath, '.md').replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}\n`
+        });
+    }
+    console.log(`✓ Created ${missingFiles.length} missing file(s)`);
 }
 ```
 
 ## 📝 PROJECT FILE TEMPLATES
 
-Optimized template creation for new projects:
+Optimized template creation using FileSystem MCP:
 
-```powershell
-# Windows - PowerShell Project Templates
-$projectPath = "<MB_ROOT>"
-$templates = @{
-    "$projectPath\tasks.md" = @"
-# Memory Bank: Tasks
+```javascript
+// FileSystem MCP Project Templates
+const projectPath = "<MB_ROOT>";
+const templates = {
+    [`${projectPath}/tasks.md`]: `# Memory Bank: Tasks
 
 ## Current Task
 [Task not yet defined]
@@ -237,10 +242,9 @@ $templates = @{
 
 ## Requirements
 [No requirements defined yet]
-"@
+`,
 
-    "$projectPath\activeContext.md" = @"
-# Memory Bank: Active Context
+    [`${projectPath}/activeContext.md`]: `# Memory Bank: Active Context
 
 ## Current Focus
 [No active focus defined]
@@ -250,10 +254,9 @@ $templates = @{
 
 ## Latest Changes
 [No changes recorded]
-"@
+`,
 
-    "$projectPath\projectbrief.md" = @"
-# Project Brief
+    [`${projectPath}/projectbrief.md`]: `# Project Brief
 
 ## Project Overview
 [Project overview to be defined]
@@ -263,12 +266,20 @@ $templates = @{
 
 ## Scope
 [Project scope to be defined]
-"@
-}
+`
+};
 
-foreach ($file in $templates.Keys) {
-    if (-not (Test-Path $file) -or (Get-Content $file -Raw).Trim() -eq "") {
-        Set-Content -Path $file -Value $templates[$file]
+// Create templates using MCP
+for (const [filePath, content] of Object.entries(templates)) {
+    try {
+        const fileInfo = await mcp_filesystem_get_file_info({ path: filePath });
+        const existingContent = await mcp_filesystem_read_file({ path: filePath });
+        if (!existingContent.trim()) {
+            await mcp_filesystem_write_file({ path: filePath, content });
+        }
+    } catch {
+        // File doesn't exist, create it
+        await mcp_filesystem_write_file({ path: filePath, content });
     }
 }
 ```

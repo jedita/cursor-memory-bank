@@ -54,11 +54,12 @@ function Validate-Environment {
         }
     }
     
-    # Check write permissions in project directory
+    # Check write permissions in project directory using FileSystem MCP
     try {
         $testFile = ".__permission_test"
-        New-Item -Path $testFile -ItemType File -Force | Out-Null
-        Remove-Item -Path $testFile -Force
+        mcp_filesystem_write_file -path $testFile -content "permission test"
+        # Note: FileSystem MCP lacks file deletion, use platform command for cleanup
+        try { Remove-Item -Path $testFile -Force -ErrorAction SilentlyContinue } catch {}
     } catch {
         $permissionIssues += "Current directory (write permission denied)"
     }

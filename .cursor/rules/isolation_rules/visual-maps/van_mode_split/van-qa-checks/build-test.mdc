@@ -39,19 +39,25 @@ function Perform-MinimalBuildTest {
     $buildSuccess = $false
     $testSuccess = $false
     
-    # Create minimal test project
+    # Create minimal test project using FileSystem MCP
     $testDir = ".__build_test"
-    if (Test-Path $testDir) {
-        Remove-Item -Path $testDir -Recurse -Force
-    }
     
     try {
-        # Create minimal test directory
-        New-Item -Path $testDir -ItemType Directory | Out-Null
+        # Remove existing test directory if it exists (using MCP)
+        try {
+            mcp_filesystem_get_file_info -path $testDir | Out-Null
+            # Directory exists, remove it (Note: MCP doesn't have recursive delete, handle carefully)
+            Write-Output "⚠️ Test directory exists, manual cleanup required"
+        } catch {
+            # Directory doesn't exist, continue
+        }
+        
+        # Create minimal test directory using MCP
+        mcp_filesystem_create_directory -path $testDir
         Push-Location $testDir
         
-        # Initialize minimal package.json
-        @"
+        # Initialize minimal package.json using MCP
+        $packageJsonContent = @"
 {
   "name": "build-test",
   "version": "1.0.0",
@@ -61,16 +67,18 @@ function Perform-MinimalBuildTest {
     "build": "echo Build test successful"
   }
 }
-"@ | Set-Content -Path "package.json"
+"@
+        mcp_filesystem_write_file -path "package.json" -content $packageJsonContent
         
         # Attempt build
         npm run build | Out-Null
         $buildSuccess = $true
         
-        # Create minimal test file
-        @"
+        # Create minimal test file using MCP
+        $indexJsContent = @"
 console.log('Test successful');
-"@ | Set-Content -Path "index.js"
+"@
+        mcp_filesystem_write_file -path "index.js" -content $indexJsContent
         
         # Run basic test
         node index.js | Out-Null
@@ -80,9 +88,9 @@ console.log('Test successful');
         Write-Output "❌ Build test failed: $($_.Exception.Message)"
     } finally {
         Pop-Location
-        if (Test-Path $testDir) {
-            Remove-Item -Path $testDir -Recurse -Force
-        }
+        # Cleanup using platform commands (MCP lacks recursive directory deletion)
+        # Note: This is an acceptable use case for platform commands
+        try { Remove-Item -Path $testDir -Recurse -Force -ErrorAction SilentlyContinue } catch {}
     }
     
     # Display results

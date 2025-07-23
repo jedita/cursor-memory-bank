@@ -34,10 +34,11 @@ function List-Projects {
     $memoryBankPath = "memory-bank"
     $projects = @()
     
-    if (Test-Path $memoryBankPath) {
-        // UPDATED: Use FileSystem MCP instead of platform-specific commands
+    try {
+        // Use FileSystem MCP instead of platform-specific commands
         // Refer to filesystem-mcp-enforcement.mdc for API details
-        $folders = listDirectoryWithMCP($memoryBankPath).filter(entry => entry.type === 'directory')
+        $directoryList = mcp_filesystem_list_directory -path $memoryBankPath
+        $folders = $directoryList | Where-Object { $_.StartsWith("[DIR]") }
         
         foreach ($folder in $folders) {
             $folderName = $folder.Name
@@ -649,29 +650,33 @@ function new_project() {
     local project_folder_name="$timestamp -- $stage -- $project_name"
     local project_path="memory-bank/$project_folder_name"
     
-    # Use FileSystem MCP equivalent commands
-    mkdir -p "$project_path"
+    # Use FileSystem MCP for cross-platform file operations
+    # Note: This pseudocode should be implemented using actual MCP calls
     
-    # Initialize core files
-    echo "# Project Brief" > "$project_path/projectbrief.md"
-    echo "" >> "$project_path/projectbrief.md"
-    echo "Project: $project_name" >> "$project_path/projectbrief.md"
-    echo "Stage: $stage" >> "$project_path/projectbrief.md"
-    echo "Created: $timestamp" >> "$project_path/projectbrief.md"
-    echo "" >> "$project_path/projectbrief.md"
-    echo "Description: [Add project description here]" >> "$project_path/projectbrief.md"
+    # Create project directory using MCP
+    # mcp_filesystem_create_directory({ path: project_path })
     
-    # Create other core files
-    echo "# Product Context" > "$project_path/productContext.md"
-    echo "# System Patterns" > "$project_path/systemPatterns.md"
-    echo "# Tech Context" > "$project_path/techContext.md"
-    echo "# Active Context" > "$project_path/activeContext.md"
-    echo "# Progress" > "$project_path/progress.md"
-    echo "# Tasks" > "$project_path/tasks.md"
-    echo "# Style Guide" > "$project_path/style-guide.md"
-    echo "# Creative Phase Notes" > "$project_path/creative.md"
-    echo "# Reflection" > "$project_path/reflection.md"
-    echo "# Archive" > "$project_path/archive.md"
+    # Initialize core files using MCP
+    project_brief_content="# Project Brief
+
+Project: $project_name
+Stage: $stage
+Created: $timestamp
+
+Description: [Add project description here]"
+    
+    # Create all files using MCP equivalents
+    # mcp_filesystem_write_file({ path: "$project_path/projectbrief.md", content: project_brief_content })
+    # mcp_filesystem_write_file({ path: "$project_path/productContext.md", content: "# Product Context" })
+    # mcp_filesystem_write_file({ path: "$project_path/systemPatterns.md", content: "# System Patterns" })
+    # mcp_filesystem_write_file({ path: "$project_path/techContext.md", content: "# Tech Context" })
+    # mcp_filesystem_write_file({ path: "$project_path/activeContext.md", content: "# Active Context" })
+    # mcp_filesystem_write_file({ path: "$project_path/progress.md", content: "# Progress" })
+    # mcp_filesystem_write_file({ path: "$project_path/tasks.md", content: "# Tasks" })
+    # mcp_filesystem_write_file({ path: "$project_path/style-guide.md", content: "# Style Guide" })
+    # mcp_filesystem_write_file({ path: "$project_path/creative.md", content: "# Creative Phase Notes" })
+    # mcp_filesystem_write_file({ path: "$project_path/reflection.md", content: "# Reflection" })
+    # mcp_filesystem_write_file({ path: "$project_path/archive.md", content: "# Archive" })
     
     # Set as current project
     export CURRENT_PROJECT="$project_folder_name"
