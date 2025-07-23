@@ -61,9 +61,8 @@ function createNewProject(projectName, stage = 'VAN') {
   const projectPath = path.join('memory-bank', folderName);
   
   // Create project directory using FileSystem MCP
-  mcp_filesystem_create_directory({
-    path: projectPath
-  });
+  // Refer to filesystem-mcp-enforcement.mdc for API details
+  createDirectoryWithMCP(projectPath);
   
   // Initialize project files using FileSystem MCP
   initializeProjectFilesWithMCP(projectPath);
@@ -87,11 +86,9 @@ function initializeProjectFilesWithMCP(projectPath) {
   ];
   
   // Create files using FileSystem MCP
+  // Refer to filesystem-mcp-enforcement.mdc for API details
   requiredFiles.forEach(file => {
-    mcp_filesystem_write_file({
-      path: `${projectPath}/${file.name}`,
-      content: file.template
-    });
+    writeFileWithMCP(projectPath, file.name, file.template);
   });
 }
 ```
@@ -303,14 +300,8 @@ Available in VAN mode and other modes:
 - **LIST PROJECTS**: Show all projects with timestamps and stages
 - **SWITCH PROJECT <name>**: Switch to different project context  
 - **CURRENT PROJECT**: Display currently active project
-- **NEW PROJECT <name>**: Create new project with full file structure 
-- Created files: [list]
-- All components verified
+- **NEW PROJECT <name>**: Create new project with full file structure
 
-Memory Bank system ready for use.
-``` 
-- Created files: [list]
-- All components verified
+## 📚 FILESYSTEM MCP REFERENCE
 
-Memory Bank system ready for use.
-``` 
+**For all file operations, refer to**: `filesystem-mcp-enforcement.mdc` for complete API reference and implementation details. 

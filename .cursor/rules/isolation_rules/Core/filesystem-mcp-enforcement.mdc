@@ -12,6 +12,54 @@ alwaysApply: false
 
 **CRITICAL:** All file and directory operations MUST use FileSystem MCP functions when available. This rule applies to VAN, PLAN, CREATIVE, IMPLEMENT, REFLECT, and ARCHIVE modes.
 
+## 📚 FILESYSTEM MCP API REFERENCE
+
+The FileSystem MCP provides the following tools for file operations:
+
+### Core File Operations
+- **`mcp_filesystem_read_file`**: Read complete contents of a file with UTF-8 encoding
+  - Input: `path` (string)
+  - Returns: File contents as string
+
+- **`mcp_filesystem_read_multiple_files`**: Read multiple files simultaneously
+  - Input: `paths` (string[])
+  - Returns: Array of file contents (failed reads won't stop operation)
+
+- **`mcp_filesystem_write_file`**: Create new file or overwrite existing
+  - Inputs: `path` (string), `content` (string)
+  - **Exercise caution** - overwrites existing files
+
+- **`mcp_filesystem_edit_file`**: Make selective edits using pattern matching
+  - Features: Line-based matching, whitespace normalization, multiple edits, git-style diff
+  - Inputs: `path` (string), `edits` (array), `dryRun` (boolean)
+  - Best Practice: Use `dryRun: true` first to preview changes
+
+### Directory Operations
+- **`mcp_filesystem_create_directory`**: Create directory (with parent directories)
+  - Input: `path` (string)
+  - Succeeds silently if directory exists
+
+- **`mcp_filesystem_list_directory`**: List directory contents with [FILE]/[DIR] prefixes
+  - Input: `path` (string)
+  - Returns: Directory listing with type indicators
+
+- **`mcp_filesystem_move_file`**: Move or rename files and directories
+  - Inputs: `source` (string), `destination` (string)
+  - Fails if destination exists
+
+### Search and Metadata Operations
+- **`mcp_filesystem_search_files`**: Recursively search for files/directories
+  - Inputs: `path` (string), `pattern` (string), `excludePatterns` (string[])
+  - Case-insensitive matching, supports glob patterns
+
+- **`mcp_filesystem_get_file_info`**: Get detailed file/directory metadata
+  - Input: `path` (string)
+  - Returns: Size, timestamps, type, permissions
+
+- **`mcp_filesystem_list_allowed_directories`**: List accessible directories
+  - No input required
+  - Returns: Available directories for operations
+
 ### ✅ MCP Operations (PREFERRED)
 
 | Operation | MCP Function | Traditional Command | Benefits |

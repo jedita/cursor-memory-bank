@@ -36,10 +36,8 @@ function List-Projects {
     
     if (Test-Path $memoryBankPath) {
         // UPDATED: Use FileSystem MCP instead of platform-specific commands
-        // $folders = Get-ChildItem -Path $memoryBankPath -Directory
-        $folders = mcp_filesystem_list_directory({
-            path: $memoryBankPath
-        }).filter(entry => entry.type === 'directory')
+        // Refer to filesystem-mcp-enforcement.mdc for API details
+        $folders = listDirectoryWithMCP($memoryBankPath).filter(entry => entry.type === 'directory')
         
         foreach ($folder in $folders) {
             $folderName = $folder.Name
@@ -557,9 +555,8 @@ function createNewProject(projectName) {
     
     try {
         // Step 4: Create project directory using MCP
-        mcp_filesystem_create_directory({
-            path: projectPath
-        });
+        // Refer to filesystem-mcp-enforcement.mdc for API details
+        createDirectoryWithMCP(projectPath);
         
         // Step 5: Initialize core Memory Bank files using MCP
         const coreFiles = [
@@ -577,11 +574,9 @@ function createNewProject(projectName) {
         ];
         
         // Create all core files using MCP
+        // Refer to filesystem-mcp-enforcement.mdc for API details
         coreFiles.forEach(file => {
-            mcp_filesystem_write_file({
-                path: `${projectPath}/${file.name}`,
-                content: file.content
-            });
+            writeFileWithMCP(`${projectPath}/${file.name}`, file.content);
         });
         
         // Step 6: Set as current project
@@ -753,3 +748,11 @@ Before completing Phase 3:
 ---
 
 **Status**: ✅ Phase 1 MCP Integration Complete - Project command handling migrated to FileSystem MCP with improved reliability and cross-platform support.
+
+---
+
+## 📚 FILESYSTEM MCP REFERENCE
+
+**For complete FileSystem MCP API details and implementation guidelines**: 
+- **Refer to**: `.cursor/rules/isolation_rules/Core/filesystem-mcp-enforcement.mdc`
+- **Contains**: Complete API reference, usage examples, best practices, and troubleshooting guidelines

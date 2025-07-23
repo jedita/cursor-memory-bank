@@ -24,7 +24,9 @@ Before proceeding with implementation operations, I will:
 
 ## 🎯 FILESYSTEM MCP ENFORCEMENT
 
-**CRITICAL:** All file operations in IMPLEMENT mode **MUST** use FileSystem MCP functions instead of platform-specific commands. This ensures cross-platform reliability and consistent behavior.
+**CRITICAL:** All file operations in IMPLEMENT mode **MUST** use FileSystem MCP functions.
+
+**Refer to `.cursor/rules/isolation_rules/Core/filesystem-mcp-enforcement.mdc` for complete API reference.**
 
 
 ## 🔄 IMPLEMENT MODE WORKFLOW
